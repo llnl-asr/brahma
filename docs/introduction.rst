@@ -25,7 +25,7 @@ Features
   interceptors can be installed from library constructors or initialization
   routines.
 - Optional logging through `cpp-logger
-  <https://github.com/LLNL/cpp-logger>`_ with compile-time log levels.
+  <https://github.com/llnl-asr/cpp-logger>`_ with compile-time log levels.
 
 Building
 --------
