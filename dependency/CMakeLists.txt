@@ -21,6 +21,7 @@ fetch_package(NAME gotcha GOTCHA Gotcha
               GIT https://github.com/LLNL/GOTCHA.git
               TAG v1.0.10
               REQUIRED
+              PATCH_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_LIST_DIR}/../cmake/patches/gotcha_pagesize.cmake
               #DIAG
               VARS "GOTCHA_ENABLE_TESTING OFF BOOL"
                    "CMAKE_INSTALL_LIBDIR ${BRAHMA_LIBDIR} PATH")

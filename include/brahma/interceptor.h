@@ -17,19 +17,26 @@
 
 
 // The unbinding points to the original function
-#define GOTCHA_BINDING_MACRO(fname, CLASS)                            \
+#define GOTCHA_BINDING_MACRO_IMPL(fname, CLASS, SYMBOL)               \
   if constexpr (!std::is_same_v<decltype(&C::fname),                  \
                                 decltype(&CLASS::fname)>) {           \
     gotcha_binding_t binding = {#fname, (void*)fname##_wrapper,       \
                                 &fname##_brahma_handle};              \
     bindings.push_back(binding);                                      \
-    fname##_fptr fn = &::fname;                                       \
+    fname##_fptr fn = &SYMBOL;                                        \
     if(fn){                                                           \
       gotcha_binding_t unbinding = {#fname, (void*)fn,                \
                                     &fname##_brahma_handle};          \
       unbindings.push_back(unbinding);                                \
       }                                                               \
 }
+
+#define GOTCHA_BINDING_MACRO(fname, CLASS) \
+  GOTCHA_BINDING_MACRO_IMPL(fname, CLASS, ::fname)
+
+// For functions declared with GOTCHA_MACRO_TYPEDEF_ALIAS.
+#define GOTCHA_BINDING_MACRO_ALIAS(fname, CLASS) \
+  GOTCHA_BINDING_MACRO_IMPL(fname, CLASS, fname##_symbol)
 
 // For a "plain"/"64" function pair (e.g. stat/stat64, sendfile/sendfile64,
 // freopen/freopen64): on platforms where glibc's _FILE_OFFSET_BITS=64
@@ -69,6 +76,27 @@
 // symbol, so the weak symbol never resolves and calls jump through a NULL
 // pointer at runtime. Use this variant for those functions specifically;
 // GOTCHA_MACRO_TYPEDEF is unaffected and still used everywhere else.
+// Same as GOTCHA_MACRO_TYPEDEF, for functions that glibc older than 2.33 only
+// provides as inline wrappers around __xstat and friends (stat, lstat, fstat,
+// fstatat, their 64 variants and mknod). Redeclaring one of those as a weak
+// symbol makes every call to it in a translation unit that includes this
+// header jump through a null address on such a glibc. The weak declaration
+// goes under a private name linked to the real symbol with an asm label, so
+// the application's own declaration is never touched.
+#define GOTCHA_MACRO_TYPEDEF_ALIAS(macroname, macroret, macroargs, macro2args_val, macroclass_name)    \
+  typedef macroret(*macroname##_fptr) macroargs;                                                      \
+  extern "C" {                                                                                        \
+  macroret macroname##_symbol macroargs __asm__(#macroname) __attribute__((weak));                    \
+  }                                                                                                   \
+  inline macroret macroname##_wrapper macroargs {                                                     \
+    auto instance = macroclass_name::get_instance();                                                  \
+    if (instance == nullptr) {                                                                        \
+      macroname##_fptr fn = &macroname##_symbol;                                                      \
+      return fn macro2args_val;                                                                       \
+    }                                                                                                 \
+    return instance->macroname macro2args_val;                                                        \
+  }
+
 #define GOTCHA_MACRO_TYPEDEF_C(macroname, macroret, macroargs, macro2args_val, macroclass_name)       \
   typedef macroret(*macroname##_fptr) macroargs;                                                      \
   extern "C" { macroret __attribute__((weak)) macroname macroargs; }                                  \

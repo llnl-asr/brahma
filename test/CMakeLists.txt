@@ -12,6 +12,11 @@ target_link_libraries(test_posix ${PROJECT_NAME})
 # recognition for this translation unit so every call reaches the symbol
 # actually written in the source.
 target_compile_options(test_posix PRIVATE -fno-builtin)
+# The test calls every function with null arguments. With optimization glibc
+# inlines getc/putc/getchar and friends, which read the FILE directly and crash
+# on null before any interceptor runs, so build this test unoptimized. Its
+# checks are assert()s, which release builds compile out; keep them.
+target_compile_options(test_posix PRIVATE -O0 -UNDEBUG)
 add_test(NAME test_posix COMMAND $<TARGET_FILE:test_posix>)
 
 if(BRAHMA_BUILD_WITH_MPI)

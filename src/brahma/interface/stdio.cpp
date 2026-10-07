@@ -228,7 +228,6 @@ int STDIO::vsscanf(const char *str, const char *format, va_list args) {
   BRAHMA_UNWRAPPED_FUNC(vsscanf, int, (str, format, args));
   return result;
 }
-#if defined(__GLIBC__) && __GLIBC_PREREQ(2, 38)
 int STDIO::__isoc23_fscanf(FILE *stream, const char *format, va_list args) {
   return __isoc23_vfscanf(stream, format, args);
 }
@@ -252,7 +251,45 @@ int STDIO::__isoc23_vsscanf(const char *str, const char *format,
   BRAHMA_UNWRAPPED_FUNC(__isoc23_vsscanf, int, (str, format, args));
   return result;
 }
-#endif
+int STDIO::__isoc99_fscanf(FILE *stream, const char *format, va_list args) {
+  return __isoc99_vfscanf(stream, format, args);
+}
+int STDIO::__isoc99_scanf(const char *format, va_list args) {
+  return __isoc99_vscanf(format, args);
+}
+int STDIO::__isoc99_sscanf(const char *str, const char *format,
+                           va_list args) {
+  return __isoc99_vsscanf(str, format, args);
+}
+int STDIO::__isoc99_vfscanf(FILE *stream, const char *format, va_list args) {
+  BRAHMA_UNWRAPPED_FUNC(__isoc99_vfscanf, int, (stream, format, args));
+  return result;
+}
+int STDIO::__isoc99_vscanf(const char *format, va_list args) {
+  BRAHMA_UNWRAPPED_FUNC(__isoc99_vscanf, int, (format, args));
+  return result;
+}
+int STDIO::__isoc99_vsscanf(const char *str, const char *format,
+                            va_list args) {
+  BRAHMA_UNWRAPPED_FUNC(__isoc99_vsscanf, int, (str, format, args));
+  return result;
+}
+size_t STDIO::__fread_chk(void *ptr, size_t ptrlen, size_t size, size_t n, FILE *stream) {
+  BRAHMA_UNWRAPPED_FUNC(__fread_chk, size_t, (ptr, ptrlen, size, n, stream));
+  return result;
+}
+size_t STDIO::__fread_unlocked_chk(void *ptr, size_t ptrlen, size_t size, size_t n, FILE *stream) {
+  BRAHMA_UNWRAPPED_FUNC(__fread_unlocked_chk, size_t, (ptr, ptrlen, size, n, stream));
+  return result;
+}
+char *STDIO::__fgets_chk(char *s, size_t size, int n, FILE *stream) {
+  BRAHMA_UNWRAPPED_FUNC(__fgets_chk, char *, (s, size, n, stream));
+  return result;
+}
+char *STDIO::__fgets_unlocked_chk(char *s, size_t size, int n, FILE *stream) {
+  BRAHMA_UNWRAPPED_FUNC(__fgets_unlocked_chk, char *, (s, size, n, stream));
+  return result;
+}
 int STDIO::puts(const char *s) {
   BRAHMA_UNWRAPPED_FUNC(puts, int, (s));
   return result;
