@@ -162,6 +162,64 @@ int POSIX::__fxstat64(int vers, int fd, struct stat64 *buf) {
   BRAHMA_UNWRAPPED_FUNC(__fxstat64, int, (vers, fd, buf));
   return result;
 }
+int POSIX::__fxstatat(int vers, int dirfd, const char *path, struct stat *buf,
+                      int flags) {
+  BRAHMA_UNWRAPPED_FUNC(__fxstatat, int, (vers, dirfd, path, buf, flags));
+  return result;
+}
+int POSIX::__fxstatat64(int vers, int dirfd, const char *path,
+                        struct stat64 *buf, int flags) {
+  BRAHMA_UNWRAPPED_FUNC(__fxstatat64, int, (vers, dirfd, path, buf, flags));
+  return result;
+}
+int POSIX::__xmknod(int vers, const char *path, mode_t mode, dev_t *dev) {
+  BRAHMA_UNWRAPPED_FUNC(__xmknod, int, (vers, path, mode, dev));
+  return result;
+}
+int POSIX::__open_2(const char *path, int oflag) {
+  BRAHMA_UNWRAPPED_FUNC(__open_2, int, (path, oflag));
+  return result;
+}
+int POSIX::__open64_2(const char *path, int oflag) {
+  BRAHMA_UNWRAPPED_FUNC(__open64_2, int, (path, oflag));
+  return result;
+}
+int POSIX::__openat_2(int dirfd, const char *path, int oflag) {
+  BRAHMA_UNWRAPPED_FUNC(__openat_2, int, (dirfd, path, oflag));
+  return result;
+}
+int POSIX::__openat64_2(int dirfd, const char *path, int oflag) {
+  BRAHMA_UNWRAPPED_FUNC(__openat64_2, int, (dirfd, path, oflag));
+  return result;
+}
+ssize_t POSIX::__read_chk(int fd, void *buf, size_t nbytes, size_t buflen) {
+  BRAHMA_UNWRAPPED_FUNC(__read_chk, ssize_t, (fd, buf, nbytes, buflen));
+  return result;
+}
+ssize_t POSIX::__pread_chk(int fd, void *buf, size_t nbytes, off_t offset, size_t buflen) {
+  BRAHMA_UNWRAPPED_FUNC(__pread_chk, ssize_t, (fd, buf, nbytes, offset, buflen));
+  return result;
+}
+ssize_t POSIX::__pread64_chk(int fd, void *buf, size_t nbytes, off64_t offset, size_t buflen) {
+  BRAHMA_UNWRAPPED_FUNC(__pread64_chk, ssize_t, (fd, buf, nbytes, offset, buflen));
+  return result;
+}
+ssize_t POSIX::__readlink_chk(const char *path, char *buf, size_t len, size_t buflen) {
+  BRAHMA_UNWRAPPED_FUNC(__readlink_chk, ssize_t, (path, buf, len, buflen));
+  return result;
+}
+ssize_t POSIX::__readlinkat_chk(int dirfd, const char *path, char *buf, size_t len, size_t buflen) {
+  BRAHMA_UNWRAPPED_FUNC(__readlinkat_chk, ssize_t, (dirfd, path, buf, len, buflen));
+  return result;
+}
+char *POSIX::__getcwd_chk(char *buf, size_t size, size_t buflen) {
+  BRAHMA_UNWRAPPED_FUNC(__getcwd_chk, char *, (buf, size, buflen));
+  return result;
+}
+char *POSIX::__realpath_chk(const char *path, char *resolved, size_t resolvedlen) {
+  BRAHMA_UNWRAPPED_FUNC(__realpath_chk, char *, (path, resolved, resolvedlen));
+  return result;
+}
 char *POSIX::getcwd(char *buf, size_t size) {
   BRAHMA_UNWRAPPED_FUNC(getcwd, char *, (buf, size));
   return result;
@@ -444,7 +502,6 @@ int POSIX::munlockall() {
 void POSIX::_fini(void) {
 }
 
-#if defined(__GLIBC__) && __GLIBC_PREREQ(2, 32)
 int POSIX::stat(const char *path, struct stat *buf) {
   BRAHMA_UNWRAPPED_FUNC(stat, int, (path, buf));
   return result;
@@ -479,7 +536,6 @@ int POSIX::fstatat64(int dirfd, const char *path, struct stat64 *buf,
   BRAHMA_UNWRAPPED_FUNC(fstatat64, int, (dirfd, path, buf, flags));
   return result;
 }
-#endif
 int POSIX::posix_fadvise(int fd, off_t offset, off_t len, int advice) {
   BRAHMA_UNWRAPPED_FUNC(posix_fadvise, int, (fd, offset, len, advice));
   return result;
@@ -581,12 +637,10 @@ int POSIX::dirfd(DIR *dir) {
   BRAHMA_UNWRAPPED_FUNC(dirfd, int, (dir));
   return result;
 }
-#if defined(__GLIBC__) && __GLIBC_PREREQ(2, 32)
 int POSIX::mknod(const char *pathname, mode_t mode, dev_t dev) {
   BRAHMA_UNWRAPPED_FUNC(mknod, int, (pathname, mode, dev));
   return result;
 }
-#endif
 ssize_t POSIX::sendfile(int out_fd, int in_fd, off_t *offset, size_t count) {
   BRAHMA_UNWRAPPED_FUNC(sendfile, ssize_t, (out_fd, in_fd, offset, count));
   return result;

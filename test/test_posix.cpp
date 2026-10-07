@@ -179,6 +179,26 @@ class POSIXTest : public POSIX {
     return 0;
   }
 
+  // _FORTIFY_SOURCE entry points that distro builds call in place of the
+  // plain functions.
+  int __open_2(const char *path, int oflag) override {
+    test_log("100 Captured __open_2 call\n");
+    api_count++;
+    return 0;
+  }
+
+  ssize_t __read_chk(int fd, void *buf, size_t nbytes, size_t buflen) override {
+    test_log("101 Captured __read_chk call\n");
+    api_count++;
+    return 0;
+  }
+
+  char *__getcwd_chk(char *buf, size_t size, size_t buflen) override {
+    test_log("102 Captured __getcwd_chk call\n");
+    api_count++;
+    return 0;
+  }
+
   int mkdir(const char *pathname, mode_t mode) override {
     test_log("17 Captured mkdir call\n");
     api_count++;
@@ -887,6 +907,17 @@ class STDIOTest : public STDIO {
     return 0;
   }
   
+  size_t __fread_chk(void *ptr, size_t ptrlen, size_t size, size_t n,
+                     FILE *stream) override {
+    test_log("103 Captured __fread_chk call\n");
+    api_count++;
+    return 0;
+  }
+  char* __fgets_chk(char *s, size_t size, int n, FILE *stream) override {
+    test_log("104 Captured __fgets_chk call\n");
+    api_count++;
+    return 0;
+  }
   char* fgets(char *, int, FILE *) override {
     test_log("19 Captured fgets call\n");
     api_count++;
@@ -1061,6 +1092,41 @@ class STDIOTest : public STDIO {
   }
   int vsscanf(const char *str, const char *format, va_list args) override {
     test_log("48 Captured vsscanf call\n");
+    api_count++;
+    return 0;
+  }
+  // Before glibc 2.38 the header sends fscanf and friends here in ISO C99 mode.
+  int __isoc99_fscanf(FILE *stream, const char *format,
+                      va_list args) override {
+    test_log("105 Captured __isoc99_fscanf call\n");
+    api_count++;
+    return 0;
+  }
+  int __isoc99_scanf(const char *format, va_list args) override {
+    test_log("106 Captured __isoc99_scanf call\n");
+    api_count++;
+    return 0;
+  }
+  int __isoc99_sscanf(const char *str, const char *format,
+                      va_list args) override {
+    test_log("107 Captured __isoc99_sscanf call\n");
+    api_count++;
+    return 0;
+  }
+  int __isoc99_vfscanf(FILE *stream, const char *format,
+                       va_list args) override {
+    test_log("108 Captured __isoc99_vfscanf call\n");
+    api_count++;
+    return 0;
+  }
+  int __isoc99_vscanf(const char *format, va_list args) override {
+    test_log("109 Captured __isoc99_vscanf call\n");
+    api_count++;
+    return 0;
+  }
+  int __isoc99_vsscanf(const char *str, const char *format,
+                       va_list args) override {
+    test_log("110 Captured __isoc99_vsscanf call\n");
     api_count++;
     return 0;
   }
@@ -1250,6 +1316,15 @@ void call_va_stdio_apis(const char *fmt, ...) {
   va_start(a, fmt);
   vsscanf(fmt, fmt, a);
   va_end(a);
+  va_start(a, fmt);
+  __isoc99_vfscanf(stdin, fmt, a);
+  va_end(a);
+  va_start(a, fmt);
+  __isoc99_vscanf(fmt, a);
+  va_end(a);
+  va_start(a, fmt);
+  __isoc99_vsscanf(fmt, fmt, a);
+  va_end(a);
 #if defined(__GLIBC__) && __GLIBC_PREREQ(2, 38)
   va_start(a, fmt);
   __isoc23_vfscanf(stdin, fmt, a);
@@ -1309,6 +1384,12 @@ int main(int argc, char *argv[]) {
   stat("", NULL);
 
   getcwd(NULL, 0);
+
+  __open_2("", 0);
+
+  __read_chk(0, NULL, 0, 0);
+
+  __getcwd_chk(NULL, 0, 0);
 
   mkdir("", 0);
 
@@ -1505,6 +1586,10 @@ int main(int argc, char *argv[]) {
   fgetpos(NULL, 0);
   fgetpos64(NULL, 0);
   fgets(NULL, 1024, NULL);
+
+  __fread_chk(NULL, 0, 0, 0, NULL);
+
+  __fgets_chk(NULL, 0, 0, NULL);
   fputc(0, NULL);
   fputs(NULL, NULL);
   fsetpos(NULL, NULL);
@@ -1543,6 +1628,9 @@ int main(int argc, char *argv[]) {
   fscanf(stdin, "");
   scanf("");
   sscanf("", "");
+  __isoc99_fscanf(stdin, "");
+  __isoc99_scanf("");
+  __isoc99_sscanf("", "");
 #if defined(__GLIBC__) && __GLIBC_PREREQ(2, 38)
   __isoc23_fscanf(stdin, "");
   __isoc23_scanf("");

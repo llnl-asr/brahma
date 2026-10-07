@@ -106,13 +106,15 @@ class STDIO : public Interface {
   virtual int vfscanf(FILE *stream, const char *format, va_list args);
   virtual int vscanf(const char *format, va_list args);
   virtual int vsscanf(const char *str, const char *format, va_list args);
-#if defined(__GLIBC__) && __GLIBC_PREREQ(2, 38)
   // glibc >= 2.38 redirects the scanf family to these ISO-C23-compliant
   // aliases at the source level (a GCC _FORTIFY_SOURCE feature, distinct
   // from the older _FILE_OFFSET_BITS=64 "64"-suffix redirects), so
   // application calls to fscanf/scanf/etc. resolve directly to these
   // instead on such platforms; both must be bound to guarantee
-  // interception either way. These symbols don't exist before 2.38.
+  // interception either way. Before 2.38 these names are absent and binding
+  // them is a no-op, so they stay unguarded to keep a wheel built on an old
+  // glibc working on a newer one. The __isoc99_* names are the same redirect
+  // for C99 mode on every glibc since 2.7.
   virtual int __isoc23_fscanf(FILE *stream, const char *format,
                               va_list args);
   virtual int __isoc23_scanf(const char *format, va_list args);
@@ -123,7 +125,20 @@ class STDIO : public Interface {
   virtual int __isoc23_vscanf(const char *format, va_list args);
   virtual int __isoc23_vsscanf(const char *str, const char *format,
                                va_list args);
-#endif
+  virtual int __isoc99_fscanf(FILE *stream, const char *format,
+                              va_list args);
+  virtual int __isoc99_scanf(const char *format, va_list args);
+  virtual int __isoc99_sscanf(const char *str, const char *format,
+                              va_list args);
+  virtual int __isoc99_vfscanf(FILE *stream, const char *format,
+                               va_list args);
+  virtual int __isoc99_vscanf(const char *format, va_list args);
+  virtual int __isoc99_vsscanf(const char *str, const char *format,
+                               va_list args);
+  virtual size_t __fread_chk(void *ptr, size_t ptrlen, size_t size, size_t n, FILE *stream);
+  virtual size_t __fread_unlocked_chk(void *ptr, size_t ptrlen, size_t size, size_t n, FILE *stream);
+  virtual char *__fgets_chk(char *s, size_t size, int n, FILE *stream);
+  virtual char *__fgets_unlocked_chk(char *s, size_t size, int n, FILE *stream);
   virtual int puts(const char *s);
   virtual int putchar(int c);
   virtual int putc(int c, FILE *stream);
@@ -197,14 +212,22 @@ class STDIO : public Interface {
   GOTCHA_MACRO_VAR(vfscanf)
   GOTCHA_MACRO_VAR(vscanf)
   GOTCHA_MACRO_VAR(vsscanf)
-#if defined(__GLIBC__) && __GLIBC_PREREQ(2, 38)
   GOTCHA_MACRO_VAR(__isoc23_fscanf)
   GOTCHA_MACRO_VAR(__isoc23_scanf)
   GOTCHA_MACRO_VAR(__isoc23_sscanf)
   GOTCHA_MACRO_VAR(__isoc23_vfscanf)
   GOTCHA_MACRO_VAR(__isoc23_vscanf)
   GOTCHA_MACRO_VAR(__isoc23_vsscanf)
-#endif
+  GOTCHA_MACRO_VAR(__isoc99_fscanf)
+  GOTCHA_MACRO_VAR(__isoc99_scanf)
+  GOTCHA_MACRO_VAR(__isoc99_sscanf)
+  GOTCHA_MACRO_VAR(__isoc99_vfscanf)
+  GOTCHA_MACRO_VAR(__isoc99_vscanf)
+  GOTCHA_MACRO_VAR(__isoc99_vsscanf)
+  GOTCHA_MACRO_VAR(__fread_chk)
+  GOTCHA_MACRO_VAR(__fread_unlocked_chk)
+  GOTCHA_MACRO_VAR(__fgets_chk)
+  GOTCHA_MACRO_VAR(__fgets_unlocked_chk)
   GOTCHA_MACRO_VAR(puts)
   GOTCHA_MACRO_VAR(putchar)
   GOTCHA_MACRO_VAR(putc)
@@ -336,7 +359,6 @@ GOTCHA_MACRO_TYPEDEF(vscanf, int, (const char *format, va_list args),
 GOTCHA_MACRO_TYPEDEF(vsscanf, int,
                      (const char *str, const char *format, va_list args),
                      (str, format, args), brahma::STDIO)
-#if defined(__GLIBC__) && __GLIBC_PREREQ(2, 38)
 // The v-variants (vname) must be declared before the VARFMT macros below
 // reference them: unlike vfscanf/vscanf/vsscanf (already declared via
 // <cstdio>), these __isoc23_v* symbols aren't exposed by any public
@@ -364,7 +386,32 @@ GOTCHA_MACRO_TYPEDEF_VARFMT_C(__isoc23_scanf, __isoc23_vscanf, int,
 GOTCHA_MACRO_TYPEDEF_VARFMT_C(__isoc23_sscanf, __isoc23_vsscanf, int,
                               (const char *str, const char *format, ...),
                               (str, format, _args), format, brahma::STDIO)
-#endif
+GOTCHA_MACRO_TYPEDEF_C(__isoc99_vfscanf, int,
+                       (FILE * stream, const char *format, va_list args),
+                       (stream, format, args), brahma::STDIO)
+GOTCHA_MACRO_TYPEDEF_C(__isoc99_vscanf, int,
+                       (const char *format, va_list args),
+                       (format, args), brahma::STDIO)
+GOTCHA_MACRO_TYPEDEF_C(__isoc99_vsscanf, int,
+                       (const char *str, const char *format, va_list args),
+                       (str, format, args), brahma::STDIO)
+GOTCHA_MACRO_TYPEDEF_VARFMT_C(__isoc99_fscanf, __isoc99_vfscanf, int,
+                              (FILE * stream, const char *format, ...),
+                              (stream, format, _args), format, brahma::STDIO)
+GOTCHA_MACRO_TYPEDEF_VARFMT_C(__isoc99_scanf, __isoc99_vscanf, int,
+                              (const char *format, ...),
+                              (format, _args), format, brahma::STDIO)
+GOTCHA_MACRO_TYPEDEF_VARFMT_C(__isoc99_sscanf, __isoc99_vsscanf, int,
+                              (const char *str, const char *format, ...),
+                              (str, format, _args), format, brahma::STDIO)
+GOTCHA_MACRO_TYPEDEF_C(__fread_chk, size_t, (void *ptr, size_t ptrlen, size_t size, size_t n, FILE *stream),
+                       (ptr, ptrlen, size, n, stream), brahma::STDIO)
+GOTCHA_MACRO_TYPEDEF_C(__fread_unlocked_chk, size_t, (void *ptr, size_t ptrlen, size_t size, size_t n, FILE *stream),
+                       (ptr, ptrlen, size, n, stream), brahma::STDIO)
+GOTCHA_MACRO_TYPEDEF_C(__fgets_chk, char *, (char *s, size_t size, int n, FILE *stream),
+                       (s, size, n, stream), brahma::STDIO)
+GOTCHA_MACRO_TYPEDEF_C(__fgets_unlocked_chk, char *, (char *s, size_t size, int n, FILE *stream),
+                       (s, size, n, stream), brahma::STDIO)
 GOTCHA_MACRO_TYPEDEF(puts, int, (const char *s), (s), brahma::STDIO)
 GOTCHA_MACRO_TYPEDEF(putchar, int, (int c), (c), brahma::STDIO)
 GOTCHA_MACRO_TYPEDEF(putc, int, (int c, FILE * stream), (c, stream),
@@ -467,14 +514,22 @@ size_t brahma::STDIO::bind(const char *name, uint16_t priority) {
   GOTCHA_BINDING_MACRO(vfscanf, STDIO);
   GOTCHA_BINDING_MACRO(vscanf, STDIO);
   GOTCHA_BINDING_MACRO(vsscanf, STDIO);
-#if defined(__GLIBC__) && __GLIBC_PREREQ(2, 38)
   GOTCHA_BINDING_MACRO(__isoc23_fscanf, STDIO);
   GOTCHA_BINDING_MACRO(__isoc23_scanf, STDIO);
   GOTCHA_BINDING_MACRO(__isoc23_sscanf, STDIO);
   GOTCHA_BINDING_MACRO(__isoc23_vfscanf, STDIO);
   GOTCHA_BINDING_MACRO(__isoc23_vscanf, STDIO);
   GOTCHA_BINDING_MACRO(__isoc23_vsscanf, STDIO);
-#endif
+  GOTCHA_BINDING_MACRO(__isoc99_fscanf, STDIO);
+  GOTCHA_BINDING_MACRO(__isoc99_scanf, STDIO);
+  GOTCHA_BINDING_MACRO(__isoc99_sscanf, STDIO);
+  GOTCHA_BINDING_MACRO(__isoc99_vfscanf, STDIO);
+  GOTCHA_BINDING_MACRO(__isoc99_vscanf, STDIO);
+  GOTCHA_BINDING_MACRO(__isoc99_vsscanf, STDIO);
+  GOTCHA_BINDING_MACRO(__fread_chk, STDIO);
+  GOTCHA_BINDING_MACRO(__fread_unlocked_chk, STDIO);
+  GOTCHA_BINDING_MACRO(__fgets_chk, STDIO);
+  GOTCHA_BINDING_MACRO(__fgets_unlocked_chk, STDIO);
   GOTCHA_BINDING_MACRO(puts, STDIO);
   GOTCHA_BINDING_MACRO(putchar, STDIO);
   GOTCHA_BINDING_MACRO(putc, STDIO);
