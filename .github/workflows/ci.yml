@@ -3,7 +3,10 @@ name: Build and Test
 on:
   pull_request:
     branches: [develop, main, dev]
-  push:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
 env:
   BUILD_TYPE: Debug
@@ -12,8 +15,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-24.04
-    # Only run on PR events, or on push events that are not from a PR
-    if: github.event_name == 'pull_request' || (github.event_name == 'push' && !contains(github.event.head_commit.message, 'Merge pull request'))
     container:
       image: hdevarajan92/brahma-ci:latest
     strategy:
@@ -33,7 +34,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 2
       - name: Setup Python
         uses: actions/setup-python@v4
@@ -65,7 +66,6 @@ jobs:
   glibc:
     # manylinux_2_28 is the baseline used by the dftracer cibuildwheel wheels.
     runs-on: ubuntu-24.04
-    if: github.event_name == 'pull_request' || (github.event_name == 'push' && !contains(github.event.head_commit.message, 'Merge pull request'))
     name: glibc ${{ matrix.glibc }}
     container:
       image: quay.io/pypa/manylinux_${{ matrix.tag }}_x86_64
@@ -79,7 +79,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 2
       - name: Check glibc version
         run: ldd --version | head -1 | grep -q " ${{ matrix.glibc }}$"
