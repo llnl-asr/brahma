@@ -80,6 +80,12 @@ class POSIXTest : public POSIX {
     return 0;
   }
 
+  int creat(const char *path, mode_t mode) override {
+    test_log("111 Captured creat call\n");
+    api_count++;
+    return 0;
+  }
+
   int creat64(const char *path, mode_t mode) override {
     test_log("2 Captured creat64 call\n");
     api_count++;
@@ -337,6 +343,12 @@ class POSIXTest : public POSIX {
 
   int dup2(int oldfd, int newfd) override {
     test_log("38 Captured dup2 call\n");
+    api_count++;
+    return 0;
+  }
+
+  int dup3(int oldfd, int newfd, int flags) override {
+    test_log("112 Captured dup3 call\n");
     api_count++;
     return 0;
   }
@@ -918,6 +930,18 @@ class STDIOTest : public STDIO {
     api_count++;
     return 0;
   }
+  int __fprintf_chk(FILE *stream, int flag, const char *format,
+                    va_list args) override {
+    test_log("113 Captured __fprintf_chk call\n");
+    api_count++;
+    return 0;
+  }
+  int __vfprintf_chk(FILE *stream, int flag, const char *format,
+                     va_list args) override {
+    test_log("114 Captured __vfprintf_chk call\n");
+    api_count++;
+    return 0;
+  }
   char* fgets(char *, int, FILE *) override {
     test_log("19 Captured fgets call\n");
     api_count++;
@@ -1299,6 +1323,9 @@ void call_va_stdio_apis(const char *fmt, ...) {
   vfprintf(stdout, fmt, a);
   va_end(a);
   va_start(a, fmt);
+  __vfprintf_chk(stdout, 1, fmt, a);
+  va_end(a);
+  va_start(a, fmt);
   vprintf(fmt, a);
   va_end(a);
   va_start(a, fmt);
@@ -1351,6 +1378,8 @@ int main(int argc, char *argv[]) {
   signal(SIGABRT, print_stacktrace);
   
   open("", 0);
+
+  creat("", 0);
 
   creat64("", 0);
 
@@ -1443,6 +1472,8 @@ int main(int argc, char *argv[]) {
   dup(0);
 
   dup2(0, 0);
+
+  dup3(0, 0, 0);
 
   pipe(NULL);
 
@@ -1590,6 +1621,7 @@ int main(int argc, char *argv[]) {
   __fread_chk(NULL, 0, 0, 0, NULL);
 
   __fgets_chk(NULL, 0, 0, NULL);
+  __fprintf_chk(stdout, 1, "");
   fputc(0, NULL);
   fputs(NULL, NULL);
   fsetpos(NULL, NULL);

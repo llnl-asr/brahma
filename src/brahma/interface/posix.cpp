@@ -38,6 +38,11 @@ int POSIX::open(const char *pathname, int flags, ...) {
   }
 }
 
+int POSIX::creat(const char *path, mode_t mode) {
+  BRAHMA_UNWRAPPED_FUNC(creat, int, (path, mode));
+  return result;
+}
+
 int POSIX::creat64(const char *path, mode_t mode) {
   BRAHMA_UNWRAPPED_FUNC(creat64, int, (path, mode));
   return result;
@@ -360,6 +365,10 @@ int POSIX::dup(int oldfd) {
 }
 int POSIX::dup2(int oldfd, int newfd) {
   BRAHMA_UNWRAPPED_FUNC(dup2, int, (oldfd, newfd));
+  return result;
+}
+int POSIX::dup3(int oldfd, int newfd, int flags) {
+  BRAHMA_UNWRAPPED_FUNC(dup3, int, (oldfd, newfd, flags));
   return result;
 }
 int POSIX::pipe(int pipefd[2]) {

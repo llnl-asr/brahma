@@ -290,6 +290,13 @@ char *STDIO::__fgets_unlocked_chk(char *s, size_t size, int n, FILE *stream) {
   BRAHMA_UNWRAPPED_FUNC(__fgets_unlocked_chk, char *, (s, size, n, stream));
   return result;
 }
+int STDIO::__fprintf_chk(FILE *stream, int flag, const char *format, va_list args) {
+  return __vfprintf_chk(stream, flag, format, args);
+}
+int STDIO::__vfprintf_chk(FILE *stream, int flag, const char *format, va_list args) {
+  BRAHMA_UNWRAPPED_FUNC(__vfprintf_chk, int, (stream, flag, format, args));
+  return result;
+}
 int STDIO::puts(const char *s) {
   BRAHMA_UNWRAPPED_FUNC(puts, int, (s));
   return result;

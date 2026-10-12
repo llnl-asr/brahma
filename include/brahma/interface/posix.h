@@ -49,6 +49,8 @@ class POSIX : public Interface {
 
   virtual int open(const char *pathname, int flags, ...);
 
+  virtual int creat(const char *path, mode_t mode);
+
   virtual int creat64(const char *path, mode_t mode);
 
   virtual int open64(const char *path, int flags, ...);
@@ -162,6 +164,8 @@ class POSIX : public Interface {
   virtual int dup(int oldfd);
 
   virtual int dup2(int oldfd, int newfd);
+
+  virtual int dup3(int oldfd, int newfd, int flags);
 
   virtual int pipe(int pipefd[2]);
 
@@ -329,6 +333,7 @@ class POSIX : public Interface {
 
   /* Handler Definitions */
   GOTCHA_MACRO_VAR(open)
+  GOTCHA_MACRO_VAR(creat)
   GOTCHA_MACRO_VAR(creat64)
   GOTCHA_MACRO_VAR(open64)
   GOTCHA_MACRO_VAR(close)
@@ -389,6 +394,7 @@ class POSIX : public Interface {
   GOTCHA_MACRO_VAR(fcntl64)
   GOTCHA_MACRO_VAR(dup)
   GOTCHA_MACRO_VAR(dup2)
+  GOTCHA_MACRO_VAR(dup3)
   GOTCHA_MACRO_VAR(pipe)
   GOTCHA_MACRO_VAR(mkfifo)
   GOTCHA_MACRO_VAR(umask)
@@ -464,6 +470,8 @@ class POSIX : public Interface {
 
 GOTCHA_MACRO_TYPEDEF_OPEN(open, int, (const char *pathname, int flags, ...),
                           (pathname, flags, mode), flags, brahma::POSIX)
+GOTCHA_MACRO_TYPEDEF(creat, int, (const char *path, mode_t mode),
+                     (path, mode), brahma::POSIX)
 GOTCHA_MACRO_TYPEDEF(creat64, int, (const char *path, mode_t mode),
                      (path, mode), brahma::POSIX)
 GOTCHA_MACRO_TYPEDEF_OPEN(open64, int, (const char *path, int flags, ...),
@@ -646,6 +654,8 @@ gotcha_wrappee_handle_t get_fcntl64_handle();
 GOTCHA_MACRO_TYPEDEF(dup, int, (int oldfd), (oldfd), brahma::POSIX)
 GOTCHA_MACRO_TYPEDEF(dup2, int, (int oldfd, int newfd), (oldfd, newfd),
                      brahma::POSIX)
+GOTCHA_MACRO_TYPEDEF(dup3, int, (int oldfd, int newfd, int flags),
+                     (oldfd, newfd, flags), brahma::POSIX)
 GOTCHA_MACRO_TYPEDEF(pipe, int, (int pipefd[2]), (pipefd), brahma::POSIX)
 GOTCHA_MACRO_TYPEDEF(mkfifo, int, (const char *pathname, mode_t mode),
                      (pathname, mode), brahma::POSIX)
@@ -837,6 +847,7 @@ GOTCHA_MACRO_TYPEDEF(fstatvfs64, int, (int fd, struct statvfs64 *buf),
 template <typename C>
 size_t brahma::POSIX::bind(const char *name, uint16_t priority) {
   GOTCHA_BINDING_MACRO(open, POSIX);
+  GOTCHA_BINDING_MACRO(creat, POSIX);
   GOTCHA_BINDING_MACRO(creat64, POSIX);
   GOTCHA_BINDING_MACRO(open64, POSIX);
   GOTCHA_BINDING_MACRO(close, POSIX);
@@ -897,6 +908,7 @@ size_t brahma::POSIX::bind(const char *name, uint16_t priority) {
   GOTCHA_BINDING_MACRO(fcntl64, POSIX);
   GOTCHA_BINDING_MACRO(dup, POSIX);
   GOTCHA_BINDING_MACRO(dup2, POSIX);
+  GOTCHA_BINDING_MACRO(dup3, POSIX);
   GOTCHA_BINDING_MACRO(pipe, POSIX);
   GOTCHA_BINDING_MACRO(mkfifo, POSIX);
   GOTCHA_BINDING_MACRO(umask, POSIX);
