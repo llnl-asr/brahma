@@ -167,6 +167,10 @@ class POSIX : public Interface {
 
   virtual int dup3(int oldfd, int newfd, int flags);
 
+  virtual int close_range(unsigned int first, unsigned int last, int flags);
+
+  virtual void closefrom(int lowfd);
+
   virtual int pipe(int pipefd[2]);
 
   virtual int mkfifo(const char *pathname, mode_t mode);
@@ -395,6 +399,8 @@ class POSIX : public Interface {
   GOTCHA_MACRO_VAR(dup)
   GOTCHA_MACRO_VAR(dup2)
   GOTCHA_MACRO_VAR(dup3)
+  GOTCHA_MACRO_VAR(close_range)
+  GOTCHA_MACRO_VAR(closefrom)
   GOTCHA_MACRO_VAR(pipe)
   GOTCHA_MACRO_VAR(mkfifo)
   GOTCHA_MACRO_VAR(umask)
@@ -656,6 +662,11 @@ GOTCHA_MACRO_TYPEDEF(dup2, int, (int oldfd, int newfd), (oldfd, newfd),
                      brahma::POSIX)
 GOTCHA_MACRO_TYPEDEF(dup3, int, (int oldfd, int newfd, int flags),
                      (oldfd, newfd, flags), brahma::POSIX)
+// glibc 2.34 added these, so they use the asm alias to build on older headers.
+GOTCHA_MACRO_TYPEDEF_ALIAS(close_range, int,
+                           (unsigned int first, unsigned int last, int flags),
+                           (first, last, flags), brahma::POSIX)
+GOTCHA_MACRO_TYPEDEF_ALIAS(closefrom, void, (int lowfd), (lowfd), brahma::POSIX)
 GOTCHA_MACRO_TYPEDEF(pipe, int, (int pipefd[2]), (pipefd), brahma::POSIX)
 GOTCHA_MACRO_TYPEDEF(mkfifo, int, (const char *pathname, mode_t mode),
                      (pathname, mode), brahma::POSIX)
@@ -909,6 +920,8 @@ size_t brahma::POSIX::bind(const char *name, uint16_t priority) {
   GOTCHA_BINDING_MACRO(dup, POSIX);
   GOTCHA_BINDING_MACRO(dup2, POSIX);
   GOTCHA_BINDING_MACRO(dup3, POSIX);
+  GOTCHA_BINDING_MACRO_ALIAS(close_range, POSIX);
+  GOTCHA_BINDING_MACRO_ALIAS(closefrom, POSIX);
   GOTCHA_BINDING_MACRO(pipe, POSIX);
   GOTCHA_BINDING_MACRO(mkfifo, POSIX);
   GOTCHA_BINDING_MACRO(umask, POSIX);

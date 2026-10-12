@@ -353,6 +353,19 @@ class POSIXTest : public POSIX {
     return 0;
   }
 
+#if defined(__GLIBC__) && __GLIBC_PREREQ(2, 34)
+  int close_range(unsigned int first, unsigned int last, int flags) override {
+    test_log("115 Captured close_range call\n");
+    api_count++;
+    return 0;
+  }
+
+  void closefrom(int lowfd) override {
+    test_log("116 Captured closefrom call\n");
+    api_count++;
+  }
+#endif
+
   int pipe(int pipefd[2]) override {
     test_log("39 Captured pipe call\n");
     api_count++;
@@ -942,6 +955,56 @@ class STDIOTest : public STDIO {
     api_count++;
     return 0;
   }
+  int dprintf(int fd, const char *format, va_list args) override {
+    test_log("117 Captured dprintf call\n");
+    api_count++;
+    return 0;
+  }
+  int vdprintf(int fd, const char *format, va_list args) override {
+    test_log("118 Captured vdprintf call\n");
+    api_count++;
+    return 0;
+  }
+  int __dprintf_chk(int fd, int flag, const char *format, va_list args) override {
+    test_log("119 Captured __dprintf_chk call\n");
+    api_count++;
+    return 0;
+  }
+  int __vdprintf_chk(int fd, int flag, const char *format, va_list args) override {
+    test_log("120 Captured __vdprintf_chk call\n");
+    api_count++;
+    return 0;
+  }
+  size_t fwrite_unlocked(const void *ptr, size_t size, size_t n, FILE *stream) override {
+    test_log("121 Captured fwrite_unlocked call\n");
+    api_count++;
+    return 0;
+  }
+  size_t fread_unlocked(void *ptr, size_t size, size_t n, FILE *stream) override {
+    test_log("122 Captured fread_unlocked call\n");
+    api_count++;
+    return 0;
+  }
+  int fputs_unlocked(const char *s, FILE *stream) override {
+    test_log("123 Captured fputs_unlocked call\n");
+    api_count++;
+    return 0;
+  }
+  char *fgets_unlocked(char *s, int n, FILE *stream) override {
+    test_log("124 Captured fgets_unlocked call\n");
+    api_count++;
+    return nullptr;
+  }
+  int fputc_unlocked(int c, FILE *stream) override {
+    test_log("125 Captured fputc_unlocked call\n");
+    api_count++;
+    return 0;
+  }
+  int fgetc_unlocked(FILE *stream) override {
+    test_log("126 Captured fgetc_unlocked call\n");
+    api_count++;
+    return 0;
+  }
   char* fgets(char *, int, FILE *) override {
     test_log("19 Captured fgets call\n");
     api_count++;
@@ -1326,6 +1389,12 @@ void call_va_stdio_apis(const char *fmt, ...) {
   __vfprintf_chk(stdout, 1, fmt, a);
   va_end(a);
   va_start(a, fmt);
+  vdprintf(1, fmt, a);
+  va_end(a);
+  va_start(a, fmt);
+  __vdprintf_chk(1, 1, fmt, a);
+  va_end(a);
+  va_start(a, fmt);
   vprintf(fmt, a);
   va_end(a);
   va_start(a, fmt);
@@ -1475,6 +1544,12 @@ int main(int argc, char *argv[]) {
 
   dup3(0, 0, 0);
 
+#if defined(__GLIBC__) && __GLIBC_PREREQ(2, 34)
+  close_range(~0U, ~0U, 0);
+
+  closefrom(~0U >> 1);
+#endif
+
   pipe(NULL);
 
   mkfifo("", 0);
@@ -1622,6 +1697,14 @@ int main(int argc, char *argv[]) {
 
   __fgets_chk(NULL, 0, 0, NULL);
   __fprintf_chk(stdout, 1, "");
+  dprintf(1, "");
+  __dprintf_chk(1, 1, "");
+  fwrite_unlocked(NULL, 0, 0, NULL);
+  fread_unlocked(NULL, 0, 0, NULL);
+  fputs_unlocked(NULL, NULL);
+  fgets_unlocked(NULL, 0, NULL);
+  fputc_unlocked(0, NULL);
+  fgetc_unlocked(NULL);
   fputc(0, NULL);
   fputs(NULL, NULL);
   fsetpos(NULL, NULL);

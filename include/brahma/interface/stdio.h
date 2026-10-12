@@ -141,6 +141,16 @@ class STDIO : public Interface {
   virtual char *__fgets_unlocked_chk(char *s, size_t size, int n, FILE *stream);
   virtual int __fprintf_chk(FILE *stream, int flag, const char *format, va_list args);
   virtual int __vfprintf_chk(FILE *stream, int flag, const char *format, va_list args);
+  virtual int dprintf(int fd, const char *format, va_list args);
+  virtual int vdprintf(int fd, const char *format, va_list args);
+  virtual int __dprintf_chk(int fd, int flag, const char *format, va_list args);
+  virtual int __vdprintf_chk(int fd, int flag, const char *format, va_list args);
+  virtual size_t fwrite_unlocked(const void *ptr, size_t size, size_t n, FILE *stream);
+  virtual size_t fread_unlocked(void *ptr, size_t size, size_t n, FILE *stream);
+  virtual int fputs_unlocked(const char *s, FILE *stream);
+  virtual char *fgets_unlocked(char *s, int n, FILE *stream);
+  virtual int fputc_unlocked(int c, FILE *stream);
+  virtual int fgetc_unlocked(FILE *stream);
   virtual int puts(const char *s);
   virtual int putchar(int c);
   virtual int putc(int c, FILE *stream);
@@ -232,6 +242,16 @@ class STDIO : public Interface {
   GOTCHA_MACRO_VAR(__fgets_unlocked_chk)
   GOTCHA_MACRO_VAR(__fprintf_chk)
   GOTCHA_MACRO_VAR(__vfprintf_chk)
+  GOTCHA_MACRO_VAR(dprintf)
+  GOTCHA_MACRO_VAR(vdprintf)
+  GOTCHA_MACRO_VAR(__dprintf_chk)
+  GOTCHA_MACRO_VAR(__vdprintf_chk)
+  GOTCHA_MACRO_VAR(fwrite_unlocked)
+  GOTCHA_MACRO_VAR(fread_unlocked)
+  GOTCHA_MACRO_VAR(fputs_unlocked)
+  GOTCHA_MACRO_VAR(fgets_unlocked)
+  GOTCHA_MACRO_VAR(fputc_unlocked)
+  GOTCHA_MACRO_VAR(fgetc_unlocked)
   GOTCHA_MACRO_VAR(puts)
   GOTCHA_MACRO_VAR(putchar)
   GOTCHA_MACRO_VAR(putc)
@@ -421,6 +441,24 @@ GOTCHA_MACRO_TYPEDEF_C(__vfprintf_chk, int, (FILE *stream, int flag, const char 
 GOTCHA_MACRO_TYPEDEF_VARFMT_C(__fprintf_chk, __vfprintf_chk, int,
                               (FILE *stream, int flag, const char *format, ...),
                               (stream, flag, format, _args), format, brahma::STDIO)
+GOTCHA_MACRO_TYPEDEF(vdprintf, int, (int fd, const char *format, va_list args),
+                     (fd, format, args), brahma::STDIO)
+GOTCHA_MACRO_TYPEDEF_VARFMT(dprintf, vdprintf, int, (int fd, const char *format, ...),
+                            (fd, format, _args), format, brahma::STDIO)
+GOTCHA_MACRO_TYPEDEF_C(__vdprintf_chk, int, (int fd, int flag, const char *format, va_list args),
+                       (fd, flag, format, args), brahma::STDIO)
+GOTCHA_MACRO_TYPEDEF_VARFMT_C(__dprintf_chk, __vdprintf_chk, int,
+                              (int fd, int flag, const char *format, ...),
+                              (fd, flag, format, _args), format, brahma::STDIO)
+GOTCHA_MACRO_TYPEDEF(fwrite_unlocked, size_t, (const void *ptr, size_t size, size_t n, FILE *stream),
+                     (ptr, size, n, stream), brahma::STDIO)
+GOTCHA_MACRO_TYPEDEF(fread_unlocked, size_t, (void *ptr, size_t size, size_t n, FILE *stream),
+                     (ptr, size, n, stream), brahma::STDIO)
+GOTCHA_MACRO_TYPEDEF(fputs_unlocked, int, (const char *s, FILE *stream), (s, stream), brahma::STDIO)
+GOTCHA_MACRO_TYPEDEF(fgets_unlocked, char *, (char *s, int n, FILE *stream), (s, n, stream),
+                     brahma::STDIO)
+GOTCHA_MACRO_TYPEDEF(fputc_unlocked, int, (int c, FILE *stream), (c, stream), brahma::STDIO)
+GOTCHA_MACRO_TYPEDEF(fgetc_unlocked, int, (FILE *stream), (stream), brahma::STDIO)
 GOTCHA_MACRO_TYPEDEF(puts, int, (const char *s), (s), brahma::STDIO)
 GOTCHA_MACRO_TYPEDEF(putchar, int, (int c), (c), brahma::STDIO)
 GOTCHA_MACRO_TYPEDEF(putc, int, (int c, FILE * stream), (c, stream),
@@ -541,6 +579,16 @@ size_t brahma::STDIO::bind(const char *name, uint16_t priority) {
   GOTCHA_BINDING_MACRO(__fgets_unlocked_chk, STDIO);
   GOTCHA_BINDING_MACRO(__fprintf_chk, STDIO);
   GOTCHA_BINDING_MACRO(__vfprintf_chk, STDIO);
+  GOTCHA_BINDING_MACRO(dprintf, STDIO);
+  GOTCHA_BINDING_MACRO(vdprintf, STDIO);
+  GOTCHA_BINDING_MACRO(__dprintf_chk, STDIO);
+  GOTCHA_BINDING_MACRO(__vdprintf_chk, STDIO);
+  GOTCHA_BINDING_MACRO(fwrite_unlocked, STDIO);
+  GOTCHA_BINDING_MACRO(fread_unlocked, STDIO);
+  GOTCHA_BINDING_MACRO(fputs_unlocked, STDIO);
+  GOTCHA_BINDING_MACRO(fgets_unlocked, STDIO);
+  GOTCHA_BINDING_MACRO(fputc_unlocked, STDIO);
+  GOTCHA_BINDING_MACRO(fgetc_unlocked, STDIO);
   GOTCHA_BINDING_MACRO(puts, STDIO);
   GOTCHA_BINDING_MACRO(putchar, STDIO);
   GOTCHA_BINDING_MACRO(putc, STDIO);

@@ -371,6 +371,13 @@ int POSIX::dup3(int oldfd, int newfd, int flags) {
   BRAHMA_UNWRAPPED_FUNC(dup3, int, (oldfd, newfd, flags));
   return result;
 }
+int POSIX::close_range(unsigned int first, unsigned int last, int flags) {
+  BRAHMA_UNWRAPPED_FUNC(close_range, int, (first, last, flags));
+  return result;
+}
+void POSIX::closefrom(int lowfd) {
+  BRAHMA_UNWRAPPED_FUNC_VOID(closefrom, (lowfd));
+}
 int POSIX::pipe(int pipefd[2]) {
   BRAHMA_UNWRAPPED_FUNC(pipe, int, (pipefd));
   return result;
