@@ -1,7 +1,7 @@
 
 add_executable(test_posix test_posix.cpp)
 add_dependencies(test_posix ${PROJECT_NAME})
-target_link_libraries(test_posix ${PROJECT_NAME})
+target_link_libraries(test_posix ${PROJECT_NAME} rt)
 # Compilers fold trivial calls in the printf family into each other as
 # builtin optimizations: printf("literal\n") -> puts("literal"),
 # fprintf(stdout, "format") -> printf("format"), snprintf(...) -> sprintf(...)
