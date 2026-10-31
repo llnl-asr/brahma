@@ -18,6 +18,13 @@
 #include <sys/statvfs.h>
 #include <sys/wait.h>
 #include <cstdarg>
+#include <aio.h>
+#include <ftw.h>
+#include <sys/ioctl.h>
+#include <sys/time.h>
+#include <sys/vfs.h>
+#include <sys/xattr.h>
+#include <wchar.h>
 
 #include <iostream>
 
@@ -76,6 +83,12 @@ class POSIXTest : public POSIX {
   
   int open(const char *pathname, int flags, ...) override {
     test_log("1 Captured open call\n");
+    api_count++;
+    return 0;
+  }
+
+  int creat(const char *path, mode_t mode) override {
+    test_log("111 Captured creat call\n");
     api_count++;
     return 0;
   }
@@ -340,6 +353,25 @@ class POSIXTest : public POSIX {
     api_count++;
     return 0;
   }
+
+  int dup3(int oldfd, int newfd, int flags) override {
+    test_log("112 Captured dup3 call\n");
+    api_count++;
+    return 0;
+  }
+
+#if defined(__GLIBC__) && __GLIBC_PREREQ(2, 34)
+  int close_range(unsigned int first, unsigned int last, int flags) override {
+    test_log("115 Captured close_range call\n");
+    api_count++;
+    return 0;
+  }
+
+  void closefrom(int lowfd) override {
+    test_log("116 Captured closefrom call\n");
+    api_count++;
+  }
+#endif
 
   int pipe(int pipefd[2]) override {
     test_log("39 Captured pipe call\n");
@@ -771,6 +803,445 @@ class POSIXTest : public POSIX {
     api_count++;
     return 0;
   }
+  ssize_t preadv2(int fd, const struct iovec *iov, int iovcnt, off_t offset, int flags) override {
+    test_log("127 Captured preadv2 call\n");
+    api_count++;
+    return 0;
+  }
+  ssize_t pwritev2(int fd, const struct iovec *iov, int iovcnt, off_t offset, int flags) override {
+    test_log("128 Captured pwritev2 call\n");
+    api_count++;
+    return 0;
+  }
+  ssize_t preadv64v2(int fd, const struct iovec *iov, int iovcnt, off64_t offset, int flags) override {
+    test_log("129 Captured preadv64v2 call\n");
+    api_count++;
+    return 0;
+  }
+  ssize_t pwritev64v2(int fd, const struct iovec *iov, int iovcnt, off64_t offset, int flags) override {
+    test_log("130 Captured pwritev64v2 call\n");
+    api_count++;
+    return 0;
+  }
+  ssize_t splice(int fd_in, off64_t *off_in, int fd_out, off64_t *off_out, size_t len, unsigned int flags) override {
+    test_log("131 Captured splice call\n");
+    api_count++;
+    return 0;
+  }
+  ssize_t tee(int fd_in, int fd_out, size_t len, unsigned int flags) override {
+    test_log("132 Captured tee call\n");
+    api_count++;
+    return 0;
+  }
+  ssize_t vmsplice(int fd, const struct iovec *iov, size_t nr_segs, unsigned int flags) override {
+    test_log("133 Captured vmsplice call\n");
+    api_count++;
+    return 0;
+  }
+  int fallocate(int fd, int mode, off_t offset, off_t len) override {
+    test_log("134 Captured fallocate call\n");
+    api_count++;
+    return 0;
+  }
+  int fallocate64(int fd, int mode, off64_t offset, off64_t len) override {
+    test_log("135 Captured fallocate64 call\n");
+    api_count++;
+    return 0;
+  }
+  ssize_t readahead(int fd, off64_t offset, size_t count) override {
+    test_log("136 Captured readahead call\n");
+    api_count++;
+    return 0;
+  }
+  void sync(void) override {
+    test_log("137 Captured sync call\n");
+    api_count++;
+  }
+  int syncfs(int fd) override {
+    test_log("138 Captured syncfs call\n");
+    api_count++;
+    return 0;
+  }
+  int sync_file_range(int fd, off64_t offset, off64_t nbytes, unsigned int flags) override {
+    test_log("139 Captured sync_file_range call\n");
+    api_count++;
+    return 0;
+  }
+  int statx(int dirfd, const char *path, int flags, unsigned int mask, struct statx *buf) override {
+    test_log("140 Captured statx call\n");
+    api_count++;
+    return 0;
+  }
+  int statfs(const char *path, struct statfs *buf) override {
+    test_log("141 Captured statfs call\n");
+    api_count++;
+    return 0;
+  }
+  int fstatfs(int fd, struct statfs *buf) override {
+    test_log("142 Captured fstatfs call\n");
+    api_count++;
+    return 0;
+  }
+  int statfs64(const char *path, struct statfs64 *buf) override {
+    test_log("143 Captured statfs64 call\n");
+    api_count++;
+    return 0;
+  }
+  int fstatfs64(int fd, struct statfs64 *buf) override {
+    test_log("144 Captured fstatfs64 call\n");
+    api_count++;
+    return 0;
+  }
+#if defined(__GLIBC__) && __GLIBC_PREREQ(2, 33)
+  int mknodat(int dirfd, const char *path, mode_t mode, dev_t dev) override {
+    test_log("145 Captured mknodat call\n");
+    api_count++;
+    return 0;
+  }
+#endif
+#if defined(__GLIBC__) && !__GLIBC_PREREQ(2, 33)
+  int __xmknodat(int ver, int dirfd, const char *path, mode_t mode, dev_t *dev) override {
+    test_log("146 Captured __xmknodat call\n");
+    api_count++;
+    return 0;
+  }
+#endif
+  int euidaccess(const char *path, int mode) override {
+    test_log("147 Captured euidaccess call\n");
+    api_count++;
+    return 0;
+  }
+  int eaccess(const char *path, int mode) override {
+    test_log("148 Captured eaccess call\n");
+    api_count++;
+    return 0;
+  }
+  int renameat2(int olddirfd, const char *oldpath, int newdirfd, const char *newpath, unsigned int flags) override {
+    test_log("149 Captured renameat2 call\n");
+    api_count++;
+    return 0;
+  }
+  int mkfifoat(int dirfd, const char *path, mode_t mode) override {
+    test_log("150 Captured mkfifoat call\n");
+    api_count++;
+    return 0;
+  }
+  int lchmod(const char *path, mode_t mode) override {
+    test_log("151 Captured lchmod call\n");
+    api_count++;
+    return 0;
+  }
+  int utimes(const char *path, const struct timeval times[2]) override {
+    test_log("152 Captured utimes call\n");
+    api_count++;
+    return 0;
+  }
+  int futimes(int fd, const struct timeval tv[2]) override {
+    test_log("153 Captured futimes call\n");
+    api_count++;
+    return 0;
+  }
+  int lutimes(const char *path, const struct timeval tv[2]) override {
+    test_log("154 Captured lutimes call\n");
+    api_count++;
+    return 0;
+  }
+  int futimesat(int dirfd, const char *path, const struct timeval times[2]) override {
+    test_log("155 Captured futimesat call\n");
+    api_count++;
+    return 0;
+  }
+  int utimensat(int dirfd, const char *path, const struct timespec times[2], int flags) override {
+    test_log("156 Captured utimensat call\n");
+    api_count++;
+    return 0;
+  }
+  int futimens(int fd, const struct timespec times[2]) override {
+    test_log("157 Captured futimens call\n");
+    api_count++;
+    return 0;
+  }
+  int fchdir(int fd) override {
+    test_log("158 Captured fchdir call\n");
+    api_count++;
+    return 0;
+  }
+  DIR *fdopendir(int fd) override {
+    test_log("159 Captured fdopendir call\n");
+    api_count++;
+    return nullptr;
+  }
+  int readdir_r(DIR *dir, struct dirent *entry, struct dirent **res) override {
+    test_log("160 Captured readdir_r call\n");
+    api_count++;
+    return 0;
+  }
+  int readdir64_r(DIR *dir, struct dirent64 *entry, struct dirent64 **res) override {
+    test_log("161 Captured readdir64_r call\n");
+    api_count++;
+    return 0;
+  }
+  void seekdir(DIR *dir, long loc) override {
+    test_log("162 Captured seekdir call\n");
+    api_count++;
+  }
+  long telldir(DIR *dir) override {
+    test_log("163 Captured telldir call\n");
+    api_count++;
+    return 0;
+  }
+  int scandir(const char *dir, struct dirent ***namelist, int (*filter)(const struct dirent *), int (*compar)(const struct dirent **, const struct dirent **)) override {
+    test_log("164 Captured scandir call\n");
+    api_count++;
+    return 0;
+  }
+  int scandir64(const char *dir, struct dirent64 ***namelist, int (*filter)(const struct dirent64 *), int (*compar)(const struct dirent64 **, const struct dirent64 **)) override {
+    test_log("165 Captured scandir64 call\n");
+    api_count++;
+    return 0;
+  }
+  int scandirat(int dirfd, const char *dir, struct dirent ***namelist, int (*filter)(const struct dirent *), int (*compar)(const struct dirent **, const struct dirent **)) override {
+    test_log("166 Captured scandirat call\n");
+    api_count++;
+    return 0;
+  }
+  int scandirat64(int dirfd, const char *dir, struct dirent64 ***namelist, int (*filter)(const struct dirent64 *), int (*compar)(const struct dirent64 **, const struct dirent64 **)) override {
+    test_log("240 Captured scandirat64 call\n");
+    api_count++;
+    return 0;
+  }
+  int nftw(const char *path, int (*func)(const char *, const struct stat *, int, struct FTW *), int nopenfd, int flags) override {
+    test_log("167 Captured nftw call\n");
+    api_count++;
+    return 0;
+  }
+  int nftw64(const char *path, int (*func)(const char *, const struct stat64 *, int, struct FTW *), int nopenfd, int flags) override {
+    test_log("168 Captured nftw64 call\n");
+    api_count++;
+    return 0;
+  }
+#if defined(__GLIBC__) && __GLIBC_PREREQ(2, 30)
+  ssize_t getdents64(int fd, void *buf, size_t count) override {
+    test_log("169 Captured getdents64 call\n");
+    api_count++;
+    return 0;
+  }
+#endif
+  void *mremap(void *old_addr, size_t old_size, size_t new_size, int flags, void *new_addr) override {
+    test_log("170 Captured mremap call\n");
+    api_count++;
+    return nullptr;
+  }
+  int ioctl(int fd, unsigned long request, void *arg) override {
+    test_log("171 Captured ioctl call\n");
+    api_count++;
+    return 0;
+  }
+  int lockf(int fd, int cmd, off_t len) override {
+    test_log("172 Captured lockf call\n");
+    api_count++;
+    return 0;
+  }
+  int lockf64(int fd, int cmd, off64_t len) override {
+    test_log("173 Captured lockf64 call\n");
+    api_count++;
+    return 0;
+  }
+  int pipe2(int pipefd[2], int flags) override {
+    test_log("174 Captured pipe2 call\n");
+    api_count++;
+    return 0;
+  }
+  int memfd_create(const char *name, unsigned int flags) override {
+    test_log("175 Captured memfd_create call\n");
+    api_count++;
+    return 0;
+  }
+  int mkstemp(char *tmpl) override {
+    test_log("176 Captured mkstemp call\n");
+    api_count++;
+    return 0;
+  }
+  int mkstemp64(char *tmpl) override {
+    test_log("177 Captured mkstemp64 call\n");
+    api_count++;
+    return 0;
+  }
+  int mkostemp(char *tmpl, int flags) override {
+    test_log("178 Captured mkostemp call\n");
+    api_count++;
+    return 0;
+  }
+  int mkostemp64(char *tmpl, int flags) override {
+    test_log("179 Captured mkostemp64 call\n");
+    api_count++;
+    return 0;
+  }
+  int mkstemps(char *tmpl, int suffixlen) override {
+    test_log("180 Captured mkstemps call\n");
+    api_count++;
+    return 0;
+  }
+  int mkstemps64(char *tmpl, int suffixlen) override {
+    test_log("181 Captured mkstemps64 call\n");
+    api_count++;
+    return 0;
+  }
+  int mkostemps(char *tmpl, int suffixlen, int flags) override {
+    test_log("182 Captured mkostemps call\n");
+    api_count++;
+    return 0;
+  }
+  int mkostemps64(char *tmpl, int suffixlen, int flags) override {
+    test_log("183 Captured mkostemps64 call\n");
+    api_count++;
+    return 0;
+  }
+  char *mkdtemp(char *tmpl) override {
+    test_log("184 Captured mkdtemp call\n");
+    api_count++;
+    return nullptr;
+  }
+  ssize_t getxattr(const char *path, const char *name, void *value, size_t size) override {
+    test_log("185 Captured getxattr call\n");
+    api_count++;
+    return 0;
+  }
+  ssize_t lgetxattr(const char *path, const char *name, void *value, size_t size) override {
+    test_log("186 Captured lgetxattr call\n");
+    api_count++;
+    return 0;
+  }
+  ssize_t fgetxattr(int fd, const char *name, void *value, size_t size) override {
+    test_log("187 Captured fgetxattr call\n");
+    api_count++;
+    return 0;
+  }
+  int setxattr(const char *path, const char *name, const void *value, size_t size, int flags) override {
+    test_log("188 Captured setxattr call\n");
+    api_count++;
+    return 0;
+  }
+  int lsetxattr(const char *path, const char *name, const void *value, size_t size, int flags) override {
+    test_log("189 Captured lsetxattr call\n");
+    api_count++;
+    return 0;
+  }
+  int fsetxattr(int fd, const char *name, const void *value, size_t size, int flags) override {
+    test_log("190 Captured fsetxattr call\n");
+    api_count++;
+    return 0;
+  }
+  ssize_t listxattr(const char *path, char *list, size_t size) override {
+    test_log("191 Captured listxattr call\n");
+    api_count++;
+    return 0;
+  }
+  ssize_t llistxattr(const char *path, char *list, size_t size) override {
+    test_log("192 Captured llistxattr call\n");
+    api_count++;
+    return 0;
+  }
+  ssize_t flistxattr(int fd, char *list, size_t size) override {
+    test_log("193 Captured flistxattr call\n");
+    api_count++;
+    return 0;
+  }
+  int removexattr(const char *path, const char *name) override {
+    test_log("194 Captured removexattr call\n");
+    api_count++;
+    return 0;
+  }
+  int lremovexattr(const char *path, const char *name) override {
+    test_log("195 Captured lremovexattr call\n");
+    api_count++;
+    return 0;
+  }
+  int fremovexattr(int fd, const char *name) override {
+    test_log("196 Captured fremovexattr call\n");
+    api_count++;
+    return 0;
+  }
+  int aio_read(struct aiocb *cb) override {
+    test_log("197 Captured aio_read call\n");
+    api_count++;
+    return 0;
+  }
+  int aio_write(struct aiocb *cb) override {
+    test_log("198 Captured aio_write call\n");
+    api_count++;
+    return 0;
+  }
+  int aio_error(const struct aiocb *cb) override {
+    test_log("199 Captured aio_error call\n");
+    api_count++;
+    return 0;
+  }
+  ssize_t aio_return(struct aiocb *cb) override {
+    test_log("200 Captured aio_return call\n");
+    api_count++;
+    return 0;
+  }
+  int aio_fsync(int op, struct aiocb *cb) override {
+    test_log("201 Captured aio_fsync call\n");
+    api_count++;
+    return 0;
+  }
+  int aio_cancel(int fd, struct aiocb *cb) override {
+    test_log("202 Captured aio_cancel call\n");
+    api_count++;
+    return 0;
+  }
+  int aio_suspend(const struct aiocb *const list[], int nent, const struct timespec *timeout) override {
+    test_log("203 Captured aio_suspend call\n");
+    api_count++;
+    return 0;
+  }
+  int lio_listio(int mode, struct aiocb *const list[], int nent, struct sigevent *sig) override {
+    test_log("204 Captured lio_listio call\n");
+    api_count++;
+    return 0;
+  }
+  int aio_read64(struct aiocb64 *cb) override {
+    test_log("205 Captured aio_read64 call\n");
+    api_count++;
+    return 0;
+  }
+  int aio_write64(struct aiocb64 *cb) override {
+    test_log("206 Captured aio_write64 call\n");
+    api_count++;
+    return 0;
+  }
+  int aio_error64(const struct aiocb64 *cb) override {
+    test_log("207 Captured aio_error64 call\n");
+    api_count++;
+    return 0;
+  }
+  ssize_t aio_return64(struct aiocb64 *cb) override {
+    test_log("208 Captured aio_return64 call\n");
+    api_count++;
+    return 0;
+  }
+  int aio_fsync64(int op, struct aiocb64 *cb) override {
+    test_log("209 Captured aio_fsync64 call\n");
+    api_count++;
+    return 0;
+  }
+  int aio_cancel64(int fd, struct aiocb64 *cb) override {
+    test_log("210 Captured aio_cancel64 call\n");
+    api_count++;
+    return 0;
+  }
+  int aio_suspend64(const struct aiocb64 *const list[], int nent, const struct timespec *timeout) override {
+    test_log("211 Captured aio_suspend64 call\n");
+    api_count++;
+    return 0;
+  }
+  int lio_listio64(int mode, struct aiocb64 *const list[], int nent, struct sigevent *sig) override {
+    test_log("212 Captured lio_listio64 call\n");
+    api_count++;
+    return 0;
+  }
 };
 class STDIOTest : public STDIO {
  private:
@@ -915,6 +1386,68 @@ class STDIOTest : public STDIO {
   }
   char* __fgets_chk(char *s, size_t size, int n, FILE *stream) override {
     test_log("104 Captured __fgets_chk call\n");
+    api_count++;
+    return 0;
+  }
+  int __fprintf_chk(FILE *stream, int flag, const char *format,
+                    va_list args) override {
+    test_log("113 Captured __fprintf_chk call\n");
+    api_count++;
+    return 0;
+  }
+  int __vfprintf_chk(FILE *stream, int flag, const char *format,
+                     va_list args) override {
+    test_log("114 Captured __vfprintf_chk call\n");
+    api_count++;
+    return 0;
+  }
+  int dprintf(int fd, const char *format, va_list args) override {
+    test_log("117 Captured dprintf call\n");
+    api_count++;
+    return 0;
+  }
+  int vdprintf(int fd, const char *format, va_list args) override {
+    test_log("118 Captured vdprintf call\n");
+    api_count++;
+    return 0;
+  }
+  int __dprintf_chk(int fd, int flag, const char *format, va_list args) override {
+    test_log("119 Captured __dprintf_chk call\n");
+    api_count++;
+    return 0;
+  }
+  int __vdprintf_chk(int fd, int flag, const char *format, va_list args) override {
+    test_log("120 Captured __vdprintf_chk call\n");
+    api_count++;
+    return 0;
+  }
+  size_t fwrite_unlocked(const void *ptr, size_t size, size_t n, FILE *stream) override {
+    test_log("121 Captured fwrite_unlocked call\n");
+    api_count++;
+    return 0;
+  }
+  size_t fread_unlocked(void *ptr, size_t size, size_t n, FILE *stream) override {
+    test_log("122 Captured fread_unlocked call\n");
+    api_count++;
+    return 0;
+  }
+  int fputs_unlocked(const char *s, FILE *stream) override {
+    test_log("123 Captured fputs_unlocked call\n");
+    api_count++;
+    return 0;
+  }
+  char *fgets_unlocked(char *s, int n, FILE *stream) override {
+    test_log("124 Captured fgets_unlocked call\n");
+    api_count++;
+    return nullptr;
+  }
+  int fputc_unlocked(int c, FILE *stream) override {
+    test_log("125 Captured fputc_unlocked call\n");
+    api_count++;
+    return 0;
+  }
+  int fgetc_unlocked(FILE *stream) override {
+    test_log("126 Captured fgetc_unlocked call\n");
     api_count++;
     return 0;
   }
@@ -1246,6 +1779,144 @@ class STDIOTest : public STDIO {
     api_count++;
     return 0;
   }
+  int fcloseall(void) override {
+    test_log("213 Captured fcloseall call\n");
+    api_count++;
+    return 0;
+  }
+  FILE *fopencookie(void *cookie, const char *mode, cookie_io_functions_t funcs) override {
+    test_log("214 Captured fopencookie call\n");
+    api_count++;
+    return nullptr;
+  }
+  FILE *open_wmemstream(wchar_t **ptr, size_t *sizeloc) override {
+    test_log("215 Captured open_wmemstream call\n");
+    api_count++;
+    return nullptr;
+  }
+  int fflush_unlocked(FILE *stream) override {
+    test_log("216 Captured fflush_unlocked call\n");
+    api_count++;
+    return 0;
+  }
+  int feof_unlocked(FILE *stream) override {
+    test_log("217 Captured feof_unlocked call\n");
+    api_count++;
+    return 0;
+  }
+  int ferror_unlocked(FILE *stream) override {
+    test_log("218 Captured ferror_unlocked call\n");
+    api_count++;
+    return 0;
+  }
+  int fileno_unlocked(FILE *stream) override {
+    test_log("219 Captured fileno_unlocked call\n");
+    api_count++;
+    return 0;
+  }
+  void clearerr_unlocked(FILE *stream) override {
+    test_log("220 Captured clearerr_unlocked call\n");
+    api_count++;
+  }
+  int _IO_getc(FILE *stream) override {
+    test_log("221 Captured _IO_getc call\n");
+    api_count++;
+    return 0;
+  }
+  int _IO_putc(int c, FILE *stream) override {
+    test_log("222 Captured _IO_putc call\n");
+    api_count++;
+    return 0;
+  }
+  wint_t fgetwc(FILE *stream) override {
+    test_log("223 Captured fgetwc call\n");
+    api_count++;
+    return 0;
+  }
+  wint_t getwc(FILE *stream) override {
+    test_log("224 Captured getwc call\n");
+    api_count++;
+    return 0;
+  }
+  wint_t fputwc(wchar_t wc, FILE *stream) override {
+    test_log("225 Captured fputwc call\n");
+    api_count++;
+    return 0;
+  }
+  wint_t putwc(wchar_t wc, FILE *stream) override {
+    test_log("226 Captured putwc call\n");
+    api_count++;
+    return 0;
+  }
+  wint_t ungetwc(wint_t wc, FILE *stream) override {
+    test_log("227 Captured ungetwc call\n");
+    api_count++;
+    return 0;
+  }
+  wchar_t *fgetws(wchar_t *ws, int n, FILE *stream) override {
+    test_log("228 Captured fgetws call\n");
+    api_count++;
+    return nullptr;
+  }
+  int fputws(const wchar_t *ws, FILE *stream) override {
+    test_log("229 Captured fputws call\n");
+    api_count++;
+    return 0;
+  }
+  int vfwprintf(FILE *stream, const wchar_t *format, va_list args) override {
+    test_log("230 Captured vfwprintf call\n");
+    api_count++;
+    return 0;
+  }
+  int fwprintf(FILE *stream, const wchar_t *format, va_list args) override {
+    test_log("231 Captured fwprintf call\n");
+    api_count++;
+    return 0;
+  }
+  int __vfwprintf_chk(FILE *stream, int flag, const wchar_t *format, va_list args) override {
+    test_log("232 Captured __vfwprintf_chk call\n");
+    api_count++;
+    return 0;
+  }
+  int __fwprintf_chk(FILE *stream, int flag, const wchar_t *format, va_list args) override {
+    test_log("233 Captured __fwprintf_chk call\n");
+    api_count++;
+    return 0;
+  }
+  int vfwscanf(FILE *stream, const wchar_t *format, va_list args) override {
+    test_log("234 Captured vfwscanf call\n");
+    api_count++;
+    return 0;
+  }
+  int fwscanf(FILE *stream, const wchar_t *format, va_list args) override {
+    test_log("235 Captured fwscanf call\n");
+    api_count++;
+    return 0;
+  }
+  int __isoc99_vfwscanf(FILE *stream, const wchar_t *format, va_list args) override {
+    test_log("236 Captured __isoc99_vfwscanf call\n");
+    api_count++;
+    return 0;
+  }
+  int __isoc99_fwscanf(FILE *stream, const wchar_t *format, va_list args) override {
+    test_log("237 Captured __isoc99_fwscanf call\n");
+    api_count++;
+    return 0;
+  }
+#if defined(__GLIBC__) && __GLIBC_PREREQ(2, 38)
+  int __isoc23_vfwscanf(FILE *stream, const wchar_t *format, va_list args) override {
+    test_log("238 Captured __isoc23_vfwscanf call\n");
+    api_count++;
+    return 0;
+  }
+#endif
+#if defined(__GLIBC__) && __GLIBC_PREREQ(2, 38)
+  int __isoc23_fwscanf(FILE *stream, const wchar_t *format, va_list args) override {
+    test_log("239 Captured __isoc23_fwscanf call\n");
+    api_count++;
+    return 0;
+  }
+#endif
 };
 
 std::shared_ptr<POSIXTest> POSIXTest::instance = nullptr;
@@ -1299,6 +1970,15 @@ void call_va_stdio_apis(const char *fmt, ...) {
   vfprintf(stdout, fmt, a);
   va_end(a);
   va_start(a, fmt);
+  __vfprintf_chk(stdout, 1, fmt, a);
+  va_end(a);
+  va_start(a, fmt);
+  vdprintf(1, fmt, a);
+  va_end(a);
+  va_start(a, fmt);
+  __vdprintf_chk(1, 1, fmt, a);
+  va_end(a);
+  va_start(a, fmt);
   vprintf(fmt, a);
   va_end(a);
   va_start(a, fmt);
@@ -1336,6 +2016,23 @@ void call_va_stdio_apis(const char *fmt, ...) {
   __isoc23_vsscanf(fmt, fmt, a);
   va_end(a);
 #endif
+  va_start(a, fmt);
+  vfwprintf(stdout, L"", a);
+  va_end(a);
+  va_start(a, fmt);
+  __vfwprintf_chk(stdout, 1, L"", a);
+  va_end(a);
+  va_start(a, fmt);
+  vfwscanf(stdin, L"", a);
+  va_end(a);
+  va_start(a, fmt);
+  __isoc99_vfwscanf(stdin, L"", a);
+  va_end(a);
+#if defined(__GLIBC__) && __GLIBC_PREREQ(2, 38)
+  va_start(a, fmt);
+  __isoc23_vfwscanf(stdin, L"", a);
+  va_end(a);
+#endif
 }
 
 void print_stacktrace(int sig) {
@@ -1351,6 +2048,8 @@ int main(int argc, char *argv[]) {
   signal(SIGABRT, print_stacktrace);
   
   open("", 0);
+
+  creat("", 0);
 
   creat64("", 0);
 
@@ -1443,6 +2142,14 @@ int main(int argc, char *argv[]) {
   dup(0);
 
   dup2(0, 0);
+
+  dup3(0, 0, 0);
+
+#if defined(__GLIBC__) && __GLIBC_PREREQ(2, 34)
+  close_range(~0U, ~0U, 0);
+
+  closefrom(~0U >> 1);
+#endif
 
   pipe(NULL);
 
@@ -1562,6 +2269,100 @@ int main(int argc, char *argv[]) {
     fstatvfs64(0, &vfs64_buf);
   }
 
+  preadv2(0, NULL, 0, 0, 0);
+  pwritev2(0, NULL, 0, 0, 0);
+  preadv64v2(0, NULL, 0, 0, 0);
+  pwritev64v2(0, NULL, 0, 0, 0);
+  splice(0, NULL, 0, NULL, 0, 0);
+  tee(0, 0, 0, 0);
+  vmsplice(0, NULL, 0, 0);
+  fallocate(0, 0, 0, 0);
+  fallocate64(0, 0, 0, 0);
+  readahead(0, 0, 0);
+  sync();
+  syncfs(0);
+  sync_file_range(0, 0, 0, 0);
+  statx(0, "", 0, 0, NULL);
+  statfs("", NULL);
+  fstatfs(0, NULL);
+  statfs64("", NULL);
+  fstatfs64(0, NULL);
+#if defined(__GLIBC__) && __GLIBC_PREREQ(2, 33)
+  mknodat(0, "", 0, 0);
+#endif
+#if defined(__GLIBC__) && !__GLIBC_PREREQ(2, 33)
+  __xmknodat(0, 0, "", 0, NULL);
+#endif
+  euidaccess("", 0);
+  eaccess("", 0);
+  renameat2(0, "", 0, "", 0);
+  mkfifoat(0, "", 0);
+  lchmod("", 0);
+  utimes("", NULL);
+  futimes(0, NULL);
+  lutimes("", NULL);
+  futimesat(0, "", NULL);
+  utimensat(0, "", NULL, 0);
+  futimens(0, NULL);
+  fchdir(0);
+  fdopendir(0);
+  readdir_r(NULL, NULL, NULL);
+  readdir64_r(NULL, NULL, NULL);
+  seekdir(NULL, 0);
+  telldir(NULL);
+  scandir("", NULL, NULL, NULL);
+  scandir64("", NULL, NULL, NULL);
+  scandirat(0, "", NULL, NULL, NULL);
+  scandirat64(0, "", NULL, NULL, NULL);
+  nftw("", NULL, 0, 0);
+  nftw64("", NULL, 0, 0);
+#if defined(__GLIBC__) && __GLIBC_PREREQ(2, 30)
+  getdents64(0, NULL, 0);
+#endif
+  mremap(NULL, 0, 0, 0);
+  ioctl(0, 0, NULL);
+  lockf(0, 0, 0);
+  lockf64(0, 0, 0);
+  pipe2(NULL, 0);
+  memfd_create("", 0);
+  mkstemp(NULL);
+  mkstemp64(NULL);
+  mkostemp(NULL, 0);
+  mkostemp64(NULL, 0);
+  mkstemps(NULL, 0);
+  mkstemps64(NULL, 0);
+  mkostemps(NULL, 0, 0);
+  mkostemps64(NULL, 0, 0);
+  mkdtemp(NULL);
+  getxattr("", "", NULL, 0);
+  lgetxattr("", "", NULL, 0);
+  fgetxattr(0, "", NULL, 0);
+  setxattr("", "", NULL, 0, 0);
+  lsetxattr("", "", NULL, 0, 0);
+  fsetxattr(0, "", NULL, 0, 0);
+  listxattr("", NULL, 0);
+  llistxattr("", NULL, 0);
+  flistxattr(0, NULL, 0);
+  removexattr("", "");
+  lremovexattr("", "");
+  fremovexattr(0, "");
+  aio_read(NULL);
+  aio_write(NULL);
+  aio_error(NULL);
+  aio_return(NULL);
+  aio_fsync(0, NULL);
+  aio_cancel(0, NULL);
+  aio_suspend(NULL, 0, NULL);
+  lio_listio(0, NULL, 0, NULL);
+  aio_read64(NULL);
+  aio_write64(NULL);
+  aio_error64(NULL);
+  aio_return64(NULL);
+  aio_fsync64(0, NULL);
+  aio_cancel64(0, NULL);
+  aio_suspend64(NULL, 0, NULL);
+  lio_listio64(0, NULL, 0, NULL);
+
   fopen("", "");
   fopen64("", "");
   fclose(NULL);
@@ -1590,6 +2391,15 @@ int main(int argc, char *argv[]) {
   __fread_chk(NULL, 0, 0, 0, NULL);
 
   __fgets_chk(NULL, 0, 0, NULL);
+  __fprintf_chk(stdout, 1, "");
+  dprintf(1, "");
+  __dprintf_chk(1, 1, "");
+  fwrite_unlocked(NULL, 0, 0, NULL);
+  fread_unlocked(NULL, 0, 0, NULL);
+  fputs_unlocked(NULL, NULL);
+  fgets_unlocked(NULL, 0, NULL);
+  fputc_unlocked(0, NULL);
+  fgetc_unlocked(NULL);
   fputc(0, NULL);
   fputs(NULL, NULL);
   fsetpos(NULL, NULL);
@@ -1668,6 +2478,34 @@ int main(int argc, char *argv[]) {
     char buf2[64];
     tmpnam(buf2);
   }
+
+  fcloseall();
+  {
+    cookie_io_functions_t cookie_funcs = {NULL, NULL, NULL, NULL};
+    fopencookie(NULL, "", cookie_funcs);
+  }
+  open_wmemstream(NULL, NULL);
+  fflush_unlocked(NULL);
+  feof_unlocked(NULL);
+  ferror_unlocked(NULL);
+  fileno_unlocked(NULL);
+  clearerr_unlocked(NULL);
+  _IO_getc(NULL);
+  _IO_putc(0, NULL);
+  fgetwc(NULL);
+  getwc(NULL);
+  fputwc(0, NULL);
+  putwc(0, NULL);
+  ungetwc(0, NULL);
+  fgetws(NULL, 0, NULL);
+  fputws(NULL, NULL);
+  fwprintf(stdout, L"");
+  __fwprintf_chk(stdout, 1, L"");
+  fwscanf(stdin, L"");
+  __isoc99_fwscanf(stdin, L"");
+#if defined(__GLIBC__) && __GLIBC_PREREQ(2, 38)
+  __isoc23_fwscanf(stdin, L"");
+#endif
 
   exit(100);
   return 0;

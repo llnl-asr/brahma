@@ -290,6 +290,51 @@ char *STDIO::__fgets_unlocked_chk(char *s, size_t size, int n, FILE *stream) {
   BRAHMA_UNWRAPPED_FUNC(__fgets_unlocked_chk, char *, (s, size, n, stream));
   return result;
 }
+int STDIO::__fprintf_chk(FILE *stream, int flag, const char *format, va_list args) {
+  return __vfprintf_chk(stream, flag, format, args);
+}
+int STDIO::__vfprintf_chk(FILE *stream, int flag, const char *format, va_list args) {
+  BRAHMA_UNWRAPPED_FUNC(__vfprintf_chk, int, (stream, flag, format, args));
+  return result;
+}
+int STDIO::dprintf(int fd, const char *format, va_list args) {
+  return vdprintf(fd, format, args);
+}
+int STDIO::vdprintf(int fd, const char *format, va_list args) {
+  BRAHMA_UNWRAPPED_FUNC(vdprintf, int, (fd, format, args));
+  return result;
+}
+int STDIO::__dprintf_chk(int fd, int flag, const char *format, va_list args) {
+  return __vdprintf_chk(fd, flag, format, args);
+}
+int STDIO::__vdprintf_chk(int fd, int flag, const char *format, va_list args) {
+  BRAHMA_UNWRAPPED_FUNC(__vdprintf_chk, int, (fd, flag, format, args));
+  return result;
+}
+size_t STDIO::fwrite_unlocked(const void *ptr, size_t size, size_t n, FILE *stream) {
+  BRAHMA_UNWRAPPED_FUNC(fwrite_unlocked, size_t, (ptr, size, n, stream));
+  return result;
+}
+size_t STDIO::fread_unlocked(void *ptr, size_t size, size_t n, FILE *stream) {
+  BRAHMA_UNWRAPPED_FUNC(fread_unlocked, size_t, (ptr, size, n, stream));
+  return result;
+}
+int STDIO::fputs_unlocked(const char *s, FILE *stream) {
+  BRAHMA_UNWRAPPED_FUNC(fputs_unlocked, int, (s, stream));
+  return result;
+}
+char *STDIO::fgets_unlocked(char *s, int n, FILE *stream) {
+  BRAHMA_UNWRAPPED_FUNC(fgets_unlocked, char *, (s, n, stream));
+  return result;
+}
+int STDIO::fputc_unlocked(int c, FILE *stream) {
+  BRAHMA_UNWRAPPED_FUNC(fputc_unlocked, int, (c, stream));
+  return result;
+}
+int STDIO::fgetc_unlocked(FILE *stream) {
+  BRAHMA_UNWRAPPED_FUNC(fgetc_unlocked, int, (stream));
+  return result;
+}
 int STDIO::puts(const char *s) {
   BRAHMA_UNWRAPPED_FUNC(puts, int, (s));
   return result;
@@ -349,6 +394,108 @@ FILE *STDIO::popen(const char *command, const char *type) {
 char *STDIO::tmpnam(char *s) {
   BRAHMA_UNWRAPPED_FUNC(tmpnam, char *, (s));
   return result;
+}
+int STDIO::fcloseall(void) {
+  BRAHMA_UNWRAPPED_FUNC(fcloseall, int, ());
+  return result;
+}
+FILE *STDIO::fopencookie(void *cookie, const char *mode, cookie_io_functions_t funcs) {
+  BRAHMA_UNWRAPPED_FUNC(fopencookie, FILE *, (cookie, mode, funcs));
+  return result;
+}
+FILE *STDIO::open_wmemstream(wchar_t **ptr, size_t *sizeloc) {
+  BRAHMA_UNWRAPPED_FUNC(open_wmemstream, FILE *, (ptr, sizeloc));
+  return result;
+}
+int STDIO::fflush_unlocked(FILE *stream) {
+  BRAHMA_UNWRAPPED_FUNC(fflush_unlocked, int, (stream));
+  return result;
+}
+int STDIO::feof_unlocked(FILE *stream) {
+  BRAHMA_UNWRAPPED_FUNC(feof_unlocked, int, (stream));
+  return result;
+}
+int STDIO::ferror_unlocked(FILE *stream) {
+  BRAHMA_UNWRAPPED_FUNC(ferror_unlocked, int, (stream));
+  return result;
+}
+int STDIO::fileno_unlocked(FILE *stream) {
+  BRAHMA_UNWRAPPED_FUNC(fileno_unlocked, int, (stream));
+  return result;
+}
+void STDIO::clearerr_unlocked(FILE *stream) {
+  BRAHMA_UNWRAPPED_FUNC_VOID(clearerr_unlocked, (stream));
+}
+int STDIO::_IO_getc(FILE *stream) {
+  BRAHMA_UNWRAPPED_FUNC(_IO_getc, int, (stream));
+  return result;
+}
+int STDIO::_IO_putc(int c, FILE *stream) {
+  BRAHMA_UNWRAPPED_FUNC(_IO_putc, int, (c, stream));
+  return result;
+}
+wint_t STDIO::fgetwc(FILE *stream) {
+  BRAHMA_UNWRAPPED_FUNC(fgetwc, wint_t, (stream));
+  return result;
+}
+wint_t STDIO::getwc(FILE *stream) {
+  BRAHMA_UNWRAPPED_FUNC(getwc, wint_t, (stream));
+  return result;
+}
+wint_t STDIO::fputwc(wchar_t wc, FILE *stream) {
+  BRAHMA_UNWRAPPED_FUNC(fputwc, wint_t, (wc, stream));
+  return result;
+}
+wint_t STDIO::putwc(wchar_t wc, FILE *stream) {
+  BRAHMA_UNWRAPPED_FUNC(putwc, wint_t, (wc, stream));
+  return result;
+}
+wint_t STDIO::ungetwc(wint_t wc, FILE *stream) {
+  BRAHMA_UNWRAPPED_FUNC(ungetwc, wint_t, (wc, stream));
+  return result;
+}
+wchar_t *STDIO::fgetws(wchar_t *ws, int n, FILE *stream) {
+  BRAHMA_UNWRAPPED_FUNC(fgetws, wchar_t *, (ws, n, stream));
+  return result;
+}
+int STDIO::fputws(const wchar_t *ws, FILE *stream) {
+  BRAHMA_UNWRAPPED_FUNC(fputws, int, (ws, stream));
+  return result;
+}
+int STDIO::vfwprintf(FILE *stream, const wchar_t *format, va_list args) {
+  BRAHMA_UNWRAPPED_FUNC(vfwprintf, int, (stream, format, args));
+  return result;
+}
+int STDIO::fwprintf(FILE *stream, const wchar_t *format, va_list args) {
+  return vfwprintf(stream, format, args);
+}
+int STDIO::__vfwprintf_chk(FILE *stream, int flag, const wchar_t *format, va_list args) {
+  BRAHMA_UNWRAPPED_FUNC(__vfwprintf_chk, int, (stream, flag, format, args));
+  return result;
+}
+int STDIO::__fwprintf_chk(FILE *stream, int flag, const wchar_t *format, va_list args) {
+  return __vfwprintf_chk(stream, flag, format, args);
+}
+int STDIO::vfwscanf(FILE *stream, const wchar_t *format, va_list args) {
+  BRAHMA_UNWRAPPED_FUNC(vfwscanf, int, (stream, format, args));
+  return result;
+}
+int STDIO::fwscanf(FILE *stream, const wchar_t *format, va_list args) {
+  return vfwscanf(stream, format, args);
+}
+int STDIO::__isoc99_vfwscanf(FILE *stream, const wchar_t *format, va_list args) {
+  BRAHMA_UNWRAPPED_FUNC(__isoc99_vfwscanf, int, (stream, format, args));
+  return result;
+}
+int STDIO::__isoc99_fwscanf(FILE *stream, const wchar_t *format, va_list args) {
+  return __isoc99_vfwscanf(stream, format, args);
+}
+int STDIO::__isoc23_vfwscanf(FILE *stream, const wchar_t *format, va_list args) {
+  BRAHMA_UNWRAPPED_FUNC(__isoc23_vfwscanf, int, (stream, format, args));
+  return result;
+}
+int STDIO::__isoc23_fwscanf(FILE *stream, const wchar_t *format, va_list args) {
+  return __isoc23_vfwscanf(stream, format, args);
 }
 
 

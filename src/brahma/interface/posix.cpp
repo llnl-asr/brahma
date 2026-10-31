@@ -38,6 +38,11 @@ int POSIX::open(const char *pathname, int flags, ...) {
   }
 }
 
+int POSIX::creat(const char *path, mode_t mode) {
+  BRAHMA_UNWRAPPED_FUNC(creat, int, (path, mode));
+  return result;
+}
+
 int POSIX::creat64(const char *path, mode_t mode) {
   BRAHMA_UNWRAPPED_FUNC(creat64, int, (path, mode));
   return result;
@@ -362,6 +367,17 @@ int POSIX::dup2(int oldfd, int newfd) {
   BRAHMA_UNWRAPPED_FUNC(dup2, int, (oldfd, newfd));
   return result;
 }
+int POSIX::dup3(int oldfd, int newfd, int flags) {
+  BRAHMA_UNWRAPPED_FUNC(dup3, int, (oldfd, newfd, flags));
+  return result;
+}
+int POSIX::close_range(unsigned int first, unsigned int last, int flags) {
+  BRAHMA_UNWRAPPED_FUNC(close_range, int, (first, last, flags));
+  return result;
+}
+void POSIX::closefrom(int lowfd) {
+  BRAHMA_UNWRAPPED_FUNC_VOID(closefrom, (lowfd));
+}
 int POSIX::pipe(int pipefd[2]) {
   BRAHMA_UNWRAPPED_FUNC(pipe, int, (pipefd));
   return result;
@@ -671,6 +687,360 @@ int POSIX::fstatvfs(int fd, struct statvfs *buf) {
 }
 int POSIX::fstatvfs64(int fd, struct statvfs64 *buf) {
   BRAHMA_UNWRAPPED_FUNC(fstatvfs64, int, (fd, buf));
+  return result;
+}
+ssize_t POSIX::preadv2(int fd, const struct iovec *iov, int iovcnt, off_t offset, int flags) {
+  BRAHMA_UNWRAPPED_FUNC(preadv2, ssize_t, (fd, iov, iovcnt, offset, flags));
+  return result;
+}
+ssize_t POSIX::pwritev2(int fd, const struct iovec *iov, int iovcnt, off_t offset, int flags) {
+  BRAHMA_UNWRAPPED_FUNC(pwritev2, ssize_t, (fd, iov, iovcnt, offset, flags));
+  return result;
+}
+ssize_t POSIX::preadv64v2(int fd, const struct iovec *iov, int iovcnt, off64_t offset, int flags) {
+  BRAHMA_UNWRAPPED_FUNC(preadv64v2, ssize_t, (fd, iov, iovcnt, offset, flags));
+  return result;
+}
+ssize_t POSIX::pwritev64v2(int fd, const struct iovec *iov, int iovcnt, off64_t offset, int flags) {
+  BRAHMA_UNWRAPPED_FUNC(pwritev64v2, ssize_t, (fd, iov, iovcnt, offset, flags));
+  return result;
+}
+ssize_t POSIX::splice(int fd_in, off64_t *off_in, int fd_out, off64_t *off_out, size_t len, unsigned int flags) {
+  BRAHMA_UNWRAPPED_FUNC(splice, ssize_t, (fd_in, off_in, fd_out, off_out, len, flags));
+  return result;
+}
+ssize_t POSIX::tee(int fd_in, int fd_out, size_t len, unsigned int flags) {
+  BRAHMA_UNWRAPPED_FUNC(tee, ssize_t, (fd_in, fd_out, len, flags));
+  return result;
+}
+ssize_t POSIX::vmsplice(int fd, const struct iovec *iov, size_t nr_segs, unsigned int flags) {
+  BRAHMA_UNWRAPPED_FUNC(vmsplice, ssize_t, (fd, iov, nr_segs, flags));
+  return result;
+}
+int POSIX::fallocate(int fd, int mode, off_t offset, off_t len) {
+  BRAHMA_UNWRAPPED_FUNC(fallocate, int, (fd, mode, offset, len));
+  return result;
+}
+int POSIX::fallocate64(int fd, int mode, off64_t offset, off64_t len) {
+  BRAHMA_UNWRAPPED_FUNC(fallocate64, int, (fd, mode, offset, len));
+  return result;
+}
+ssize_t POSIX::readahead(int fd, off64_t offset, size_t count) {
+  BRAHMA_UNWRAPPED_FUNC(readahead, ssize_t, (fd, offset, count));
+  return result;
+}
+void POSIX::sync(void) {
+  BRAHMA_UNWRAPPED_FUNC_VOID(sync, ());
+}
+int POSIX::syncfs(int fd) {
+  BRAHMA_UNWRAPPED_FUNC(syncfs, int, (fd));
+  return result;
+}
+int POSIX::sync_file_range(int fd, off64_t offset, off64_t nbytes, unsigned int flags) {
+  BRAHMA_UNWRAPPED_FUNC(sync_file_range, int, (fd, offset, nbytes, flags));
+  return result;
+}
+int POSIX::statx(int dirfd, const char *path, int flags, unsigned int mask, struct statx *buf) {
+  BRAHMA_UNWRAPPED_FUNC(statx, int, (dirfd, path, flags, mask, buf));
+  return result;
+}
+int POSIX::statfs(const char *path, struct statfs *buf) {
+  BRAHMA_UNWRAPPED_FUNC(statfs, int, (path, buf));
+  return result;
+}
+int POSIX::fstatfs(int fd, struct statfs *buf) {
+  BRAHMA_UNWRAPPED_FUNC(fstatfs, int, (fd, buf));
+  return result;
+}
+int POSIX::statfs64(const char *path, struct statfs64 *buf) {
+  BRAHMA_UNWRAPPED_FUNC(statfs64, int, (path, buf));
+  return result;
+}
+int POSIX::fstatfs64(int fd, struct statfs64 *buf) {
+  BRAHMA_UNWRAPPED_FUNC(fstatfs64, int, (fd, buf));
+  return result;
+}
+int POSIX::mknodat(int dirfd, const char *path, mode_t mode, dev_t dev) {
+  BRAHMA_UNWRAPPED_FUNC(mknodat, int, (dirfd, path, mode, dev));
+  return result;
+}
+int POSIX::__xmknodat(int ver, int dirfd, const char *path, mode_t mode, dev_t *dev) {
+  BRAHMA_UNWRAPPED_FUNC(__xmknodat, int, (ver, dirfd, path, mode, dev));
+  return result;
+}
+int POSIX::euidaccess(const char *path, int mode) {
+  BRAHMA_UNWRAPPED_FUNC(euidaccess, int, (path, mode));
+  return result;
+}
+int POSIX::eaccess(const char *path, int mode) {
+  BRAHMA_UNWRAPPED_FUNC(eaccess, int, (path, mode));
+  return result;
+}
+int POSIX::renameat2(int olddirfd, const char *oldpath, int newdirfd, const char *newpath, unsigned int flags) {
+  BRAHMA_UNWRAPPED_FUNC(renameat2, int, (olddirfd, oldpath, newdirfd, newpath, flags));
+  return result;
+}
+int POSIX::mkfifoat(int dirfd, const char *path, mode_t mode) {
+  BRAHMA_UNWRAPPED_FUNC(mkfifoat, int, (dirfd, path, mode));
+  return result;
+}
+int POSIX::lchmod(const char *path, mode_t mode) {
+  BRAHMA_UNWRAPPED_FUNC(lchmod, int, (path, mode));
+  return result;
+}
+int POSIX::utimes(const char *path, const struct timeval times[2]) {
+  BRAHMA_UNWRAPPED_FUNC(utimes, int, (path, times));
+  return result;
+}
+int POSIX::futimes(int fd, const struct timeval tv[2]) {
+  BRAHMA_UNWRAPPED_FUNC(futimes, int, (fd, tv));
+  return result;
+}
+int POSIX::lutimes(const char *path, const struct timeval tv[2]) {
+  BRAHMA_UNWRAPPED_FUNC(lutimes, int, (path, tv));
+  return result;
+}
+int POSIX::futimesat(int dirfd, const char *path, const struct timeval times[2]) {
+  BRAHMA_UNWRAPPED_FUNC(futimesat, int, (dirfd, path, times));
+  return result;
+}
+int POSIX::utimensat(int dirfd, const char *path, const struct timespec times[2], int flags) {
+  BRAHMA_UNWRAPPED_FUNC(utimensat, int, (dirfd, path, times, flags));
+  return result;
+}
+int POSIX::futimens(int fd, const struct timespec times[2]) {
+  BRAHMA_UNWRAPPED_FUNC(futimens, int, (fd, times));
+  return result;
+}
+int POSIX::fchdir(int fd) {
+  BRAHMA_UNWRAPPED_FUNC(fchdir, int, (fd));
+  return result;
+}
+DIR *POSIX::fdopendir(int fd) {
+  BRAHMA_UNWRAPPED_FUNC(fdopendir, DIR *, (fd));
+  return result;
+}
+int POSIX::readdir_r(DIR *dir, struct dirent *entry, struct dirent **res) {
+  BRAHMA_UNWRAPPED_FUNC(readdir_r, int, (dir, entry, res));
+  return result;
+}
+int POSIX::readdir64_r(DIR *dir, struct dirent64 *entry, struct dirent64 **res) {
+  BRAHMA_UNWRAPPED_FUNC(readdir64_r, int, (dir, entry, res));
+  return result;
+}
+void POSIX::seekdir(DIR *dir, long loc) {
+  BRAHMA_UNWRAPPED_FUNC_VOID(seekdir, (dir, loc));
+}
+long POSIX::telldir(DIR *dir) {
+  BRAHMA_UNWRAPPED_FUNC(telldir, long, (dir));
+  return result;
+}
+int POSIX::scandir(const char *dir, struct dirent ***namelist, int (*filter)(const struct dirent *), int (*compar)(const struct dirent **, const struct dirent **)) {
+  BRAHMA_UNWRAPPED_FUNC(scandir, int, (dir, namelist, filter, compar));
+  return result;
+}
+int POSIX::scandir64(const char *dir, struct dirent64 ***namelist, int (*filter)(const struct dirent64 *), int (*compar)(const struct dirent64 **, const struct dirent64 **)) {
+  BRAHMA_UNWRAPPED_FUNC(scandir64, int, (dir, namelist, filter, compar));
+  return result;
+}
+int POSIX::scandirat(int dirfd, const char *dir, struct dirent ***namelist, int (*filter)(const struct dirent *), int (*compar)(const struct dirent **, const struct dirent **)) {
+  BRAHMA_UNWRAPPED_FUNC(scandirat, int, (dirfd, dir, namelist, filter, compar));
+  return result;
+}
+int POSIX::scandirat64(int dirfd, const char *dir, struct dirent64 ***namelist, int (*filter)(const struct dirent64 *), int (*compar)(const struct dirent64 **, const struct dirent64 **)) {
+  BRAHMA_UNWRAPPED_FUNC(scandirat64, int, (dirfd, dir, namelist, filter, compar));
+  return result;
+}
+int POSIX::nftw(const char *path, int (*func)(const char *, const struct stat *, int, struct FTW *), int nopenfd, int flags) {
+  BRAHMA_UNWRAPPED_FUNC(nftw, int, (path, func, nopenfd, flags));
+  return result;
+}
+int POSIX::nftw64(const char *path, int (*func)(const char *, const struct stat64 *, int, struct FTW *), int nopenfd, int flags) {
+  BRAHMA_UNWRAPPED_FUNC(nftw64, int, (path, func, nopenfd, flags));
+  return result;
+}
+ssize_t POSIX::getdents64(int fd, void *buf, size_t count) {
+  BRAHMA_UNWRAPPED_FUNC(getdents64, ssize_t, (fd, buf, count));
+  return result;
+}
+void *POSIX::mremap(void *old_addr, size_t old_size, size_t new_size, int flags,
+                   void *new_addr) {
+  if (flags & MREMAP_FIXED) {
+    BRAHMA_UNWRAPPED_FUNC(mremap, void *,
+                          (old_addr, old_size, new_size, flags, new_addr));
+    return result;
+  } else {
+    BRAHMA_UNWRAPPED_FUNC(mremap, void *,
+                          (old_addr, old_size, new_size, flags));
+    return result;
+  }
+}
+int POSIX::ioctl(int fd, unsigned long request, void *arg) {
+  BRAHMA_UNWRAPPED_FUNC(ioctl, int, (fd, request, arg));
+  return result;
+}
+int POSIX::lockf(int fd, int cmd, off_t len) {
+  BRAHMA_UNWRAPPED_FUNC(lockf, int, (fd, cmd, len));
+  return result;
+}
+int POSIX::lockf64(int fd, int cmd, off64_t len) {
+  BRAHMA_UNWRAPPED_FUNC(lockf64, int, (fd, cmd, len));
+  return result;
+}
+int POSIX::pipe2(int pipefd[2], int flags) {
+  BRAHMA_UNWRAPPED_FUNC(pipe2, int, (pipefd, flags));
+  return result;
+}
+int POSIX::memfd_create(const char *name, unsigned int flags) {
+  BRAHMA_UNWRAPPED_FUNC(memfd_create, int, (name, flags));
+  return result;
+}
+int POSIX::mkstemp(char *tmpl) {
+  BRAHMA_UNWRAPPED_FUNC(mkstemp, int, (tmpl));
+  return result;
+}
+int POSIX::mkstemp64(char *tmpl) {
+  BRAHMA_UNWRAPPED_FUNC(mkstemp64, int, (tmpl));
+  return result;
+}
+int POSIX::mkostemp(char *tmpl, int flags) {
+  BRAHMA_UNWRAPPED_FUNC(mkostemp, int, (tmpl, flags));
+  return result;
+}
+int POSIX::mkostemp64(char *tmpl, int flags) {
+  BRAHMA_UNWRAPPED_FUNC(mkostemp64, int, (tmpl, flags));
+  return result;
+}
+int POSIX::mkstemps(char *tmpl, int suffixlen) {
+  BRAHMA_UNWRAPPED_FUNC(mkstemps, int, (tmpl, suffixlen));
+  return result;
+}
+int POSIX::mkstemps64(char *tmpl, int suffixlen) {
+  BRAHMA_UNWRAPPED_FUNC(mkstemps64, int, (tmpl, suffixlen));
+  return result;
+}
+int POSIX::mkostemps(char *tmpl, int suffixlen, int flags) {
+  BRAHMA_UNWRAPPED_FUNC(mkostemps, int, (tmpl, suffixlen, flags));
+  return result;
+}
+int POSIX::mkostemps64(char *tmpl, int suffixlen, int flags) {
+  BRAHMA_UNWRAPPED_FUNC(mkostemps64, int, (tmpl, suffixlen, flags));
+  return result;
+}
+char *POSIX::mkdtemp(char *tmpl) {
+  BRAHMA_UNWRAPPED_FUNC(mkdtemp, char *, (tmpl));
+  return result;
+}
+ssize_t POSIX::getxattr(const char *path, const char *name, void *value, size_t size) {
+  BRAHMA_UNWRAPPED_FUNC(getxattr, ssize_t, (path, name, value, size));
+  return result;
+}
+ssize_t POSIX::lgetxattr(const char *path, const char *name, void *value, size_t size) {
+  BRAHMA_UNWRAPPED_FUNC(lgetxattr, ssize_t, (path, name, value, size));
+  return result;
+}
+ssize_t POSIX::fgetxattr(int fd, const char *name, void *value, size_t size) {
+  BRAHMA_UNWRAPPED_FUNC(fgetxattr, ssize_t, (fd, name, value, size));
+  return result;
+}
+int POSIX::setxattr(const char *path, const char *name, const void *value, size_t size, int flags) {
+  BRAHMA_UNWRAPPED_FUNC(setxattr, int, (path, name, value, size, flags));
+  return result;
+}
+int POSIX::lsetxattr(const char *path, const char *name, const void *value, size_t size, int flags) {
+  BRAHMA_UNWRAPPED_FUNC(lsetxattr, int, (path, name, value, size, flags));
+  return result;
+}
+int POSIX::fsetxattr(int fd, const char *name, const void *value, size_t size, int flags) {
+  BRAHMA_UNWRAPPED_FUNC(fsetxattr, int, (fd, name, value, size, flags));
+  return result;
+}
+ssize_t POSIX::listxattr(const char *path, char *list, size_t size) {
+  BRAHMA_UNWRAPPED_FUNC(listxattr, ssize_t, (path, list, size));
+  return result;
+}
+ssize_t POSIX::llistxattr(const char *path, char *list, size_t size) {
+  BRAHMA_UNWRAPPED_FUNC(llistxattr, ssize_t, (path, list, size));
+  return result;
+}
+ssize_t POSIX::flistxattr(int fd, char *list, size_t size) {
+  BRAHMA_UNWRAPPED_FUNC(flistxattr, ssize_t, (fd, list, size));
+  return result;
+}
+int POSIX::removexattr(const char *path, const char *name) {
+  BRAHMA_UNWRAPPED_FUNC(removexattr, int, (path, name));
+  return result;
+}
+int POSIX::lremovexattr(const char *path, const char *name) {
+  BRAHMA_UNWRAPPED_FUNC(lremovexattr, int, (path, name));
+  return result;
+}
+int POSIX::fremovexattr(int fd, const char *name) {
+  BRAHMA_UNWRAPPED_FUNC(fremovexattr, int, (fd, name));
+  return result;
+}
+int POSIX::aio_read(struct aiocb *cb) {
+  BRAHMA_UNWRAPPED_FUNC(aio_read, int, (cb));
+  return result;
+}
+int POSIX::aio_write(struct aiocb *cb) {
+  BRAHMA_UNWRAPPED_FUNC(aio_write, int, (cb));
+  return result;
+}
+int POSIX::aio_error(const struct aiocb *cb) {
+  BRAHMA_UNWRAPPED_FUNC(aio_error, int, (cb));
+  return result;
+}
+ssize_t POSIX::aio_return(struct aiocb *cb) {
+  BRAHMA_UNWRAPPED_FUNC(aio_return, ssize_t, (cb));
+  return result;
+}
+int POSIX::aio_fsync(int op, struct aiocb *cb) {
+  BRAHMA_UNWRAPPED_FUNC(aio_fsync, int, (op, cb));
+  return result;
+}
+int POSIX::aio_cancel(int fd, struct aiocb *cb) {
+  BRAHMA_UNWRAPPED_FUNC(aio_cancel, int, (fd, cb));
+  return result;
+}
+int POSIX::aio_suspend(const struct aiocb *const list[], int nent, const struct timespec *timeout) {
+  BRAHMA_UNWRAPPED_FUNC(aio_suspend, int, (list, nent, timeout));
+  return result;
+}
+int POSIX::lio_listio(int mode, struct aiocb *const list[], int nent, struct sigevent *sig) {
+  BRAHMA_UNWRAPPED_FUNC(lio_listio, int, (mode, list, nent, sig));
+  return result;
+}
+int POSIX::aio_read64(struct aiocb64 *cb) {
+  BRAHMA_UNWRAPPED_FUNC(aio_read64, int, (cb));
+  return result;
+}
+int POSIX::aio_write64(struct aiocb64 *cb) {
+  BRAHMA_UNWRAPPED_FUNC(aio_write64, int, (cb));
+  return result;
+}
+int POSIX::aio_error64(const struct aiocb64 *cb) {
+  BRAHMA_UNWRAPPED_FUNC(aio_error64, int, (cb));
+  return result;
+}
+ssize_t POSIX::aio_return64(struct aiocb64 *cb) {
+  BRAHMA_UNWRAPPED_FUNC(aio_return64, ssize_t, (cb));
+  return result;
+}
+int POSIX::aio_fsync64(int op, struct aiocb64 *cb) {
+  BRAHMA_UNWRAPPED_FUNC(aio_fsync64, int, (op, cb));
+  return result;
+}
+int POSIX::aio_cancel64(int fd, struct aiocb64 *cb) {
+  BRAHMA_UNWRAPPED_FUNC(aio_cancel64, int, (fd, cb));
+  return result;
+}
+int POSIX::aio_suspend64(const struct aiocb64 *const list[], int nent, const struct timespec *timeout) {
+  BRAHMA_UNWRAPPED_FUNC(aio_suspend64, int, (list, nent, timeout));
+  return result;
+}
+int POSIX::lio_listio64(int mode, struct aiocb64 *const list[], int nent, struct sigevent *sig) {
+  BRAHMA_UNWRAPPED_FUNC(lio_listio64, int, (mode, list, nent, sig));
   return result;
 }
 
