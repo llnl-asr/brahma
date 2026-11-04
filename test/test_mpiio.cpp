@@ -28,7 +28,7 @@
 // (MPI_Address, MPI_Type_struct, ...). OpenMPI declares them only when built
 // with MPI-1 compatibility; every other implementation brahma supports does.
 // Interfaces for those functions are compiled only when this is defined.
-#if !defined(BRAHMA_MPI_HAS_MPI1_REMOVED) && \
+#if !defined(BRAHMA_MPI_HAS_MPI1_REMOVED) &&                       \
     !(defined(OPEN_MPI) && defined(OMPI_OMIT_MPI1_COMPAT_DECLS) && \
       OMPI_OMIT_MPI1_COMPAT_DECLS)
 #define BRAHMA_MPI_HAS_MPI1_REMOVED 1
