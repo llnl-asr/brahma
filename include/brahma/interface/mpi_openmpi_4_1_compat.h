@@ -40,6 +40,16 @@
 #define H5_DOXYGEN 1
 #include <mpi.h>
 
+// Defined when this MPI's mpi.h declares the functions MPI-3.0 removed
+// (MPI_Address, MPI_Type_struct, ...). OpenMPI declares them only when built
+// with MPI-1 compatibility; every other implementation brahma supports does.
+// Interfaces for those functions are compiled only when this is defined.
+#if !defined(BRAHMA_MPI_HAS_MPI1_REMOVED) && \
+    !(defined(OPEN_MPI) && defined(OMPI_OMIT_MPI1_COMPAT_DECLS) && \
+      OMPI_OMIT_MPI1_COMPAT_DECLS)
+#define BRAHMA_MPI_HAS_MPI1_REMOVED 1
+#endif
+
 namespace brahma {
 class MPI_OPENMPI_4_1_COMPAT : public Interface {
  private:
@@ -59,22 +69,28 @@ class MPI_OPENMPI_4_1_COMPAT : public Interface {
 
   size_t unbind();
 
+#ifdef BRAHMA_MPI_HAS_MPI1_REMOVED
   virtual int MPI_Errhandler_create(MPI_Handler_function* function,
                                     MPI_Errhandler* errhandler);
 
   GOTCHA_MACRO_VAR(MPI_Errhandler_create)
+#endif  // BRAHMA_MPI_HAS_MPI1_REMOVED
 };
 }  // namespace brahma
 
+#ifdef BRAHMA_MPI_HAS_MPI1_REMOVED
 GOTCHA_MACRO_TYPEDEF(MPI_Errhandler_create, int,
                      (MPI_Handler_function * function,
                       MPI_Errhandler* errhandler),
                      (function, errhandler), brahma::MPI_OPENMPI_4_1_COMPAT);
+#endif  // BRAHMA_MPI_HAS_MPI1_REMOVED
 
 template <typename C>
 size_t brahma::MPI_OPENMPI_4_1_COMPAT::bind(const char* name,
                                             uint16_t priority) {
+#ifdef BRAHMA_MPI_HAS_MPI1_REMOVED
   GOTCHA_BINDING_MACRO(MPI_Errhandler_create, brahma::MPI_OPENMPI_4_1_COMPAT);
+#endif  // BRAHMA_MPI_HAS_MPI1_REMOVED
 
   num_bindings = bindings.size();
   if (num_bindings > 0) {

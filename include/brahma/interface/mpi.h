@@ -34,6 +34,16 @@
 #define H5_DOXYGEN 1
 #include <mpi.h>
 
+// Defined when this MPI's mpi.h declares the functions MPI-3.0 removed
+// (MPI_Address, MPI_Type_struct, ...). OpenMPI declares them only when built
+// with MPI-1 compatibility; every other implementation brahma supports does.
+// Interfaces for those functions are compiled only when this is defined.
+#if !defined(BRAHMA_MPI_HAS_MPI1_REMOVED) && \
+    !(defined(OPEN_MPI) && defined(OMPI_OMIT_MPI1_COMPAT_DECLS) && \
+      OMPI_OMIT_MPI1_COMPAT_DECLS)
+#define BRAHMA_MPI_HAS_MPI1_REMOVED 1
+#endif
+
 namespace brahma {
 class MPI : public Interface {
  private:
@@ -989,6 +999,7 @@ class MPI : public Interface {
 
   virtual int MPI_Keyval_free(int* keyval);
 
+#ifdef BRAHMA_MPI_HAS_MPI1_REMOVED
   virtual int MPI_Address(void* location, MPI_Aint* address);
 
   virtual int MPI_Errhandler_get(MPI_Comm comm, MPI_Errhandler* errhandler);
@@ -1012,6 +1023,7 @@ class MPI : public Interface {
                               MPI_Datatype* newtype);
 
   virtual int MPI_Type_ub(MPI_Datatype mtype, MPI_Aint* ub);
+#endif  // BRAHMA_MPI_HAS_MPI1_REMOVED
 
   GOTCHA_MACRO_VAR(MPI_Abort)
 
@@ -1597,6 +1609,7 @@ class MPI : public Interface {
 
   GOTCHA_MACRO_VAR(MPI_Keyval_free)
 
+#ifdef BRAHMA_MPI_HAS_MPI1_REMOVED
   GOTCHA_MACRO_VAR(MPI_Address)
 
   GOTCHA_MACRO_VAR(MPI_Errhandler_get)
@@ -1614,6 +1627,7 @@ class MPI : public Interface {
   GOTCHA_MACRO_VAR(MPI_Type_struct)
 
   GOTCHA_MACRO_VAR(MPI_Type_ub)
+#endif  // BRAHMA_MPI_HAS_MPI1_REMOVED
 };
 }  // namespace brahma
 
@@ -3120,6 +3134,7 @@ GOTCHA_MACRO_TYPEDEF(MPI_Keyval_create, int,
 GOTCHA_MACRO_TYPEDEF(MPI_Keyval_free, int, (int* keyval), (keyval),
                      brahma::MPI);
 
+#ifdef BRAHMA_MPI_HAS_MPI1_REMOVED
 GOTCHA_MACRO_TYPEDEF(MPI_Address, int, (void* location, MPI_Aint* address),
                      (location, address), brahma::MPI);
 
@@ -3162,6 +3177,7 @@ GOTCHA_MACRO_TYPEDEF(MPI_Type_struct, int,
 
 GOTCHA_MACRO_TYPEDEF(MPI_Type_ub, int, (MPI_Datatype mtype, MPI_Aint* ub),
                      (mtype, ub), brahma::MPI);
+#endif  // BRAHMA_MPI_HAS_MPI1_REMOVED
 
 template <typename C>
 size_t brahma::MPI::bind(const char* name, uint16_t priority) {
@@ -3749,6 +3765,7 @@ size_t brahma::MPI::bind(const char* name, uint16_t priority) {
 
   GOTCHA_BINDING_MACRO(MPI_Keyval_free, brahma::MPI);
 
+#ifdef BRAHMA_MPI_HAS_MPI1_REMOVED
   GOTCHA_BINDING_MACRO(MPI_Address, brahma::MPI);
 
   GOTCHA_BINDING_MACRO(MPI_Errhandler_get, brahma::MPI);
@@ -3766,6 +3783,7 @@ size_t brahma::MPI::bind(const char* name, uint16_t priority) {
   GOTCHA_BINDING_MACRO(MPI_Type_struct, brahma::MPI);
 
   GOTCHA_BINDING_MACRO(MPI_Type_ub, brahma::MPI);
+#endif  // BRAHMA_MPI_HAS_MPI1_REMOVED
 
   num_bindings = bindings.size();
   if (num_bindings > 0) {
