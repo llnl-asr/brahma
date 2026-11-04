@@ -1965,7 +1965,7 @@ build_and_execute_command() {
     fi
     
     # Build command array
-    local cmd=("$python_exe" "$generate_script" "--libclang-path" "$libclang_path" "--with-tests")
+    local cmd=("$python_exe" "$generate_script" "--libclang-path" "$libclang_path" "--with-tests" "--mpi-layered")
     
     # Add HDF5 arguments
     if [[ ${#SELECTED_HDF5_INDICES[@]} -gt 0 ]]; then

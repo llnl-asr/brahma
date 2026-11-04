@@ -28,6 +28,44 @@ if(BRAHMA_BUILD_WITH_MPI)
     add_dependencies(test_mpi ${PROJECT_NAME})
     target_link_libraries(test_mpi ${PROJECT_NAME})
     add_test(NAME test_mpi COMMAND $<TARGET_FILE:test_mpi>)
+    add_executable(test_mpi_compat_select test_mpi_compat_select.cpp)
+    add_dependencies(test_mpi_compat_select ${PROJECT_NAME})
+    target_link_libraries(test_mpi_compat_select ${PROJECT_NAME})
+    add_test(NAME test_mpi_compat_select COMMAND $<TARGET_FILE:test_mpi_compat_select>)
+    # One test per generated compat interface. A compat test checks only its
+    # own implementation and major.minor; on any other MPI it exits 77 and is
+    # reported as skipped (see below), never as a pass.
+    file(GLOB BRAHMA_MPI_COMPAT_TESTS CONFIGURE_DEPENDS
+            ${CMAKE_CURRENT_SOURCE_DIR}/test_mpi_*_compat.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/test_mpiio_*_compat.cpp)
+    # The compat interface this build's MPI selects: implementation, major and
+    # minor, the same rule the generated headers use.
+    string(TOLOWER "${BRAHMA_MPI_IMPL_NAME}" _brahma_impl)
+    set(_brahma_expected "")
+    if(_brahma_impl AND BRAHMA_MPI_VERSION)
+        math(EXPR _brahma_major "${BRAHMA_MPI_VERSION} / 100000")
+        math(EXPR _brahma_minor "(${BRAHMA_MPI_VERSION} / 100) % 1000")
+        set(_brahma_expected "${_brahma_impl}_${_brahma_major}_${_brahma_minor}")
+    endif()
+    message(STATUS "[${PROJECT_NAME}] MPI compat interface expected for this build: '${_brahma_expected}'")
+    foreach(_t ${BRAHMA_MPI_COMPAT_TESTS})
+        get_filename_component(_name ${_t} NAME_WE)
+        add_executable(${_name} ${_t})
+        add_dependencies(${_name} ${PROJECT_NAME})
+        target_link_libraries(${_name} ${PROJECT_NAME})
+        add_test(NAME ${_name} COMMAND $<TARGET_FILE:${_name}>)
+        if(_brahma_expected AND _name MATCHES "^test_mpiio?_${_brahma_expected}_compat$")
+            # This is the compat interface the build must test. It exits 77 if
+            # it did not apply, and without SKIP_RETURN_CODE that is a failure,
+            # so a family that silently stopped being selected cannot pass.
+            set_tests_properties(${_name} PROPERTIES LABELS "mpi-compat-applies")
+        else()
+            # Another MPI's compat interface: nothing to check here. Report it
+            # as skipped rather than passed.
+            set_tests_properties(${_name} PROPERTIES SKIP_RETURN_CODE 77
+                                 LABELS "mpi-compat-other")
+        endif()
+    endforeach()
 endif()
 
 if(BRAHMA_BUILD_WITH_HDF5)

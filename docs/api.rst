@@ -101,6 +101,20 @@ Interface classes
    ``MPI_File_read*``/``MPI_File_write*`` variants (at/all/shared), seeks,
    and sync. Available when built with ``BRAHMA_BUILD_WITH_MPI``.
 
+   ``brahma::MPI`` and ``brahma::MPIIO`` hold the functions that every
+   supported MPI declares with the same signature, so they are available for
+   any MPI implementation and version.
+
+``brahma::MPI_<IMPL>_<MAJOR>_<MINOR>_COMPAT`` and ``brahma::MPIIO_..._COMPAT`` (``brahma/interface/mpi_<impl>_<major>_<minor>_compat.h``)
+   The functions one MPI family has beyond the common set, for example the
+   MPI-4 large-count ``_c`` calls in ``brahma::MPI_OPENMPI_5_0_COMPAT``. A
+   compat class exists only when the build's MPI implementation, major and
+   minor version match, which is signalled by
+   ``BRAHMA_MPI_<IMPL>_<MAJOR>_<MINOR>_COMPAT``. ``brahma/interface/mpi_compat.h``
+   includes all of them; ``brahma::mpi_compat_enabled()`` lists the ones
+   compiled in. A tool binds each compat class it uses the same way as
+   ``brahma::MPI``. See "Supported MPI" in the README for the families.
+
 ``brahma::HDF5`` (``brahma/interface/hdf5.h``)
    Intercepts the HDF5 C API (file, dataset, group, attribute operations such
    as ``H5Fcreate``, ``H5Fopen``, ``H5Fclose``, ``H5Dread``, ``H5Dwrite``,

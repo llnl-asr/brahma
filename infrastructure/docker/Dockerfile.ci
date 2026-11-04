@@ -10,8 +10,9 @@ ENV LOCAL=local
 # Remove default Ubuntu repositories
 
 
-# Update package lists and install minimal base dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Update package lists and install minimal base dependencies. apt runs as root throughout:
+# its sandbox user (65534) does not exist in a rootless build with few subordinate ids.
+RUN apt-get -o APT::Sandbox::User=root update && apt-get -o APT::Sandbox::User=root install -y --no-install-recommends \
     build-essential \
     ca-certificates \
     clang \
@@ -65,7 +66,14 @@ RUN source $SPACK_ROOT/share/spack/setup-env.sh && \
 RUN source $SPACK_ROOT/share/spack/setup-env.sh && \
     spack compiler list
 
+# Build for a generic CPU, not the one building the image. Spack targets the build
+# host by default: built on a zen4 machine, mpicc died with "Illegal instruction"
+# on the GitHub runners. Every package below must honour this.
+RUN mkdir -p ~/.spack && \
+    printf 'packages:\n  all:\n    require:\n    - "target=x86_64_v2"\n' > ~/.spack/packages.yaml
+
 # Install HDF5 versions (1.8, 1.10, 1.12, 1.14) with MPI support mpich 3, 4 and openmpi 4, 5
+# (the combinations .github/workflows/ci.yml tests)
 RUN source $SPACK_ROOT/share/spack/setup-env.sh && \
   spack install -j$(nproc) --reuse  hdf5@1.8.23+mpi ^mpich@3.4.3
 
@@ -76,6 +84,18 @@ RUN source $SPACK_ROOT/share/spack/setup-env.sh && \
   spack install -j$(nproc) --reuse hdf5@1.12.3+mpi  ^mpich@4.2.3
 RUN source $SPACK_ROOT/share/spack/setup-env.sh && \
   spack install -j$(nproc) --reuse hdf5@1.14.5+mpi  ^openmpi@5.0.6
+
+# Wider MPI coverage for the common-plus-compat MPI interfaces: a second patch
+# release in the OpenMPI 4.1 and 5.0 families, and an MPICH minor series (4.3)
+# that has no compat interface. Published as hdevarajan92/brahma-ci:mpi-wide.
+# MVAPICH2 2.3.7-1 is not included: its spack build re-runs aclocal-1.15 and
+# fails.
+RUN source $SPACK_ROOT/share/spack/setup-env.sh && \
+  spack install -j$(nproc) --reuse hdf5@1.14.5+mpi  ^openmpi@5.0.3
+RUN source $SPACK_ROOT/share/spack/setup-env.sh && \
+  spack install -j$(nproc) --reuse hdf5@1.10.11+mpi ^openmpi@4.1.8
+RUN source $SPACK_ROOT/share/spack/setup-env.sh && \
+  spack install -j$(nproc) --reuse hdf5@1.14.5+mpi  ^mpich@4.3.0
 
 # Clean up spack build cache to reduce image size
 RUN source $SPACK_ROOT/share/spack/setup-env.sh && \

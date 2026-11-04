@@ -53,6 +53,18 @@ parser.add_argument(
     type=str,
     help="MPI implementation name for each header (openmpi, mpich, mvapich, craympich)",
 )
+parser.add_argument(
+    "--mpi-layered",
+    action="store_true",
+    default=False,
+    help=(
+        "Emit MPI as one unguarded core interface (functions with an identical "
+        "signature in every header given) plus one compat interface per MPI "
+        "implementation and major.minor for what the core lacks. A compat "
+        "interface is compiled only for its own implementation/version; any "
+        "other MPI gets the core."
+    ),
+)
 cli_args = parser.parse_args()
 
 cix.Config.set_library_file(cli_args.libclang_path)
@@ -275,6 +287,13 @@ void print_stacktrace(int sig) {
 int main(int argc, char* argv[]) {
   signal(SIGSEGV, print_stacktrace);
   signal(SIGABRT, print_stacktrace);
+#ifndef ${enable_macro_name}
+  // A compat interface exists only for its own MPI implementation, major and
+  // minor. On any other MPI this test has nothing to check, so say so: 77 is
+  // reported as skipped by ctest (see test/CMakeLists.txt) instead of a pass.
+  printf("SKIPPED: ${namespace} does not apply to this MPI implementation and version\\n");
+  return 77;
+#endif
     #ifdef ${enable_macro_name}
 
     ${test_functions}
@@ -560,6 +579,30 @@ def process_type(cursor):
     return None
 
 
+def mpi_family(version_string, implementation):
+    """(impl, major, minor): the unit one compat interface covers."""
+    parts = (version_string.split(".") + ["0", "0"])[:2]
+    return (implementation.lower(), int(parts[0]), int(parts[1]))
+
+
+def mpi_family_slug(family):
+    return "{}_{}_{}".format(*family)
+
+
+def mpi_family_condition(family):
+    """Enable a compat interface only for its own implementation, major and minor.
+
+    BRAHMA_MPI_VERSION is major*100000 + minor*100 + patch, so major and minor
+    are compared separately and the patch release is deliberately ignored.
+    """
+    impl, major, minor = family
+    macro = get_mpi_impl_macro(impl)
+    return (
+        f"defined({macro}) && (BRAHMA_MPI_VERSION / 100000) == {major} && "
+        f"((BRAHMA_MPI_VERSION / 100) % 1000) == {minor}"
+    )
+
+
 def wrap_with_version_condition(version_condition, function, impl_condition=None):
     """
     Wrap function with version and/or implementation condition.
@@ -615,6 +658,23 @@ def normalize_function_signature(return_type, function_name, args):
     Create a normalized signature that ignores parameter names but keeps types.
     This allows us to identify functionally identical signatures.
     """
+    if cli_args.mpi_layered:
+        # Layered MPI compares signatures across implementations, so two
+        # spellings of one type must compare equal: drop the parameter name,
+        # decay "T x[]" to "T *", and ignore spacing around "*".
+        import re
+        keys = []
+        for arg in args:
+            a = arg.strip()
+            if a != "void":
+                a = re.sub(r"\b[A-Za-z_]\w*\s*(\[[^\]]*\])*\s*$", lambda m: "[]" if "[" in m.group(0) else "", a) \
+                    if re.search(r"[\w\]]\s*$", a) and len(a.split()) > 1 or "[" in a else a
+                a = re.sub(r"\[[^\]]*\]", "*", a)
+                a = re.sub(r"\s*\*\s*", "*", a)
+                a = re.sub(r"\s+", " ", a).strip()
+            keys.append(a)
+        return f"{return_type} {function_name}({', '.join(keys)})"
+
     normalized_args = []
     for arg in args:
         if arg == "void":
@@ -941,6 +1001,7 @@ for (
     underlying_types = {}
     virtual_functions = {}
     wrapper_functions = {}
+    function_bucket = {}
 
     type_defs = {}
 
@@ -1383,8 +1444,73 @@ for (
         # Show version optimization examples
         test_version_optimization()
 
+    # ---- layered MPI: core (identical everywhere) + per-family compat -------
+    bucket_namespace = {"core": namespace}
+    bucket_file = {"core": brahma_file_name}
+    bucket_family = {}
+    layered = bool(cli_args.mpi_layered and brahma_name in ("mpi", "mpiio"))
+    if layered:
+        import glob
+        for stale in glob.glob(f"{interface_dir}/{brahma_file_name}_*compat.h") + glob.glob(
+            f"{implementation_dir}/{brahma_file_name}_*_compat.cpp"
+        ) + glob.glob(f"{test_dir}/test_{brahma_file_name}_*_compat.cpp"):
+            os.remove(stale)
+        universe = {
+            (lib_implementations[i].lower(), lib_versions[i])
+            for i in range(len(lib_header_file_paths))
+        }
+        family_universe = {}
+        # sorted so the order of the generated files does not change per run
+        for impl, ver in sorted(universe, key=lambda p: (p[0], version_number(p[1]))):
+            family_universe.setdefault(mpi_family(ver, impl), set()).add((impl, ver))
+        by_sig = {}
+        for variants in signature_groups.values():
+            for v in variants:
+                key = (v["function_name"], v["normalized_sig"])
+                m = by_sig.setdefault(key, dict(v, versions=[], implementations=[]))
+                m["versions"] += v["versions"]
+                m["implementations"] += v.get("implementations", [])
+        signature_groups = {}
+        dropped = []
+        for (fname, nsig), v in by_sig.items():
+            present = {
+                (impl.lower(), ver)
+                for ver, impl in zip(v["versions"], v["implementations"])
+            }
+            if present >= universe:
+                targets = ["core"]
+            else:
+                targets = [
+                    mpi_family_slug(f)
+                    for f, members in family_universe.items()
+                    if present >= members
+                ]
+                if not targets:
+                    dropped.append(fname)
+            for t in targets:
+                if t != "core" and t not in bucket_namespace:
+                    fam = next(f for f in family_universe if mpi_family_slug(f) == t)
+                    bucket_family[t] = fam
+                    bucket_namespace[t] = f"{namespace}_{t.upper()}_COMPAT"
+                    bucket_file[t] = f"{brahma_file_name}_{t}_compat"
+                nv = dict(v, bucket=t, hash=f"{v['hash']}|{t}")
+                signature_groups[f"{nsig}@@{t}"] = [nv]
+        print(
+            f"[{brahma_name}] layered: {sum(1 for k in signature_groups if k.endswith('@@core'))} core, "
+            + ", ".join(
+                f"{sum(1 for k in signature_groups if k.endswith('@@' + t))} {t}"
+                for t in bucket_family
+            )
+        )
+        if dropped:
+            print(
+                f"[{brahma_name}] warning: {len(dropped)} functions are in only some "
+                f"patch releases of a family and were left out: {sorted(dropped)[:10]}..."
+            )
+
     # Generate merged functions
     api_counter = 1
+    base_namespace = namespace
     for normalized_sig, func_variants in signature_groups.items():
         # Collect all version-implementation pairs from all variants of this function
         version_impl_pairs = []
@@ -1408,6 +1534,9 @@ for (
         # Use the first variant as the canonical one (they should all be functionally identical)
         canonical_variant = func_variants[0]
         function_hash = canonical_variant['hash']  # Keep original hash for mapping
+        bucket = canonical_variant.get('bucket', 'core')
+        function_bucket[function_hash] = bucket
+        namespace = bucket_namespace.get(bucket, base_namespace)
         
         version_condition = None
         impl_condition = None
@@ -1471,6 +1600,9 @@ for (
         if is_mpi_interface:
             final_version_condition = None  # Version is coupled with implementation
             final_impl_condition = impl_condition  # Contains both version and implementation
+            if layered:
+                # the file (compat) or nothing (core) carries the guard
+                final_impl_condition = None
         else:
             final_version_condition = version_condition
             final_impl_condition = impl_condition
@@ -1594,51 +1726,96 @@ for (
 
         api_counter += 1
 
-    with open(interface_path, "w+") as interface_file:
-        interface_file.write(
-            TEMPLATE_INTERFACE.substitute(
-                {
-                    "enable_macro_name": enable_macro_name,
-                    "file_name": brahma_file_name,
-                    "lib_header_file_name": lib_header_file_name,
-                    "macro_bindings": "".join(macro_bindings.values()),
-                    "macro_typedefs": "".join(macro_typedefs.values()),
-                    "macro_vars": "".join(macro_vars.values()),
-                    "namespace": namespace,
-                    "timestamp": timestamp,
-                    "virtual_functions": "".join(virtual_functions.values()),
-                }
+    namespace = base_namespace
+    written = []
+    # Record the exact MPI releases the interfaces were generated from. A
+    # compat interface covers a whole family (every patch release), so which
+    # releases were actually read is otherwise unrecoverable from the output.
+    provenance = ""
+    if layered:
+        provenance = (
+            "///\n/// Generated from these MPI headers (implementation version):\n"
+            + "".join(
+                f"///   {impl} {ver}\n"
+                for impl, ver in sorted(universe, key=lambda p: (p[0], version_number(p[1])))
             )
         )
-
-    with open(implementation_path, "w+") as implementation_file:
-        implementation_file.write(
-            TEMPLATE_IMPLEMENTATION.substitute(
-                {
-                    "enable_macro_name": enable_macro_name,
-                    "file_name": brahma_file_name,
-                    "namespace": namespace,
-                    "timestamp": timestamp,
-                    "wrapper_functions": "".join(wrapper_functions.values()),
-                }
-            )
+    if layered:
+        # One header that pulls in every compat interface of this kind. Each is
+        # guarded, so including all of them costs nothing for other MPIs.
+        agg = "".join(
+            f"#include <brahma/interface/{bucket_file[b]}.h>\n"
+            for b in bucket_namespace if b != "core"
         )
-
-    if cli_args.with_tests:
-        with open(test_path, "w+") as test_file:
-            test_file.write(
-                TEMPLATE_TEST.substitute(
-                    {
-                        "enable_macro_name": enable_macro_name,
-                        "file_name": brahma_file_name,
-                        "function_overrides": "".join(test_function_overrides.values()),
-                        "lib_header_file_name": lib_header_file_name,
-                        "namespace": namespace,
-                        "test_functions": "".join(test_functions.values()),
-                        "timestamp": timestamp,
-                    }
+        with open(f"{interface_dir}/{brahma_file_name}_compat.h", "w+") as f:
+            f.write(
+                "///\n/// This file is generated by tools/generate_interfaces.py\n"
+                f"{provenance}///\n\n"
+                f"#ifndef BRAHMA_{namespace}_COMPAT_H\n#define BRAHMA_{namespace}_COMPAT_H\n"
+                f"#include <brahma/interface/{brahma_file_name}.h>\n{agg}"
+                "#include <vector>\n\nnamespace brahma {\n"
+                f"/// Every compat interface that was generated for {brahma_file_name}.\n"
+                f"inline std::vector<const char*> {brahma_file_name}_compat_families() {{\n"
+                "  return {" + ", ".join(f'"{b}"' for b in bucket_namespace if b != "core") + "};\n}\n"
+                f"/// The ones compiled in for this build's MPI implementation, major and minor.\n"
+                f"inline std::vector<const char*> {brahma_file_name}_compat_enabled() {{\n"
+                "  std::vector<const char*> enabled;\n"
+                + "".join(
+                    f'#ifdef BRAHMA_{brahma_name.upper()}_{b.upper()}_COMPAT\n  enabled.push_back("{b}");\n#endif\n'
+                    for b in bucket_namespace if b != "core"
                 )
+                + "  return enabled;\n}\n}  // namespace brahma\n"
+                f"#endif  // BRAHMA_{namespace}_COMPAT_H\n"
             )
+    for bucket in bucket_namespace:
+        in_bucket = lambda d: "".join(v for k, v in d.items() if function_bucket.get(k, "core") == bucket)
+        b_ns = bucket_namespace[bucket]
+        b_file = bucket_file[bucket]
+        b_enable = enable_macro_name
+        prefix = provenance
+        if bucket != "core":
+            b_enable = f"BRAHMA_{brahma_name.upper()}_{bucket.upper()}_COMPAT"
+            prefix = provenance + (
+                "#include <brahma/brahma_config.hpp>\n"
+                f"#if defined({enable_macro_name}) && {mpi_family_condition(bucket_family[bucket])}\n"
+                f"#define {b_enable} 1\n#endif\n"
+            )
+        b_interface = f"{interface_dir}/{b_file}.h"
+        b_impl = f"{implementation_dir}/{b_file}.cpp"
+        b_test = f"{test_dir}/test_{b_file}.cpp"
+        written.append((b_interface, b_impl, b_test))
+
+        with open(b_interface, "w+") as f:
+            f.write(prefix + TEMPLATE_INTERFACE.substitute({
+                "enable_macro_name": b_enable,
+                "file_name": b_file,
+                "lib_header_file_name": lib_header_file_name,
+                "macro_bindings": in_bucket(macro_bindings),
+                "macro_typedefs": in_bucket(macro_typedefs),
+                "macro_vars": in_bucket(macro_vars),
+                "namespace": b_ns,
+                "timestamp": timestamp,
+                "virtual_functions": in_bucket(virtual_functions),
+            }))
+        with open(b_impl, "w+") as f:
+            f.write(prefix + TEMPLATE_IMPLEMENTATION.substitute({
+                "enable_macro_name": b_enable,
+                "file_name": b_file,
+                "namespace": b_ns,
+                "timestamp": timestamp,
+                "wrapper_functions": in_bucket(wrapper_functions),
+            }))
+        if cli_args.with_tests:
+            with open(b_test, "w+") as f:
+                f.write(prefix + TEMPLATE_TEST.substitute({
+                    "enable_macro_name": b_enable,
+                    "file_name": b_file,
+                    "function_overrides": in_bucket(test_function_overrides),
+                    "lib_header_file_name": lib_header_file_name,
+                    "namespace": b_ns,
+                    "test_functions": in_bucket(test_functions),
+                    "timestamp": timestamp,
+                }))
 
     print(f"[{brahma_name}] Generated {len(signature_groups)} unique function signatures")
     print(f"[{brahma_name}] Found {total_functions_found} total functions, skipped {duplicate_functions_skipped} duplicates")
@@ -1652,9 +1829,10 @@ for (
         print(f"[{brahma_name}] clang-format not found, skipping formatting")
     else:
         print(f"[{brahma_name}] Formatting files using clang-format...")
-        os.system(f"clang-format -i {interface_path}")
-        os.system(f"clang-format -i {implementation_path}")
-        if cli_args.with_tests:
-            os.system(f"clang-format -i {test_path}")
+        for b_interface, b_impl, b_test in written:
+            os.system(f"clang-format -i {b_interface}")
+            os.system(f"clang-format -i {b_impl}")
+            if cli_args.with_tests:
+                os.system(f"clang-format -i {b_test}")
 
     print(f"[{brahma_name}] Done!")
