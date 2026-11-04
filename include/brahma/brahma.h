@@ -10,6 +10,8 @@
 #ifdef BRAHMA_ENABLE_MPI
 #include <brahma/interface/mpi.h>
 #include <brahma/interface/mpiio.h>
+#include <brahma/interface/mpi_compat.h>
+#include <brahma/interface/mpiio_compat.h>
 #endif
 #ifdef BRAHMA_ENABLE_HDF5
 #include <brahma/interface/hdf5.h>

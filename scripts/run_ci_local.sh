@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Reproduce the GitHub Actions CI build+test locally, using the exact same
-# container image (hdevarajan92/brahma-ci:latest) as .github/workflows/ci.yml,
+# container image (hdevarajan92/brahma-ci:mpi-wide) as .github/workflows/ci.yml,
 # via either podman or docker -- whichever is available.
 #
 # Why this exists: CI failures are sometimes specific to the container's
@@ -48,13 +48,13 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
-IMAGE="hdevarajan92/brahma-ci:latest"
+IMAGE="hdevarajan92/brahma-ci:mpi-wide"
 CONTAINER_NAME="brahma-ci-local-$$"
 CONTAINER_SRC_DIR="/home/spack/brahma"
 
 # Matrix combinations, matching .github/workflows/ci.yml exactly.
-MATRIX_HDF5=("hdf5@1.8.23" "hdf5@1.10.11" "hdf5@1.12.3" "hdf5@1.14.5")
-MATRIX_MPI=("mpich@3.4.3" "openmpi@4.1.6" "mpich@4.2.3" "openmpi@5.0.6")
+MATRIX_HDF5=("hdf5@1.8.23^mpich@3.4.3" "hdf5@1.10.11^openmpi@4.1.6" "hdf5@1.10.11^openmpi@4.1.8" "hdf5@1.12.3^mpich@4.2.3" "hdf5@1.14.5^mpich@4.3.0" "hdf5@1.14.5^openmpi@5.0.3" "hdf5@1.14.5^openmpi@5.0.6")
+MATRIX_MPI=("mpich@3.4.3" "openmpi@4.1.6" "openmpi@4.1.8" "mpich@4.2.3" "mpich@4.3.0" "openmpi@5.0.3" "openmpi@5.0.6")
 
 ENGINE="auto"
 HDF5_SPEC=""

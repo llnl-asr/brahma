@@ -36,7 +36,7 @@ PODMAN_RUN_OPTS=(
 # We keep ONE combo here so the pipeline fits in the shared allocation's
 # walltime; the other three can be enabled by looping over them below (or by
 # adding a GitLab `parallel: matrix:` with its own allocation).
-HDF5=${HDF5:-hdf5@1.14.5}
+HDF5=${HDF5:-hdf5@1.14.5^openmpi@5.0.6}
 MPI=${MPI:-openmpi@5.0.6}
 
 $PODMAN run "${PODMAN_RUN_OPTS[@]}" \

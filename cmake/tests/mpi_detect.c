@@ -12,6 +12,11 @@
 #include <mpi.h>
 #include <stdio.h>
 
+/* Cray MPICH defines CRAY_MPICH_VERSION as a bare token (9.0.1.498), not a
+ * string, so it has to be stringified before it can be printed with %s. */
+#define BRAHMA_STR2(x) #x
+#define BRAHMA_STR(x) BRAHMA_STR2(x)
+
 int main(void) {
 #if defined(OMPI_MAJOR_VERSION)
     /* Open MPI: OMPI_MAJOR_VERSION / OMPI_MINOR_VERSION / OMPI_RELEASE_VERSION */
@@ -22,7 +27,7 @@ int main(void) {
     printf("IMPL=INTELMPI\nVERSION=%s\n", I_MPI_VERSION);
 #elif defined(CRAY_MPICH_VERSION)
     /* Cray MPICH — check before generic MPICH */
-    printf("IMPL=CRAYMPICH\nVERSION=%s\n", CRAY_MPICH_VERSION);
+    printf("IMPL=CRAYMPICH\nVERSION=%s\n", BRAHMA_STR(CRAY_MPICH_VERSION));
 #elif defined(MVAPICH2_VERSION)
     /* MVAPICH2 (MPICH-based) — check before generic MPICH */
     printf("IMPL=MVAPICH\nVERSION=%s\n", MVAPICH2_VERSION);

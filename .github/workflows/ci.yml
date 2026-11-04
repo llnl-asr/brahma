@@ -13,60 +13,75 @@ env:
   LOCAL: local
 
 jobs:
-  build:
+  # Each job loads one thing from the image: an MPI, or an HDF5. POSIX and STDIO
+  # need neither and are tested by the glibc job.
+  mpi:
     runs-on: ubuntu-24.04
+    name: ${{ matrix.mpi }}
     container:
-      image: hdevarajan92/brahma-ci:latest
+      # mpi-wide holds every MPI and HDF5 below (infrastructure/docker/Dockerfile.ci).
+      image: hdevarajan92/brahma-ci:mpi-wide
     strategy:
       fail-fast: false
-      
       matrix:
-        include:
-          - hdf5: "hdf5@1.8.23"
-            mpi: "mpich@3.4.3"
-          - hdf5: "hdf5@1.10.11"
-            mpi: "openmpi@4.1.6"
-          - hdf5: "hdf5@1.12.3"
-            mpi: "mpich@4.2.3"
-          - hdf5: "hdf5@1.14.5"
-            mpi: "openmpi@5.0.6"
+        # One entry per family that has a compat interface, a second patch release in
+        # a family (4.1.6 and 4.1.8, 5.0.3 and 5.0.6), and mpich 4.3.0, which has no
+        # compat interface and must still build and pass on the common interface.
+        # Cray MPICH is proprietary and cannot be installed in the image, and the spack
+        # build of MVAPICH2 2.3.7-1 fails, so neither is tested here.
+        mpi: [mpich@3.4.3, mpich@4.2.3, mpich@4.3.0, openmpi@4.1.6, openmpi@4.1.8, openmpi@5.0.3, openmpi@5.0.6]
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 2
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
       - name: Build
         shell: bash
         run: |
-          source .github/workflows/scripts/load_env.sh ${{ matrix.hdf5 }} ${{ matrix.mpi }}
-          mkdir -p build
-          CMAKE_ARGS=(
-            "-DCMAKE_BUILD_TYPE=Debug"
-            "-DBRAHMA_ENABLE_TESTING=ON"
-            "-DBRAHMA_GENERATE_INTERFACES=OFF"
-            "-DBRAHMA_BUILD_WITH_HDF5=ON"
-            "-DBRAHMA_BUILD_WITH_MPI=ON"
-            "-DHDF5_ROOT=$HDF5_DIR"
-            "-DMPI_ROOT=$MPI_DIR"
-          )
-          cmake -Bbuild "${CMAKE_ARGS[@]}" -DBRAHMA_BUILD_DEPENDENCIES=ON
+          source .github/workflows/scripts/load_env.sh ${{ matrix.mpi }}
+          cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -DBRAHMA_ENABLE_TESTING=ON -DBRAHMA_GENERATE_INTERFACES=OFF \
+            -DBRAHMA_BUILD_DEPENDENCIES=ON -DBRAHMA_BUILD_WITH_MPI=ON -DMPI_ROOT=$PACKAGE_DIR
           make -C build -j
       - name: Test
         shell: bash
         run: |
-          source .github/workflows/scripts/load_env.sh ${{ matrix.hdf5 }} ${{ matrix.mpi }}
+          source .github/workflows/scripts/load_env.sh ${{ matrix.mpi }}
           ctest --test-dir build -VV
 
+  hdf5:
+    runs-on: ubuntu-24.04
+    name: ${{ matrix.hdf5 }}
+    container:
+      image: hdevarajan92/brahma-ci:mpi-wide
+    strategy:
+      fail-fast: false
+      matrix:
+        # The image builds each HDF5 with MPI, and some versions more than once, so a
+        # spec names the build by its MPI. Only the HDF5 interface is built.
+        hdf5: ["hdf5@1.8.23^mpich@3.4.3", "hdf5@1.10.11^openmpi@4.1.6", "hdf5@1.12.3^mpich@4.2.3", "hdf5@1.14.5^openmpi@5.0.6"]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 2
+      - name: Build
+        shell: bash
+        run: |
+          source .github/workflows/scripts/load_env.sh "${{ matrix.hdf5 }}"
+          cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -DBRAHMA_ENABLE_TESTING=ON -DBRAHMA_GENERATE_INTERFACES=OFF \
+            -DBRAHMA_BUILD_DEPENDENCIES=ON -DBRAHMA_BUILD_WITH_HDF5=ON -DHDF5_ROOT=$PACKAGE_DIR
+          make -C build -j
+      - name: Test
+        shell: bash
+        run: |
+          source .github/workflows/scripts/load_env.sh "${{ matrix.hdf5 }}"
+          ctest --test-dir build -VV
 
-  glibc:
+  posix-stdio:
+    # POSIX and STDIO alone, no MPI or HDF5, on the oldest and a newer glibc.
     # manylinux_2_28 is the baseline used by the dftracer cibuildwheel wheels.
     runs-on: ubuntu-24.04
-    name: glibc ${{ matrix.glibc }}
+    name: posix and stdio, glibc ${{ matrix.glibc }}
     container:
       image: quay.io/pypa/manylinux_${{ matrix.tag }}_x86_64
     strategy:
