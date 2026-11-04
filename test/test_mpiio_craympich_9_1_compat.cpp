@@ -30,6 +30,16 @@
 #ifdef BRAHMA_MPIIO_CRAYMPICH_9_1_COMPAT
 #include <mpi.h>
 
+// Defined when this MPI's mpi.h declares the functions MPI-3.0 removed
+// (MPI_Address, MPI_Type_struct, ...). OpenMPI declares them only when built
+// with MPI-1 compatibility; every other implementation brahma supports does.
+// Interfaces for those functions are compiled only when this is defined.
+#if !defined(BRAHMA_MPI_HAS_MPI1_REMOVED) &&                       \
+    !(defined(OPEN_MPI) && defined(OMPI_OMIT_MPI1_COMPAT_DECLS) && \
+      OMPI_OMIT_MPI1_COMPAT_DECLS)
+#define BRAHMA_MPI_HAS_MPI1_REMOVED 1
+#endif
+
 namespace brahma {
 class MPIIO_CRAYMPICH_9_1_COMPATTest : public MPIIO_CRAYMPICH_9_1_COMPAT {
  private:

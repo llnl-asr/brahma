@@ -30,6 +30,16 @@
 #ifdef BRAHMA_MPI_MPICH_4_2_COMPAT
 #include <mpi.h>
 
+// Defined when this MPI's mpi.h declares the functions MPI-3.0 removed
+// (MPI_Address, MPI_Type_struct, ...). OpenMPI declares them only when built
+// with MPI-1 compatibility; every other implementation brahma supports does.
+// Interfaces for those functions are compiled only when this is defined.
+#if !defined(BRAHMA_MPI_HAS_MPI1_REMOVED) &&                       \
+    !(defined(OPEN_MPI) && defined(OMPI_OMIT_MPI1_COMPAT_DECLS) && \
+      OMPI_OMIT_MPI1_COMPAT_DECLS)
+#define BRAHMA_MPI_HAS_MPI1_REMOVED 1
+#endif
+
 namespace brahma {
 class MPI_MPICH_4_2_COMPATTest : public MPI_MPICH_4_2_COMPAT {
  private:
@@ -50,6 +60,7 @@ class MPI_MPICH_4_2_COMPATTest : public MPI_MPICH_4_2_COMPAT {
 
   size_t api_count;
 
+#ifdef BRAHMA_MPI_HAS_MPI1_REMOVED
   int MPI_Errhandler_create(MPI_Comm_errhandler_function* comm_errhandler_fn,
                             MPI_Errhandler* errhandler) override {
     printf("297 Captured MPI_Errhandler_create call\n");
@@ -57,6 +68,7 @@ class MPI_MPICH_4_2_COMPATTest : public MPI_MPICH_4_2_COMPAT {
     api_count++;
     return 0;
   }
+#endif  // BRAHMA_MPI_HAS_MPI1_REMOVED
 
   int MPI_Allgather_init(const void* sendbuf, int sendcount,
                          MPI_Datatype sendtype, void* recvbuf, int recvcount,
@@ -1857,8 +1869,10 @@ int main(int argc, char* argv[]) {
 #endif
 #ifdef BRAHMA_MPI_MPICH_4_2_COMPAT
 
+#ifdef BRAHMA_MPI_HAS_MPI1_REMOVED
   MPI_Errhandler_create((MPI_Comm_errhandler_function*)NULL,
                         (MPI_Errhandler*)NULL);
+#endif  // BRAHMA_MPI_HAS_MPI1_REMOVED
 
   MPI_Allgather_init((const void*)NULL, (int)0, (MPI_Datatype)0, (void*)NULL,
                      (int)0, (MPI_Datatype)0, (MPI_Comm)0, (MPI_Info)0,

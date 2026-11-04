@@ -154,6 +154,7 @@ TEMPLATE_INTERFACE = Template("""
 // (Doxygen-stub) signature again.
 #define H5_DOXYGEN 1
 #include <${lib_header_file_name}>
+${lib_preamble}
 
 namespace brahma {
     class ${namespace} : public Interface {
@@ -226,6 +227,7 @@ TEMPLATE_TEST = Template("""
 #include <stdio.h>
 #ifdef ${enable_macro_name}
 #include <${lib_header_file_name}>
+${lib_preamble}
 
 namespace brahma {
     class ${namespace}Test : public ${namespace} {
@@ -601,6 +603,41 @@ def mpi_family_condition(family):
         f"defined({macro}) && (BRAHMA_MPI_VERSION / 100000) == {major} && "
         f"((BRAHMA_MPI_VERSION / 100) % 1000) == {minor}"
     )
+
+
+# Functions the MPI-3.0 standard removed. An MPI may still declare them, but
+# OpenMPI 5 only does so when built with --enable-mpi1-compatibility: otherwise
+# its mpi.h turns each name into a static_assert macro and any declaration of it
+# fails to compile. They are in every header the interfaces are generated from,
+# so they land in the common interface; guard them on the macro the interface
+# header derives from the build's mpi.h (see MPI1_REMOVED_PREAMBLE).
+MPI1_REMOVED_FUNCTIONS = frozenset({
+    "MPI_Address", "MPI_Errhandler_create", "MPI_Errhandler_get",
+    "MPI_Errhandler_set", "MPI_Type_extent", "MPI_Type_hindexed",
+    "MPI_Type_hvector", "MPI_Type_lb", "MPI_Type_struct", "MPI_Type_ub",
+})
+MPI1_REMOVED_MACRO = "BRAHMA_MPI_HAS_MPI1_REMOVED"
+MPI1_REMOVED_PREAMBLE = f"""
+// Defined when this MPI's mpi.h declares the functions MPI-3.0 removed
+// (MPI_Address, MPI_Type_struct, ...). OpenMPI declares them only when built
+// with MPI-1 compatibility; every other implementation brahma supports does.
+// Interfaces for those functions are compiled only when this is defined.
+#if !defined({MPI1_REMOVED_MACRO}) && \\
+    !(defined(OPEN_MPI) && defined(OMPI_OMIT_MPI1_COMPAT_DECLS) && \\
+      OMPI_OMIT_MPI1_COMPAT_DECLS)
+#define {MPI1_REMOVED_MACRO} 1
+#endif
+"""
+
+
+def and_conditions(a, b):
+    """Combine two impl_condition values for wrap_with_version_condition."""
+    if not a:
+        return b
+    if not b:
+        return a
+    fmt = lambda c: c if "defined(" in c else f"defined({c})"
+    return f"(({fmt(a)}) && ({fmt(b)}))"
 
 
 def wrap_with_version_condition(version_condition, function, impl_condition=None):
@@ -1607,6 +1644,9 @@ for (
             final_version_condition = version_condition
             final_impl_condition = impl_condition
 
+        if is_mpi_interface and canonical_variant['function_name'] in MPI1_REMOVED_FUNCTIONS:
+            final_impl_condition = and_conditions(final_impl_condition, MPI1_REMOVED_MACRO)
+
         macro_bindings[function_hash] = wrap_with_version_condition(
             final_version_condition,
             TEMPLATE_MACRO_BINDING.substitute(
@@ -1790,6 +1830,7 @@ for (
                 "enable_macro_name": b_enable,
                 "file_name": b_file,
                 "lib_header_file_name": lib_header_file_name,
+                "lib_preamble": MPI1_REMOVED_PREAMBLE if brahma_name in ("mpi", "mpiio") else "",
                 "macro_bindings": in_bucket(macro_bindings),
                 "macro_typedefs": in_bucket(macro_typedefs),
                 "macro_vars": in_bucket(macro_vars),
@@ -1812,6 +1853,7 @@ for (
                     "file_name": b_file,
                     "function_overrides": in_bucket(test_function_overrides),
                     "lib_header_file_name": lib_header_file_name,
+                    "lib_preamble": MPI1_REMOVED_PREAMBLE if brahma_name in ("mpi", "mpiio") else "",
                     "namespace": b_ns,
                     "test_functions": in_bucket(test_functions),
                     "timestamp": timestamp,

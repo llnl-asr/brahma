@@ -2048,6 +2048,7 @@ int MPI::MPI_Keyval_free(int* keyval) {
   return result;
 }
 
+#ifdef BRAHMA_MPI_HAS_MPI1_REMOVED
 int MPI::MPI_Address(void* location, MPI_Aint* address) {
   BRAHMA_UNWRAPPED_FUNC(MPI_Address, int, (location, address));
   return result;
@@ -2102,6 +2103,7 @@ int MPI::MPI_Type_ub(MPI_Datatype mtype, MPI_Aint* ub) {
   BRAHMA_UNWRAPPED_FUNC(MPI_Type_ub, int, (mtype, ub));
   return result;
 }
+#endif  // BRAHMA_MPI_HAS_MPI1_REMOVED
 
 }  // namespace brahma
 
