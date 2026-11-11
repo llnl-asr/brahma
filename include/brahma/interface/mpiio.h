@@ -54,7 +54,12 @@ class MPIIO : public Interface {
 
   virtual ~MPIIO() {};
 
-  static std::shared_ptr<MPIIO> get_instance();
+  // Inline, so an intercepted call does not cross into libbrahma.
+  static const std::shared_ptr<MPIIO>& get_instance() {
+    if (__builtin_expect(my_instance == nullptr, 0)) return create_instance();
+    return my_instance;
+  }
+  static const std::shared_ptr<MPIIO>& create_instance();
 
   static int set_instance(std::shared_ptr<MPIIO> instance_i);
 

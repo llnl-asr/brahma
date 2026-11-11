@@ -57,7 +57,7 @@
   typedef macroret(*macroname##_fptr) macroargs;                             \
   macroret __attribute__((weak)) macroname macroargs;                        \
   inline macroret macroname##_wrapper macroargs {                            \
-    auto instance = macroclass_name::get_instance();                         \
+    const auto &instance = macroclass_name::get_instance();                  \
     if (instance == nullptr) {                                               \
       macroname##_fptr fn = &::macroname;                                    \
       return fn macro2args_val;                                              \
@@ -90,7 +90,7 @@
       __attribute__((weak));                                        \
   }                                                                 \
   inline macroret macroname##_wrapper macroargs {                   \
-    auto instance = macroclass_name::get_instance();                \
+    const auto &instance = macroclass_name::get_instance();         \
     if (instance == nullptr) {                                      \
       macroname##_fptr fn = &macroname##_symbol;                    \
       return fn macro2args_val;                                     \
@@ -105,7 +105,7 @@
   macroret __attribute__((weak)) macroname macroargs;                          \
   }                                                                            \
   inline macroret macroname##_wrapper macroargs {                              \
-    auto instance = macroclass_name::get_instance();                           \
+    const auto &instance = macroclass_name::get_instance();                    \
     if (instance == nullptr) {                                                 \
       macroname##_fptr fn = &::macroname;                                      \
       return fn macro2args_val;                                                \
@@ -118,7 +118,7 @@
   typedef macroret(*macroname##_fptr) macroargs;                     \
   macroret macroname macroargs;                                      \
   inline macroret macroname##_wrapper macroargs {                    \
-    auto instance = macroclass_name::get_instance();                 \
+    const auto &instance = macroclass_name::get_instance();          \
     if (instance == nullptr) {                                       \
       macroname##_fptr fn = &::macroname;                            \
       return fn macro2args_val;                                      \
@@ -135,7 +135,7 @@
     va_start(_args, start);                                         \
     int mode = va_arg(_args, int);                                  \
     va_end(_args);                                                  \
-    auto instance = class_name::get_instance();                     \
+    const auto &instance = class_name::get_instance();              \
     if (instance == nullptr) {                                      \
       name##_fptr fn = &::name;                                     \
       return fn args_val;                                           \
@@ -152,7 +152,7 @@
     va_start(_args, start);                                          \
     char *val = va_arg(_args, char *);                               \
     va_end(_args);                                                   \
-    auto instance = class_name::get_instance();                      \
+    const auto &instance = class_name::get_instance();               \
     if (instance == nullptr) {                                       \
       return ::name args_val;                                        \
     }                                                                \
@@ -172,7 +172,7 @@
   inline ret name##_wrapper args {                                         \
     va_list _args;                                                         \
     va_start(_args, fmtarg);                                               \
-    auto instance = class_name::get_instance();                            \
+    const auto &instance = class_name::get_instance();                     \
     ret _r;                                                                \
     if (instance == nullptr) {                                             \
       _r = vname vargs;                                                    \
@@ -202,7 +202,7 @@
   inline ret name##_wrapper args {                                           \
     va_list _args;                                                           \
     va_start(_args, fmtarg);                                                 \
-    auto instance = class_name::get_instance();                              \
+    const auto &instance = class_name::get_instance();                       \
     ret _r;                                                                  \
     if (instance == nullptr) {                                               \
       _r = vname vargs;                                                      \
