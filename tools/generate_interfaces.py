@@ -94,7 +94,7 @@ TEMPLATE_IMPLEMENTATION = Template("""
 namespace brahma {
     std::shared_ptr<${namespace}> ${namespace}::my_instance = nullptr;
                                    
-    std::shared_ptr<${namespace}> ${namespace}::get_instance() {
+    const std::shared_ptr<${namespace}>& ${namespace}::create_instance() {
         if (my_instance == nullptr) {
             BRAHMA_LOG_INFO("${namespace} class not intercepted but used", "");
             my_instance = std::make_shared<${namespace}>();
@@ -117,10 +117,12 @@ namespace brahma {
     num_bindings = unbindings.size();
     if (num_bindings > 0) {
         gotcha_binding_t *raw_bindings = unbindings.data();
-        char unbind_name[128];
+        // gotcha keeps this pointer as the tool name, so it must outlive the call.
+        static char unbind_name[128];
         sprintf(unbind_name, "%s_${file_name}_unbind", tool_name);
-        gotcha_wrap(raw_bindings, num_bindings, unbind_name);
+        // gotcha places the bindings by the priority the tool has when it wraps.
         gotcha_set_priority(unbind_name, bind_priority+1);
+        gotcha_wrap(raw_bindings, num_bindings, unbind_name);
     }
     return num_bindings;
     }
@@ -166,7 +168,12 @@ namespace brahma {
             
             virtual ~${namespace}() {};
 
-            static std::shared_ptr<${namespace}> get_instance();
+            // Inline, so an intercepted call does not cross into libbrahma.
+            static const std::shared_ptr<${namespace}>& get_instance() {
+              if (__builtin_expect(my_instance == nullptr, 0)) return create_instance();
+              return my_instance;
+            }
+            static const std::shared_ptr<${namespace}>& create_instance();
                              
             static int set_instance(std::shared_ptr<${namespace}> instance_i);
                               

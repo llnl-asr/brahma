@@ -12,7 +12,7 @@
 namespace brahma {
 std::shared_ptr<HDF5> HDF5::my_instance = nullptr;
 
-std::shared_ptr<HDF5> HDF5::get_instance() {
+const std::shared_ptr<HDF5> &HDF5::create_instance() {
   if (my_instance == nullptr) {
     BRAHMA_LOG_INFO("HDF5 class not intercepted but used", "");
     my_instance = std::make_shared<HDF5>();
@@ -35,10 +35,12 @@ size_t HDF5::unbind() {
   num_bindings = unbindings.size();
   if (num_bindings > 0) {
     gotcha_binding_t *raw_bindings = unbindings.data();
-    char unbind_name[128];
+    // gotcha keeps this pointer as the tool name, so it must outlive the call.
+    static char unbind_name[128];
     sprintf(unbind_name, "%s_hdf5_unbind", tool_name);
-    gotcha_wrap(raw_bindings, num_bindings, unbind_name);
+    // gotcha places the bindings by the priority the tool has when it wraps.
     gotcha_set_priority(unbind_name, bind_priority + 1);
+    gotcha_wrap(raw_bindings, num_bindings, unbind_name);
   }
   return num_bindings;
 }

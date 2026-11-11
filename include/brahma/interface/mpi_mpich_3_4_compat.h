@@ -60,7 +60,12 @@ class MPI_MPICH_3_4_COMPAT : public Interface {
 
   virtual ~MPI_MPICH_3_4_COMPAT() {};
 
-  static std::shared_ptr<MPI_MPICH_3_4_COMPAT> get_instance();
+  // Inline, so an intercepted call does not cross into libbrahma.
+  static const std::shared_ptr<MPI_MPICH_3_4_COMPAT>& get_instance() {
+    if (__builtin_expect(my_instance == nullptr, 0)) return create_instance();
+    return my_instance;
+  }
+  static const std::shared_ptr<MPI_MPICH_3_4_COMPAT>& create_instance();
 
   static int set_instance(std::shared_ptr<MPI_MPICH_3_4_COMPAT> instance_i);
 
