@@ -31,7 +31,7 @@ namespace brahma {
 std::shared_ptr<MPIIO_CRAYMPICH_9_0_COMPAT>
     MPIIO_CRAYMPICH_9_0_COMPAT::my_instance = nullptr;
 
-std::shared_ptr<MPIIO_CRAYMPICH_9_0_COMPAT>
+const std::shared_ptr<MPIIO_CRAYMPICH_9_0_COMPAT>&
 MPIIO_CRAYMPICH_9_0_COMPAT::get_instance() {
   if (my_instance == nullptr) {
     BRAHMA_LOG_INFO("MPIIO_CRAYMPICH_9_0_COMPAT class not intercepted but used",

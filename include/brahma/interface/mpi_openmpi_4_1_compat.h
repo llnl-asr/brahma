@@ -60,7 +60,7 @@ class MPI_OPENMPI_4_1_COMPAT : public Interface {
 
   virtual ~MPI_OPENMPI_4_1_COMPAT() {};
 
-  static std::shared_ptr<MPI_OPENMPI_4_1_COMPAT> get_instance();
+  static const std::shared_ptr<MPI_OPENMPI_4_1_COMPAT>& get_instance();
 
   static int set_instance(std::shared_ptr<MPI_OPENMPI_4_1_COMPAT> instance_i);
 

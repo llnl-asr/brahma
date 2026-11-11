@@ -7,7 +7,7 @@ namespace brahma {
 
 std::shared_ptr<POSIX> POSIX::my_instance = nullptr;
 
-std::shared_ptr<POSIX> POSIX::get_instance() {
+const std::shared_ptr<POSIX> &POSIX::get_instance() {
   if (my_instance == nullptr) {
     BRAHMA_LOG_INFO("POSIX class not intercepted but used", "");
     my_instance = std::make_shared<POSIX>();

@@ -54,7 +54,7 @@ class MPI : public Interface {
 
   virtual ~MPI() {};
 
-  static std::shared_ptr<MPI> get_instance();
+  static const std::shared_ptr<MPI>& get_instance();
 
   static int set_instance(std::shared_ptr<MPI> instance_i);
 

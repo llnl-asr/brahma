@@ -60,7 +60,7 @@ class MPI_MVAPICH_2_3_COMPAT : public Interface {
 
   virtual ~MPI_MVAPICH_2_3_COMPAT() {};
 
-  static std::shared_ptr<MPI_MVAPICH_2_3_COMPAT> get_instance();
+  static const std::shared_ptr<MPI_MVAPICH_2_3_COMPAT>& get_instance();
 
   static int set_instance(std::shared_ptr<MPI_MVAPICH_2_3_COMPAT> instance_i);
 

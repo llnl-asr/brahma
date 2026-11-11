@@ -31,7 +31,8 @@ namespace brahma {
 std::shared_ptr<MPI_OPENMPI_4_1_COMPAT> MPI_OPENMPI_4_1_COMPAT::my_instance =
     nullptr;
 
-std::shared_ptr<MPI_OPENMPI_4_1_COMPAT> MPI_OPENMPI_4_1_COMPAT::get_instance() {
+const std::shared_ptr<MPI_OPENMPI_4_1_COMPAT>&
+MPI_OPENMPI_4_1_COMPAT::get_instance() {
   if (my_instance == nullptr) {
     BRAHMA_LOG_INFO("MPI_OPENMPI_4_1_COMPAT class not intercepted but used",
                     "");

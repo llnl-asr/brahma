@@ -60,7 +60,7 @@ class MPIIO_CRAYMPICH_9_0_COMPAT : public Interface {
 
   virtual ~MPIIO_CRAYMPICH_9_0_COMPAT() {};
 
-  static std::shared_ptr<MPIIO_CRAYMPICH_9_0_COMPAT> get_instance();
+  static const std::shared_ptr<MPIIO_CRAYMPICH_9_0_COMPAT>& get_instance();
 
   static int set_instance(
       std::shared_ptr<MPIIO_CRAYMPICH_9_0_COMPAT> instance_i);

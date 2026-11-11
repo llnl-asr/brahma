@@ -94,7 +94,7 @@ TEMPLATE_IMPLEMENTATION = Template("""
 namespace brahma {
     std::shared_ptr<${namespace}> ${namespace}::my_instance = nullptr;
                                    
-    std::shared_ptr<${namespace}> ${namespace}::get_instance() {
+    const std::shared_ptr<${namespace}>& ${namespace}::get_instance() {
         if (my_instance == nullptr) {
             BRAHMA_LOG_INFO("${namespace} class not intercepted but used", "");
             my_instance = std::make_shared<${namespace}>();
@@ -166,7 +166,7 @@ namespace brahma {
             
             virtual ~${namespace}() {};
 
-            static std::shared_ptr<${namespace}> get_instance();
+            static const std::shared_ptr<${namespace}>& get_instance();
                              
             static int set_instance(std::shared_ptr<${namespace}> instance_i);
                               
