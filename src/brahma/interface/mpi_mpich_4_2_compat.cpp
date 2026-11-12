@@ -31,7 +31,8 @@ namespace brahma {
 std::shared_ptr<MPI_MPICH_4_2_COMPAT> MPI_MPICH_4_2_COMPAT::my_instance =
     nullptr;
 
-std::shared_ptr<MPI_MPICH_4_2_COMPAT> MPI_MPICH_4_2_COMPAT::get_instance() {
+const std::shared_ptr<MPI_MPICH_4_2_COMPAT>&
+MPI_MPICH_4_2_COMPAT::get_instance() {
   if (my_instance == nullptr) {
     BRAHMA_LOG_INFO("MPI_MPICH_4_2_COMPAT class not intercepted but used", "");
     my_instance = std::make_shared<MPI_MPICH_4_2_COMPAT>();

@@ -12,7 +12,7 @@
 namespace brahma {
 std::shared_ptr<HDF5> HDF5::my_instance = nullptr;
 
-std::shared_ptr<HDF5> HDF5::get_instance() {
+const std::shared_ptr<HDF5> &HDF5::get_instance() {
   if (my_instance == nullptr) {
     BRAHMA_LOG_INFO("HDF5 class not intercepted but used", "");
     my_instance = std::make_shared<HDF5>();

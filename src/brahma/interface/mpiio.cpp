@@ -24,7 +24,7 @@
 namespace brahma {
 std::shared_ptr<MPIIO> MPIIO::my_instance = nullptr;
 
-std::shared_ptr<MPIIO> MPIIO::get_instance() {
+const std::shared_ptr<MPIIO>& MPIIO::get_instance() {
   if (my_instance == nullptr) {
     BRAHMA_LOG_INFO("MPIIO class not intercepted but used", "");
     my_instance = std::make_shared<MPIIO>();

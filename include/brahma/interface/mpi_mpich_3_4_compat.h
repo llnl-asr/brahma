@@ -60,7 +60,7 @@ class MPI_MPICH_3_4_COMPAT : public Interface {
 
   virtual ~MPI_MPICH_3_4_COMPAT() {};
 
-  static std::shared_ptr<MPI_MPICH_3_4_COMPAT> get_instance();
+  static const std::shared_ptr<MPI_MPICH_3_4_COMPAT>& get_instance();
 
   static int set_instance(std::shared_ptr<MPI_MPICH_3_4_COMPAT> instance_i);
 

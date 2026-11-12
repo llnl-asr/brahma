@@ -54,7 +54,7 @@ class MPIIO : public Interface {
 
   virtual ~MPIIO() {};
 
-  static std::shared_ptr<MPIIO> get_instance();
+  static const std::shared_ptr<MPIIO>& get_instance();
 
   static int set_instance(std::shared_ptr<MPIIO> instance_i);
 

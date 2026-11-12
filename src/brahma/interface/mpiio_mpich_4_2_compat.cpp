@@ -31,7 +31,8 @@ namespace brahma {
 std::shared_ptr<MPIIO_MPICH_4_2_COMPAT> MPIIO_MPICH_4_2_COMPAT::my_instance =
     nullptr;
 
-std::shared_ptr<MPIIO_MPICH_4_2_COMPAT> MPIIO_MPICH_4_2_COMPAT::get_instance() {
+const std::shared_ptr<MPIIO_MPICH_4_2_COMPAT>&
+MPIIO_MPICH_4_2_COMPAT::get_instance() {
   if (my_instance == nullptr) {
     BRAHMA_LOG_INFO("MPIIO_MPICH_4_2_COMPAT class not intercepted but used",
                     "");

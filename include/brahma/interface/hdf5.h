@@ -164,7 +164,7 @@ class HDF5 : public Interface {
 
   virtual ~HDF5() {};
 
-  static std::shared_ptr<HDF5> get_instance();
+  static const std::shared_ptr<HDF5> &get_instance();
 
   static int set_instance(std::shared_ptr<HDF5> instance_i);
 

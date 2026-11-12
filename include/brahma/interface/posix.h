@@ -38,7 +38,7 @@ class POSIX : public Interface {
   static std::shared_ptr<POSIX> my_instance;
 
  public:
-  static std::shared_ptr<POSIX> get_instance();
+  static const std::shared_ptr<POSIX> &get_instance();
 
   POSIX() : Interface() {}
 
