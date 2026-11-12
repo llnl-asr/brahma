@@ -5546,6 +5546,7 @@ void HDF5::H5FD_mpio_term(void) {
 }
 #endif
 
+#if defined(H5_HAVE_PARALLEL)
 #if ((BRAHMA_HDF5_VERSION >= 100823 && BRAHMA_HDF5_VERSION < 100900) || \
      (BRAHMA_HDF5_VERSION >= 101011 && BRAHMA_HDF5_VERSION < 101100) || \
      (BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
@@ -5555,7 +5556,9 @@ herr_t HDF5::H5Pset_fapl_mpio(hid_t fapl_id, MPI_Comm comm, MPI_Info info) {
   return result;
 }
 #endif
+#endif
 
+#if defined(H5_HAVE_PARALLEL)
 #if ((BRAHMA_HDF5_VERSION >= 100823 && BRAHMA_HDF5_VERSION < 100900) || \
      (BRAHMA_HDF5_VERSION >= 101011 && BRAHMA_HDF5_VERSION < 101100) || \
      (BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
@@ -5564,6 +5567,7 @@ herr_t HDF5::H5Pget_fapl_mpio(hid_t fapl_id, MPI_Comm *comm, MPI_Info *info) {
   BRAHMA_UNWRAPPED_FUNC(H5Pget_fapl_mpio, herr_t, (fapl_id, comm, info));
   return result;
 }
+#endif
 #endif
 
 #if ((BRAHMA_HDF5_VERSION >= 100823 && BRAHMA_HDF5_VERSION < 100900) || \
@@ -7338,6 +7342,7 @@ herr_t HDF5::H5Pset_vol(hid_t plist_id, hid_t new_vol_id,
 }
 #endif
 
+#if defined(H5_HAVE_PARALLEL)
 #if ((BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
      (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500))
 herr_t HDF5::H5Pget_mpi_params(hid_t fapl_id, MPI_Comm *comm, MPI_Info *info) {
@@ -7345,13 +7350,16 @@ herr_t HDF5::H5Pget_mpi_params(hid_t fapl_id, MPI_Comm *comm, MPI_Info *info) {
   return result;
 }
 #endif
+#endif
 
+#if defined(H5_HAVE_PARALLEL)
 #if ((BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
      (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500))
 herr_t HDF5::H5Pset_mpi_params(hid_t fapl_id, MPI_Comm comm, MPI_Info info) {
   BRAHMA_UNWRAPPED_FUNC(H5Pset_mpi_params, herr_t, (fapl_id, comm, info));
   return result;
 }
+#endif
 #endif
 
 #if ((BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
@@ -7501,48 +7509,58 @@ herr_t HDF5::H5is_library_terminating(hbool_t *is_terminating) {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-hid_t HDF5::H5Oopen_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t lapl_id,
-                          hid_t es_id) {
-  BRAHMA_UNWRAPPED_FUNC(H5Oopen_async, hid_t,
-                        (app_file, app_func, app_line, loc_id, name, lapl_id, es_id));
-  return result;
-}
-#endif
-
-#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-hid_t HDF5::H5Oopen_by_idx_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *group_name,
-                                 H5_index_t idx_type, H5_iter_order_t order,
-                                 hsize_t n, hid_t lapl_id, hid_t es_id) {
+hid_t HDF5::H5Oopen_async(const char *app_file, const char *app_func,
+                          unsigned app_line, hid_t loc_id, const char *name,
+                          hid_t lapl_id, hid_t es_id) {
   BRAHMA_UNWRAPPED_FUNC(
-      H5Oopen_by_idx_async, hid_t,
-      (app_file, app_func, app_line, loc_id, group_name, idx_type, order, n, lapl_id, es_id));
+      H5Oopen_async, hid_t,
+      (app_file, app_func, app_line, loc_id, name, lapl_id, es_id));
   return result;
 }
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Oget_info_by_name_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name,
+hid_t HDF5::H5Oopen_by_idx_async(const char *app_file, const char *app_func,
+                                 unsigned app_line, hid_t loc_id,
+                                 const char *group_name, H5_index_t idx_type,
+                                 H5_iter_order_t order, hsize_t n,
+                                 hid_t lapl_id, hid_t es_id) {
+  BRAHMA_UNWRAPPED_FUNC(H5Oopen_by_idx_async, hid_t,
+                        (app_file, app_func, app_line, loc_id, group_name,
+                         idx_type, order, n, lapl_id, es_id));
+  return result;
+}
+#endif
+
+#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
+herr_t HDF5::H5Oget_info_by_name_async(const char *app_file,
+                                       const char *app_func, unsigned app_line,
+                                       hid_t loc_id, const char *name,
                                        H5O_info2_t *oinfo, unsigned int fields,
                                        hid_t lapl_id, hid_t es_id) {
   BRAHMA_UNWRAPPED_FUNC(H5Oget_info_by_name_async, herr_t,
-                        (app_file, app_func, app_line, loc_id, name, oinfo, fields, lapl_id, es_id));
+                        (app_file, app_func, app_line, loc_id, name, oinfo,
+                         fields, lapl_id, es_id));
   return result;
 }
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Ocopy_async(const char *app_file, const char *app_func, unsigned app_line, hid_t src_loc_id, const char *src_name,
-                           hid_t dst_loc_id, const char *dst_name,
-                           hid_t ocpypl_id, hid_t lcpl_id, hid_t es_id) {
-  BRAHMA_UNWRAPPED_FUNC(
-      H5Ocopy_async, herr_t,
-      (app_file, app_func, app_line, src_loc_id, src_name, dst_loc_id, dst_name, ocpypl_id, lcpl_id, es_id));
+herr_t HDF5::H5Ocopy_async(const char *app_file, const char *app_func,
+                           unsigned app_line, hid_t src_loc_id,
+                           const char *src_name, hid_t dst_loc_id,
+                           const char *dst_name, hid_t ocpypl_id, hid_t lcpl_id,
+                           hid_t es_id) {
+  BRAHMA_UNWRAPPED_FUNC(H5Ocopy_async, herr_t,
+                        (app_file, app_func, app_line, src_loc_id, src_name,
+                         dst_loc_id, dst_name, ocpypl_id, lcpl_id, es_id));
   return result;
 }
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Oclose_async(const char *app_file, const char *app_func, unsigned app_line, hid_t object_id, hid_t es_id) {
+herr_t HDF5::H5Oclose_async(const char *app_file, const char *app_func,
+                            unsigned app_line, hid_t object_id, hid_t es_id) {
   BRAHMA_UNWRAPPED_FUNC(H5Oclose_async, herr_t,
                         (app_file, app_func, app_line, object_id, es_id));
   return result;
@@ -7550,7 +7568,8 @@ herr_t HDF5::H5Oclose_async(const char *app_file, const char *app_func, unsigned
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Oflush_async(const char *app_file, const char *app_func, unsigned app_line, hid_t obj_id, hid_t es_id) {
+herr_t HDF5::H5Oflush_async(const char *app_file, const char *app_func,
+                            unsigned app_line, hid_t obj_id, hid_t es_id) {
   BRAHMA_UNWRAPPED_FUNC(H5Oflush_async, herr_t,
                         (app_file, app_func, app_line, obj_id, es_id));
   return result;
@@ -7558,7 +7577,8 @@ herr_t HDF5::H5Oflush_async(const char *app_file, const char *app_func, unsigned
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Orefresh_async(const char *app_file, const char *app_func, unsigned app_line, hid_t oid, hid_t es_id) {
+herr_t HDF5::H5Orefresh_async(const char *app_file, const char *app_func,
+                              unsigned app_line, hid_t oid, hid_t es_id) {
   BRAHMA_UNWRAPPED_FUNC(H5Orefresh_async, herr_t,
                         (app_file, app_func, app_line, oid, es_id));
   return result;
@@ -7566,7 +7586,8 @@ herr_t HDF5::H5Orefresh_async(const char *app_file, const char *app_func, unsign
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Tclose_async(const char *app_file, const char *app_func, unsigned app_line, hid_t type_id, hid_t es_id) {
+herr_t HDF5::H5Tclose_async(const char *app_file, const char *app_func,
+                            unsigned app_line, hid_t type_id, hid_t es_id) {
   BRAHMA_UNWRAPPED_FUNC(H5Tclose_async, herr_t,
                         (app_file, app_func, app_line, type_id, es_id));
   return result;
@@ -7574,27 +7595,31 @@ herr_t HDF5::H5Tclose_async(const char *app_file, const char *app_func, unsigned
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Tcommit_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t type_id,
-                             hid_t lcpl_id, hid_t tcpl_id, hid_t tapl_id,
-                             hid_t es_id) {
+herr_t HDF5::H5Tcommit_async(const char *app_file, const char *app_func,
+                             unsigned app_line, hid_t loc_id, const char *name,
+                             hid_t type_id, hid_t lcpl_id, hid_t tcpl_id,
+                             hid_t tapl_id, hid_t es_id) {
+  BRAHMA_UNWRAPPED_FUNC(H5Tcommit_async, herr_t,
+                        (app_file, app_func, app_line, loc_id, name, type_id,
+                         lcpl_id, tcpl_id, tapl_id, es_id));
+  return result;
+}
+#endif
+
+#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
+hid_t HDF5::H5Topen_async(const char *app_file, const char *app_func,
+                          unsigned app_line, hid_t loc_id, const char *name,
+                          hid_t tapl_id, hid_t es_id) {
   BRAHMA_UNWRAPPED_FUNC(
-      H5Tcommit_async, herr_t,
-      (app_file, app_func, app_line, loc_id, name, type_id, lcpl_id, tcpl_id, tapl_id, es_id));
+      H5Topen_async, hid_t,
+      (app_file, app_func, app_line, loc_id, name, tapl_id, es_id));
   return result;
 }
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-hid_t HDF5::H5Topen_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t tapl_id,
-                          hid_t es_id) {
-  BRAHMA_UNWRAPPED_FUNC(H5Topen_async, hid_t,
-                        (app_file, app_func, app_line, loc_id, name, tapl_id, es_id));
-  return result;
-}
-#endif
-
-#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Aclose_async(const char *app_file, const char *app_func, unsigned app_line, hid_t attr_id, hid_t es_id) {
+herr_t HDF5::H5Aclose_async(const char *app_file, const char *app_func,
+                            unsigned app_line, hid_t attr_id, hid_t es_id) {
   BRAHMA_UNWRAPPED_FUNC(H5Aclose_async, herr_t,
                         (app_file, app_func, app_line, attr_id, es_id));
   return result;
@@ -7602,139 +7627,168 @@ herr_t HDF5::H5Aclose_async(const char *app_file, const char *app_func, unsigned
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-hid_t HDF5::H5Acreate_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *attr_name, hid_t type_id,
+hid_t HDF5::H5Acreate_async(const char *app_file, const char *app_func,
+                            unsigned app_line, hid_t loc_id,
+                            const char *attr_name, hid_t type_id,
                             hid_t space_id, hid_t acpl_id, hid_t aapl_id,
                             hid_t es_id) {
+  BRAHMA_UNWRAPPED_FUNC(H5Acreate_async, hid_t,
+                        (app_file, app_func, app_line, loc_id, attr_name,
+                         type_id, space_id, acpl_id, aapl_id, es_id));
+  return result;
+}
+#endif
+
+#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
+hid_t HDF5::H5Acreate_by_name_async(const char *app_file, const char *app_func,
+                                    unsigned app_line, hid_t loc_id,
+                                    const char *obj_name, const char *attr_name,
+                                    hid_t type_id, hid_t space_id,
+                                    hid_t acpl_id, hid_t aapl_id, hid_t lapl_id,
+                                    hid_t es_id) {
   BRAHMA_UNWRAPPED_FUNC(
-      H5Acreate_async, hid_t,
-      (app_file, app_func, app_line, loc_id, attr_name, type_id, space_id, acpl_id, aapl_id, es_id));
+      H5Acreate_by_name_async, hid_t,
+      (app_file, app_func, app_line, loc_id, obj_name, attr_name, type_id,
+       space_id, acpl_id, aapl_id, lapl_id, es_id));
   return result;
 }
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-hid_t HDF5::H5Acreate_by_name_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *obj_name,
-                                    const char *attr_name, hid_t type_id,
-                                    hid_t space_id, hid_t acpl_id,
-                                    hid_t aapl_id, hid_t lapl_id, hid_t es_id) {
-  BRAHMA_UNWRAPPED_FUNC(H5Acreate_by_name_async, hid_t,
-                        (app_file, app_func, app_line, loc_id, obj_name, attr_name, type_id, space_id,
-                         acpl_id, aapl_id, lapl_id, es_id));
+herr_t HDF5::H5Aexists_async(const char *app_file, const char *app_func,
+                             unsigned app_line, hid_t obj_id,
+                             const char *attr_name, hbool_t *exists,
+                             hid_t es_id) {
+  BRAHMA_UNWRAPPED_FUNC(
+      H5Aexists_async, herr_t,
+      (app_file, app_func, app_line, obj_id, attr_name, exists, es_id));
   return result;
 }
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Aexists_async(const char *app_file, const char *app_func, unsigned app_line, hid_t obj_id, const char *attr_name,
-                             hbool_t *exists, hid_t es_id) {
-  BRAHMA_UNWRAPPED_FUNC(H5Aexists_async, herr_t,
-                        (app_file, app_func, app_line, obj_id, attr_name, exists, es_id));
-  return result;
-}
-#endif
-
-#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Aexists_by_name_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *obj_name,
+herr_t HDF5::H5Aexists_by_name_async(const char *app_file, const char *app_func,
+                                     unsigned app_line, hid_t loc_id,
+                                     const char *obj_name,
                                      const char *attr_name, hbool_t *exists,
                                      hid_t lapl_id, hid_t es_id) {
   BRAHMA_UNWRAPPED_FUNC(H5Aexists_by_name_async, herr_t,
-                        (app_file, app_func, app_line, loc_id, obj_name, attr_name, exists, lapl_id, es_id));
+                        (app_file, app_func, app_line, loc_id, obj_name,
+                         attr_name, exists, lapl_id, es_id));
   return result;
 }
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-hid_t HDF5::H5Aopen_async(const char *app_file, const char *app_func, unsigned app_line, hid_t obj_id, const char *attr_name, hid_t aapl_id,
-                          hid_t es_id) {
-  BRAHMA_UNWRAPPED_FUNC(H5Aopen_async, hid_t,
-                        (app_file, app_func, app_line, obj_id, attr_name, aapl_id, es_id));
-  return result;
-}
-#endif
-
-#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-hid_t HDF5::H5Aopen_by_idx_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *obj_name,
-                                 H5_index_t idx_type, H5_iter_order_t order,
-                                 hsize_t n, hid_t aapl_id, hid_t lapl_id,
-                                 hid_t es_id) {
+hid_t HDF5::H5Aopen_async(const char *app_file, const char *app_func,
+                          unsigned app_line, hid_t obj_id,
+                          const char *attr_name, hid_t aapl_id, hid_t es_id) {
   BRAHMA_UNWRAPPED_FUNC(
-      H5Aopen_by_idx_async, hid_t,
-      (app_file, app_func, app_line, loc_id, obj_name, idx_type, order, n, aapl_id, lapl_id, es_id));
+      H5Aopen_async, hid_t,
+      (app_file, app_func, app_line, obj_id, attr_name, aapl_id, es_id));
   return result;
 }
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-hid_t HDF5::H5Aopen_by_name_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *obj_name,
-                                  const char *attr_name, hid_t aapl_id,
-                                  hid_t lapl_id, hid_t es_id) {
+hid_t HDF5::H5Aopen_by_idx_async(const char *app_file, const char *app_func,
+                                 unsigned app_line, hid_t loc_id,
+                                 const char *obj_name, H5_index_t idx_type,
+                                 H5_iter_order_t order, hsize_t n,
+                                 hid_t aapl_id, hid_t lapl_id, hid_t es_id) {
+  BRAHMA_UNWRAPPED_FUNC(H5Aopen_by_idx_async, hid_t,
+                        (app_file, app_func, app_line, loc_id, obj_name,
+                         idx_type, order, n, aapl_id, lapl_id, es_id));
+  return result;
+}
+#endif
+
+#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
+hid_t HDF5::H5Aopen_by_name_async(const char *app_file, const char *app_func,
+                                  unsigned app_line, hid_t loc_id,
+                                  const char *obj_name, const char *attr_name,
+                                  hid_t aapl_id, hid_t lapl_id, hid_t es_id) {
   BRAHMA_UNWRAPPED_FUNC(H5Aopen_by_name_async, hid_t,
-                        (app_file, app_func, app_line, loc_id, obj_name, attr_name, aapl_id, lapl_id, es_id));
+                        (app_file, app_func, app_line, loc_id, obj_name,
+                         attr_name, aapl_id, lapl_id, es_id));
   return result;
 }
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Aread_async(const char *app_file, const char *app_func, unsigned app_line, hid_t attr_id, hid_t dtype_id, void *buf,
-                           hid_t es_id) {
-  BRAHMA_UNWRAPPED_FUNC(H5Aread_async, herr_t,
-                        (app_file, app_func, app_line, attr_id, dtype_id, buf, es_id));
+herr_t HDF5::H5Aread_async(const char *app_file, const char *app_func,
+                           unsigned app_line, hid_t attr_id, hid_t dtype_id,
+                           void *buf, hid_t es_id) {
+  BRAHMA_UNWRAPPED_FUNC(
+      H5Aread_async, herr_t,
+      (app_file, app_func, app_line, attr_id, dtype_id, buf, es_id));
   return result;
 }
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Arename_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *old_name,
-                             const char *new_name, hid_t es_id) {
-  BRAHMA_UNWRAPPED_FUNC(H5Arename_async, herr_t,
-                        (app_file, app_func, app_line, loc_id, old_name, new_name, es_id));
+herr_t HDF5::H5Arename_async(const char *app_file, const char *app_func,
+                             unsigned app_line, hid_t loc_id,
+                             const char *old_name, const char *new_name,
+                             hid_t es_id) {
+  BRAHMA_UNWRAPPED_FUNC(
+      H5Arename_async, herr_t,
+      (app_file, app_func, app_line, loc_id, old_name, new_name, es_id));
   return result;
 }
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Arename_by_name_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *obj_name,
+herr_t HDF5::H5Arename_by_name_async(const char *app_file, const char *app_func,
+                                     unsigned app_line, hid_t loc_id,
+                                     const char *obj_name,
                                      const char *old_attr_name,
                                      const char *new_attr_name, hid_t lapl_id,
                                      hid_t es_id) {
+  BRAHMA_UNWRAPPED_FUNC(H5Arename_by_name_async, herr_t,
+                        (app_file, app_func, app_line, loc_id, obj_name,
+                         old_attr_name, new_attr_name, lapl_id, es_id));
+  return result;
+}
+#endif
+
+#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
+herr_t HDF5::H5Awrite_async(const char *app_file, const char *app_func,
+                            unsigned app_line, hid_t attr_id, hid_t type_id,
+                            const void *buf, hid_t es_id) {
   BRAHMA_UNWRAPPED_FUNC(
-      H5Arename_by_name_async, herr_t,
-      (app_file, app_func, app_line, loc_id, obj_name, old_attr_name, new_attr_name, lapl_id, es_id));
+      H5Awrite_async, herr_t,
+      (app_file, app_func, app_line, attr_id, type_id, buf, es_id));
   return result;
 }
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Awrite_async(const char *app_file, const char *app_func, unsigned app_line, hid_t attr_id, hid_t type_id, const void *buf,
-                            hid_t es_id) {
-  BRAHMA_UNWRAPPED_FUNC(H5Awrite_async, herr_t,
-                        (app_file, app_func, app_line, attr_id, type_id, buf, es_id));
+hid_t HDF5::H5Dcreate_async(const char *app_file, const char *app_func,
+                            unsigned app_line, hid_t loc_id, const char *name,
+                            hid_t type_id, hid_t space_id, hid_t lcpl_id,
+                            hid_t dcpl_id, hid_t dapl_id, hid_t es_id) {
+  BRAHMA_UNWRAPPED_FUNC(H5Dcreate_async, hid_t,
+                        (app_file, app_func, app_line, loc_id, name, type_id,
+                         space_id, lcpl_id, dcpl_id, dapl_id, es_id));
   return result;
 }
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-hid_t HDF5::H5Dcreate_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t type_id,
-                            hid_t space_id, hid_t lcpl_id, hid_t dcpl_id,
-                            hid_t dapl_id, hid_t es_id) {
+hid_t HDF5::H5Dopen_async(const char *app_file, const char *app_func,
+                          unsigned app_line, hid_t loc_id, const char *name,
+                          hid_t dapl_id, hid_t es_id) {
   BRAHMA_UNWRAPPED_FUNC(
-      H5Dcreate_async, hid_t,
-      (app_file, app_func, app_line, loc_id, name, type_id, space_id, lcpl_id, dcpl_id, dapl_id, es_id));
+      H5Dopen_async, hid_t,
+      (app_file, app_func, app_line, loc_id, name, dapl_id, es_id));
   return result;
 }
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-hid_t HDF5::H5Dopen_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t dapl_id,
-                          hid_t es_id) {
-  BRAHMA_UNWRAPPED_FUNC(H5Dopen_async, hid_t,
-                        (app_file, app_func, app_line, loc_id, name, dapl_id, es_id));
-  return result;
-}
-#endif
-
-#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-hid_t HDF5::H5Dget_space_async(const char *app_file, const char *app_func, unsigned app_line, hid_t dset_id, hid_t es_id) {
+hid_t HDF5::H5Dget_space_async(const char *app_file, const char *app_func,
+                               unsigned app_line, hid_t dset_id, hid_t es_id) {
   BRAHMA_UNWRAPPED_FUNC(H5Dget_space_async, hid_t,
                         (app_file, app_func, app_line, dset_id, es_id));
   return result;
@@ -7753,24 +7807,27 @@ herr_t HDF5::H5Dread_multi(size_t count, hid_t dset_id[], hid_t mem_type_id[],
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Dread_async(const char *app_file, const char *app_func, unsigned app_line, hid_t dset_id, hid_t mem_type_id, hid_t mem_space_id,
-                           hid_t file_space_id, hid_t dxpl_id, void *buf,
-                           hid_t es_id) {
-  BRAHMA_UNWRAPPED_FUNC(
-      H5Dread_async, herr_t,
-      (app_file, app_func, app_line, dset_id, mem_type_id, mem_space_id, file_space_id, dxpl_id, buf, es_id));
+herr_t HDF5::H5Dread_async(const char *app_file, const char *app_func,
+                           unsigned app_line, hid_t dset_id, hid_t mem_type_id,
+                           hid_t mem_space_id, hid_t file_space_id,
+                           hid_t dxpl_id, void *buf, hid_t es_id) {
+  BRAHMA_UNWRAPPED_FUNC(H5Dread_async, herr_t,
+                        (app_file, app_func, app_line, dset_id, mem_type_id,
+                         mem_space_id, file_space_id, dxpl_id, buf, es_id));
   return result;
 }
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Dread_multi_async(const char *app_file, const char *app_func, unsigned app_line, size_t count, hid_t dset_id[],
-                                 hid_t mem_type_id[], hid_t mem_space_id[],
-                                 hid_t file_space_id[], hid_t dxpl_id,
-                                 void *buf[], hid_t es_id) {
-  BRAHMA_UNWRAPPED_FUNC(H5Dread_multi_async, herr_t,
-                        (app_file, app_func, app_line, count, dset_id, mem_type_id, mem_space_id,
-                         file_space_id, dxpl_id, buf, es_id));
+herr_t HDF5::H5Dread_multi_async(const char *app_file, const char *app_func,
+                                 unsigned app_line, size_t count,
+                                 hid_t dset_id[], hid_t mem_type_id[],
+                                 hid_t mem_space_id[], hid_t file_space_id[],
+                                 hid_t dxpl_id, void *buf[], hid_t es_id) {
+  BRAHMA_UNWRAPPED_FUNC(
+      H5Dread_multi_async, herr_t,
+      (app_file, app_func, app_line, count, dset_id, mem_type_id, mem_space_id,
+       file_space_id, dxpl_id, buf, es_id));
   return result;
 }
 #endif
@@ -7787,31 +7844,36 @@ herr_t HDF5::H5Dwrite_multi(size_t count, hid_t dset_id[], hid_t mem_type_id[],
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Dwrite_async(const char *app_file, const char *app_func, unsigned app_line, hid_t dset_id, hid_t mem_type_id,
+herr_t HDF5::H5Dwrite_async(const char *app_file, const char *app_func,
+                            unsigned app_line, hid_t dset_id, hid_t mem_type_id,
                             hid_t mem_space_id, hid_t file_space_id,
                             hid_t dxpl_id, const void *buf, hid_t es_id) {
+  BRAHMA_UNWRAPPED_FUNC(H5Dwrite_async, herr_t,
+                        (app_file, app_func, app_line, dset_id, mem_type_id,
+                         mem_space_id, file_space_id, dxpl_id, buf, es_id));
+  return result;
+}
+#endif
+
+#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
+herr_t HDF5::H5Dwrite_multi_async(const char *app_file, const char *app_func,
+                                  unsigned app_line, size_t count,
+                                  hid_t dset_id[], hid_t mem_type_id[],
+                                  hid_t mem_space_id[], hid_t file_space_id[],
+                                  hid_t dxpl_id, const void *buf[],
+                                  hid_t es_id) {
   BRAHMA_UNWRAPPED_FUNC(
-      H5Dwrite_async, herr_t,
-      (app_file, app_func, app_line, dset_id, mem_type_id, mem_space_id, file_space_id, dxpl_id, buf, es_id));
+      H5Dwrite_multi_async, herr_t,
+      (app_file, app_func, app_line, count, dset_id, mem_type_id, mem_space_id,
+       file_space_id, dxpl_id, buf, es_id));
   return result;
 }
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Dwrite_multi_async(const char *app_file, const char *app_func, unsigned app_line, size_t count, hid_t dset_id[],
-                                  hid_t mem_type_id[], hid_t mem_space_id[],
-                                  hid_t file_space_id[], hid_t dxpl_id,
-                                  const void *buf[], hid_t es_id) {
-  BRAHMA_UNWRAPPED_FUNC(H5Dwrite_multi_async, herr_t,
-                        (app_file, app_func, app_line, count, dset_id, mem_type_id, mem_space_id,
-                         file_space_id, dxpl_id, buf, es_id));
-  return result;
-}
-#endif
-
-#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Dset_extent_async(const char *app_file, const char *app_func, unsigned app_line, hid_t dset_id, const hsize_t size[],
-                                 hid_t es_id) {
+herr_t HDF5::H5Dset_extent_async(const char *app_file, const char *app_func,
+                                 unsigned app_line, hid_t dset_id,
+                                 const hsize_t size[], hid_t es_id) {
   BRAHMA_UNWRAPPED_FUNC(H5Dset_extent_async, herr_t,
                         (app_file, app_func, app_line, dset_id, size, es_id));
   return result;
@@ -7819,7 +7881,8 @@ herr_t HDF5::H5Dset_extent_async(const char *app_file, const char *app_func, uns
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Dclose_async(const char *app_file, const char *app_func, unsigned app_line, hid_t dset_id, hid_t es_id) {
+herr_t HDF5::H5Dclose_async(const char *app_file, const char *app_func,
+                            unsigned app_line, hid_t dset_id, hid_t es_id) {
   BRAHMA_UNWRAPPED_FUNC(H5Dclose_async, herr_t,
                         (app_file, app_func, app_line, dset_id, es_id));
   return result;
@@ -7943,25 +8006,31 @@ herr_t HDF5::H5ESclose(hid_t es_id) {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-hid_t HDF5::H5Fcreate_async(const char *app_file, const char *app_func, unsigned app_line, const char *filename, unsigned int flags,
-                            hid_t fcpl_id, hid_t fapl_id, hid_t es_id) {
-  BRAHMA_UNWRAPPED_FUNC(H5Fcreate_async, hid_t,
-                        (app_file, app_func, app_line, filename, flags, fcpl_id, fapl_id, es_id));
+hid_t HDF5::H5Fcreate_async(const char *app_file, const char *app_func,
+                            unsigned app_line, const char *filename,
+                            unsigned int flags, hid_t fcpl_id, hid_t fapl_id,
+                            hid_t es_id) {
+  BRAHMA_UNWRAPPED_FUNC(
+      H5Fcreate_async, hid_t,
+      (app_file, app_func, app_line, filename, flags, fcpl_id, fapl_id, es_id));
   return result;
 }
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-hid_t HDF5::H5Fopen_async(const char *app_file, const char *app_func, unsigned app_line, const char *filename, unsigned int flags,
-                          hid_t access_plist, hid_t es_id) {
-  BRAHMA_UNWRAPPED_FUNC(H5Fopen_async, hid_t,
-                        (app_file, app_func, app_line, filename, flags, access_plist, es_id));
+hid_t HDF5::H5Fopen_async(const char *app_file, const char *app_func,
+                          unsigned app_line, const char *filename,
+                          unsigned int flags, hid_t access_plist, hid_t es_id) {
+  BRAHMA_UNWRAPPED_FUNC(
+      H5Fopen_async, hid_t,
+      (app_file, app_func, app_line, filename, flags, access_plist, es_id));
   return result;
 }
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-hid_t HDF5::H5Freopen_async(const char *app_file, const char *app_func, unsigned app_line, hid_t file_id, hid_t es_id) {
+hid_t HDF5::H5Freopen_async(const char *app_file, const char *app_func,
+                            unsigned app_line, hid_t file_id, hid_t es_id) {
   BRAHMA_UNWRAPPED_FUNC(H5Freopen_async, hid_t,
                         (app_file, app_func, app_line, file_id, es_id));
   return result;
@@ -7969,15 +8038,19 @@ hid_t HDF5::H5Freopen_async(const char *app_file, const char *app_func, unsigned
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Fflush_async(const char *app_file, const char *app_func, unsigned app_line, hid_t object_id, H5F_scope_t scope, hid_t es_id) {
-  BRAHMA_UNWRAPPED_FUNC(H5Fflush_async, herr_t,
-                        (app_file, app_func, app_line, object_id, scope, es_id));
+herr_t HDF5::H5Fflush_async(const char *app_file, const char *app_func,
+                            unsigned app_line, hid_t object_id,
+                            H5F_scope_t scope, hid_t es_id) {
+  BRAHMA_UNWRAPPED_FUNC(
+      H5Fflush_async, herr_t,
+      (app_file, app_func, app_line, object_id, scope, es_id));
   return result;
 }
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Fclose_async(const char *app_file, const char *app_func, unsigned app_line, hid_t file_id, hid_t es_id) {
+herr_t HDF5::H5Fclose_async(const char *app_file, const char *app_func,
+                            unsigned app_line, hid_t file_id, hid_t es_id) {
   BRAHMA_UNWRAPPED_FUNC(H5Fclose_async, herr_t,
                         (app_file, app_func, app_line, file_id, es_id));
   return result;
@@ -7985,86 +8058,105 @@ herr_t HDF5::H5Fclose_async(const char *app_file, const char *app_func, unsigned
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Lcreate_hard_async(const char *app_file, const char *app_func, unsigned app_line, hid_t cur_loc_id, const char *cur_name,
-                                  hid_t new_loc_id, const char *new_name,
-                                  hid_t lcpl_id, hid_t lapl_id, hid_t es_id) {
-  BRAHMA_UNWRAPPED_FUNC(
-      H5Lcreate_hard_async, herr_t,
-      (app_file, app_func, app_line, cur_loc_id, cur_name, new_loc_id, new_name, lcpl_id, lapl_id, es_id));
-  return result;
-}
-#endif
-
-#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Lcreate_soft_async(const char *app_file, const char *app_func, unsigned app_line, const char *link_target, hid_t link_loc_id,
-                                  const char *link_name, hid_t lcpl_id,
+herr_t HDF5::H5Lcreate_hard_async(const char *app_file, const char *app_func,
+                                  unsigned app_line, hid_t cur_loc_id,
+                                  const char *cur_name, hid_t new_loc_id,
+                                  const char *new_name, hid_t lcpl_id,
                                   hid_t lapl_id, hid_t es_id) {
-  BRAHMA_UNWRAPPED_FUNC(
-      H5Lcreate_soft_async, herr_t,
-      (app_file, app_func, app_line, link_target, link_loc_id, link_name, lcpl_id, lapl_id, es_id));
+  BRAHMA_UNWRAPPED_FUNC(H5Lcreate_hard_async, herr_t,
+                        (app_file, app_func, app_line, cur_loc_id, cur_name,
+                         new_loc_id, new_name, lcpl_id, lapl_id, es_id));
   return result;
 }
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Ldelete_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t lapl_id,
-                             hid_t es_id) {
-  BRAHMA_UNWRAPPED_FUNC(H5Ldelete_async, herr_t,
-                        (app_file, app_func, app_line, loc_id, name, lapl_id, es_id));
+herr_t HDF5::H5Lcreate_soft_async(const char *app_file, const char *app_func,
+                                  unsigned app_line, const char *link_target,
+                                  hid_t link_loc_id, const char *link_name,
+                                  hid_t lcpl_id, hid_t lapl_id, hid_t es_id) {
+  BRAHMA_UNWRAPPED_FUNC(H5Lcreate_soft_async, herr_t,
+                        (app_file, app_func, app_line, link_target, link_loc_id,
+                         link_name, lcpl_id, lapl_id, es_id));
   return result;
 }
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Ldelete_by_idx_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *group_name,
-                                    H5_index_t idx_type, H5_iter_order_t order,
-                                    hsize_t n, hid_t lapl_id, hid_t es_id) {
-  BRAHMA_UNWRAPPED_FUNC(
-      H5Ldelete_by_idx_async, herr_t,
-      (app_file, app_func, app_line, loc_id, group_name, idx_type, order, n, lapl_id, es_id));
-  return result;
-}
-#endif
-
-#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Lexists_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hbool_t *exists,
+herr_t HDF5::H5Ldelete_async(const char *app_file, const char *app_func,
+                             unsigned app_line, hid_t loc_id, const char *name,
                              hid_t lapl_id, hid_t es_id) {
-  BRAHMA_UNWRAPPED_FUNC(H5Lexists_async, herr_t,
-                        (app_file, app_func, app_line, loc_id, name, exists, lapl_id, es_id));
+  BRAHMA_UNWRAPPED_FUNC(
+      H5Ldelete_async, herr_t,
+      (app_file, app_func, app_line, loc_id, name, lapl_id, es_id));
   return result;
 }
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Literate_async(const char *app_file, const char *app_func, unsigned app_line, hid_t group_id, H5_index_t idx_type,
-                              H5_iter_order_t order, hsize_t *idx_p,
-                              H5L_iterate2_t op, void *op_data, hid_t es_id) {
+herr_t HDF5::H5Ldelete_by_idx_async(const char *app_file, const char *app_func,
+                                    unsigned app_line, hid_t loc_id,
+                                    const char *group_name, H5_index_t idx_type,
+                                    H5_iter_order_t order, hsize_t n,
+                                    hid_t lapl_id, hid_t es_id) {
+  BRAHMA_UNWRAPPED_FUNC(H5Ldelete_by_idx_async, herr_t,
+                        (app_file, app_func, app_line, loc_id, group_name,
+                         idx_type, order, n, lapl_id, es_id));
+  return result;
+}
+#endif
+
+#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
+herr_t HDF5::H5Lexists_async(const char *app_file, const char *app_func,
+                             unsigned app_line, hid_t loc_id, const char *name,
+                             hbool_t *exists, hid_t lapl_id, hid_t es_id) {
+  BRAHMA_UNWRAPPED_FUNC(
+      H5Lexists_async, herr_t,
+      (app_file, app_func, app_line, loc_id, name, exists, lapl_id, es_id));
+  return result;
+}
+#endif
+
+#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
+herr_t HDF5::H5Literate_async(const char *app_file, const char *app_func,
+                              unsigned app_line, hid_t group_id,
+                              H5_index_t idx_type, H5_iter_order_t order,
+                              hsize_t *idx_p, H5L_iterate2_t op, void *op_data,
+                              hid_t es_id) {
   BRAHMA_UNWRAPPED_FUNC(H5Literate_async, herr_t,
-                        (app_file, app_func, app_line, group_id, idx_type, order, idx_p, op, op_data, es_id));
+                        (app_file, app_func, app_line, group_id, idx_type,
+                         order, idx_p, op, op_data, es_id));
   return result;
 }
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-hid_t HDF5::H5Gcreate_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t lcpl_id,
-                            hid_t gcpl_id, hid_t gapl_id, hid_t es_id) {
+hid_t HDF5::H5Gcreate_async(const char *app_file, const char *app_func,
+                            unsigned app_line, hid_t loc_id, const char *name,
+                            hid_t lcpl_id, hid_t gcpl_id, hid_t gapl_id,
+                            hid_t es_id) {
   BRAHMA_UNWRAPPED_FUNC(H5Gcreate_async, hid_t,
-                        (app_file, app_func, app_line, loc_id, name, lcpl_id, gcpl_id, gapl_id, es_id));
+                        (app_file, app_func, app_line, loc_id, name, lcpl_id,
+                         gcpl_id, gapl_id, es_id));
   return result;
 }
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-hid_t HDF5::H5Gopen_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t gapl_id,
-                          hid_t es_id) {
-  BRAHMA_UNWRAPPED_FUNC(H5Gopen_async, hid_t,
-                        (app_file, app_func, app_line, loc_id, name, gapl_id, es_id));
+hid_t HDF5::H5Gopen_async(const char *app_file, const char *app_func,
+                          unsigned app_line, hid_t loc_id, const char *name,
+                          hid_t gapl_id, hid_t es_id) {
+  BRAHMA_UNWRAPPED_FUNC(
+      H5Gopen_async, hid_t,
+      (app_file, app_func, app_line, loc_id, name, gapl_id, es_id));
   return result;
 }
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Gget_info_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, H5G_info_t *ginfo, hid_t es_id) {
+herr_t HDF5::H5Gget_info_async(const char *app_file, const char *app_func,
+                               unsigned app_line, hid_t loc_id,
+                               H5G_info_t *ginfo, hid_t es_id) {
   BRAHMA_UNWRAPPED_FUNC(H5Gget_info_async, herr_t,
                         (app_file, app_func, app_line, loc_id, ginfo, es_id));
   return result;
@@ -8072,30 +8164,33 @@ herr_t HDF5::H5Gget_info_async(const char *app_file, const char *app_func, unsig
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Gget_info_by_name_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name,
+herr_t HDF5::H5Gget_info_by_name_async(const char *app_file,
+                                       const char *app_func, unsigned app_line,
+                                       hid_t loc_id, const char *name,
                                        H5G_info_t *ginfo, hid_t lapl_id,
                                        hid_t es_id) {
-  BRAHMA_UNWRAPPED_FUNC(H5Gget_info_by_name_async, herr_t,
-                        (app_file, app_func, app_line, loc_id, name, ginfo, lapl_id, es_id));
-  return result;
-}
-#endif
-
-#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Gget_info_by_idx_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *group_name,
-                                      H5_index_t idx_type,
-                                      H5_iter_order_t order, hsize_t n,
-                                      H5G_info_t *ginfo, hid_t lapl_id,
-                                      hid_t es_id) {
   BRAHMA_UNWRAPPED_FUNC(
-      H5Gget_info_by_idx_async, herr_t,
-      (app_file, app_func, app_line, loc_id, group_name, idx_type, order, n, ginfo, lapl_id, es_id));
+      H5Gget_info_by_name_async, herr_t,
+      (app_file, app_func, app_line, loc_id, name, ginfo, lapl_id, es_id));
   return result;
 }
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-herr_t HDF5::H5Gclose_async(const char *app_file, const char *app_func, unsigned app_line, hid_t group_id, hid_t es_id) {
+herr_t HDF5::H5Gget_info_by_idx_async(
+    const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id,
+    const char *group_name, H5_index_t idx_type, H5_iter_order_t order,
+    hsize_t n, H5G_info_t *ginfo, hid_t lapl_id, hid_t es_id) {
+  BRAHMA_UNWRAPPED_FUNC(H5Gget_info_by_idx_async, herr_t,
+                        (app_file, app_func, app_line, loc_id, group_name,
+                         idx_type, order, n, ginfo, lapl_id, es_id));
+  return result;
+}
+#endif
+
+#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
+herr_t HDF5::H5Gclose_async(const char *app_file, const char *app_func,
+                            unsigned app_line, hid_t group_id, hid_t es_id) {
   BRAHMA_UNWRAPPED_FUNC(H5Gclose_async, herr_t,
                         (app_file, app_func, app_line, group_id, es_id));
   return result;
@@ -8103,28 +8198,34 @@ herr_t HDF5::H5Gclose_async(const char *app_file, const char *app_func, unsigned
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-hid_t HDF5::H5Ropen_object_async(const char *app_file, const char *app_func, unsigned app_line, H5R_ref_t *ref_ptr,
+hid_t HDF5::H5Ropen_object_async(const char *app_file, const char *app_func,
+                                 unsigned app_line, H5R_ref_t *ref_ptr,
                                  hid_t rapl_id, hid_t oapl_id, hid_t es_id) {
-  BRAHMA_UNWRAPPED_FUNC(H5Ropen_object_async, hid_t,
-                        (app_file, app_func, app_line, ref_ptr, rapl_id, oapl_id, es_id));
+  BRAHMA_UNWRAPPED_FUNC(
+      H5Ropen_object_async, hid_t,
+      (app_file, app_func, app_line, ref_ptr, rapl_id, oapl_id, es_id));
   return result;
 }
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-hid_t HDF5::H5Ropen_region_async(const char *app_file, const char *app_func, unsigned app_line, H5R_ref_t *ref_ptr, hid_t rapl_id,
-                                 hid_t oapl_id, hid_t es_id) {
-  BRAHMA_UNWRAPPED_FUNC(H5Ropen_region_async, hid_t,
-                        (app_file, app_func, app_line, ref_ptr, rapl_id, oapl_id, es_id));
+hid_t HDF5::H5Ropen_region_async(const char *app_file, const char *app_func,
+                                 unsigned app_line, H5R_ref_t *ref_ptr,
+                                 hid_t rapl_id, hid_t oapl_id, hid_t es_id) {
+  BRAHMA_UNWRAPPED_FUNC(
+      H5Ropen_region_async, hid_t,
+      (app_file, app_func, app_line, ref_ptr, rapl_id, oapl_id, es_id));
   return result;
 }
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-hid_t HDF5::H5Ropen_attr_async(const char *app_file, const char *app_func, unsigned app_line, H5R_ref_t *ref_ptr, hid_t rapl_id, hid_t aapl_id,
-                               hid_t es_id) {
-  BRAHMA_UNWRAPPED_FUNC(H5Ropen_attr_async, hid_t,
-                        (app_file, app_func, app_line, ref_ptr, rapl_id, aapl_id, es_id));
+hid_t HDF5::H5Ropen_attr_async(const char *app_file, const char *app_func,
+                               unsigned app_line, H5R_ref_t *ref_ptr,
+                               hid_t rapl_id, hid_t aapl_id, hid_t es_id) {
+  BRAHMA_UNWRAPPED_FUNC(
+      H5Ropen_attr_async, hid_t,
+      (app_file, app_func, app_line, ref_ptr, rapl_id, aapl_id, es_id));
   return result;
 }
 #endif

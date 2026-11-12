@@ -48,5 +48,5 @@ class Singleton {
 
 template <typename T>
 std::shared_ptr<T> Singleton<T>::instance = nullptr;
-}  // namespace hcl
+}  // namespace brahma
 #endif  // BRAHMA_SINGLETON_H

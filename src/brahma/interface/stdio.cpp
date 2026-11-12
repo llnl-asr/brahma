@@ -74,13 +74,12 @@ off64_t STDIO::ftello64(FILE *stream) {
   return result;
 }
 
-
 void STDIO::clearerr(FILE *stream) {
   BRAHMA_UNWRAPPED_FUNC_VOID(clearerr, (stream));
 }
-int STDIO::feof(FILE * stream) {
-    BRAHMA_UNWRAPPED_FUNC(feof, int, (stream));
-    return result;
+int STDIO::feof(FILE *stream) {
+  BRAHMA_UNWRAPPED_FUNC(feof, int, (stream));
+  return result;
 }
 int STDIO::ferror(FILE *stream) {
   BRAHMA_UNWRAPPED_FUNC(ferror, int, (stream));
@@ -102,8 +101,8 @@ int STDIO::fgetpos64(FILE *stream, fpos64_t *pos) {
   BRAHMA_UNWRAPPED_FUNC(fgetpos64, int, (stream, pos));
   return result;
 }
-char* STDIO::fgets(char *s, int size, FILE *stream) {
-  BRAHMA_UNWRAPPED_FUNC(fgets, char*, (s, size, stream));
+char *STDIO::fgets(char *s, int size, FILE *stream) {
+  BRAHMA_UNWRAPPED_FUNC(fgets, char *, (s, size, stream));
   return result;
 }
 void STDIO::flockfile(FILE *stream) {
@@ -117,12 +116,12 @@ int STDIO::fputs(const char *s, FILE *stream) {
   BRAHMA_UNWRAPPED_FUNC(fputs, int, (s, stream));
   return result;
 }
-  FILE* STDIO::freopen(const char *pathname, const char *mode, FILE *stream) {
-  BRAHMA_UNWRAPPED_FUNC(freopen, FILE*, (pathname, mode, stream));
+FILE *STDIO::freopen(const char *pathname, const char *mode, FILE *stream) {
+  BRAHMA_UNWRAPPED_FUNC(freopen, FILE *, (pathname, mode, stream));
   return result;
 }
-FILE* STDIO::freopen64(const char *pathname, const char *mode, FILE *stream) {
-  BRAHMA_UNWRAPPED_FUNC(freopen64, FILE*, (pathname, mode, stream));
+FILE *STDIO::freopen64(const char *pathname, const char *mode, FILE *stream) {
+  BRAHMA_UNWRAPPED_FUNC(freopen64, FILE *, (pathname, mode, stream));
   return result;
 }
 int STDIO::fsetpos(FILE *stream, const fpos_t *pos) {
@@ -181,8 +180,7 @@ int STDIO::printf(const char *format, va_list args) {
 int STDIO::sprintf(char *str, const char *format, va_list args) {
   return vsprintf(str, format, args);
 }
-int STDIO::snprintf(char *str, size_t size, const char *format,
-                    va_list args) {
+int STDIO::snprintf(char *str, size_t size, const char *format, va_list args) {
   // See stdio_bypass.h: calling the plain (possibly GOTCHA-intercepted)
   // "vsnprintf" symbol here risks routing back through this library's own
   // wrapper for it depending on bind()/unbind() state, rather than always
@@ -202,8 +200,7 @@ int STDIO::vsprintf(char *str, const char *format, va_list args) {
   BRAHMA_UNWRAPPED_FUNC(vsprintf, int, (str, format, args));
   return result;
 }
-int STDIO::vsnprintf(char *str, size_t size, const char *format,
-                     va_list args) {
+int STDIO::vsnprintf(char *str, size_t size, const char *format, va_list args) {
   BRAHMA_UNWRAPPED_FUNC(vsnprintf, int, (str, size, format, args));
   return result;
 }
@@ -234,8 +231,7 @@ int STDIO::__isoc23_fscanf(FILE *stream, const char *format, va_list args) {
 int STDIO::__isoc23_scanf(const char *format, va_list args) {
   return __isoc23_vscanf(format, args);
 }
-int STDIO::__isoc23_sscanf(const char *str, const char *format,
-                           va_list args) {
+int STDIO::__isoc23_sscanf(const char *str, const char *format, va_list args) {
   return __isoc23_vsscanf(str, format, args);
 }
 int STDIO::__isoc23_vfscanf(FILE *stream, const char *format, va_list args) {
@@ -246,8 +242,7 @@ int STDIO::__isoc23_vscanf(const char *format, va_list args) {
   BRAHMA_UNWRAPPED_FUNC(__isoc23_vscanf, int, (format, args));
   return result;
 }
-int STDIO::__isoc23_vsscanf(const char *str, const char *format,
-                            va_list args) {
+int STDIO::__isoc23_vsscanf(const char *str, const char *format, va_list args) {
   BRAHMA_UNWRAPPED_FUNC(__isoc23_vsscanf, int, (str, format, args));
   return result;
 }
@@ -257,8 +252,7 @@ int STDIO::__isoc99_fscanf(FILE *stream, const char *format, va_list args) {
 int STDIO::__isoc99_scanf(const char *format, va_list args) {
   return __isoc99_vscanf(format, args);
 }
-int STDIO::__isoc99_sscanf(const char *str, const char *format,
-                           va_list args) {
+int STDIO::__isoc99_sscanf(const char *str, const char *format, va_list args) {
   return __isoc99_vsscanf(str, format, args);
 }
 int STDIO::__isoc99_vfscanf(FILE *stream, const char *format, va_list args) {
@@ -269,17 +263,19 @@ int STDIO::__isoc99_vscanf(const char *format, va_list args) {
   BRAHMA_UNWRAPPED_FUNC(__isoc99_vscanf, int, (format, args));
   return result;
 }
-int STDIO::__isoc99_vsscanf(const char *str, const char *format,
-                            va_list args) {
+int STDIO::__isoc99_vsscanf(const char *str, const char *format, va_list args) {
   BRAHMA_UNWRAPPED_FUNC(__isoc99_vsscanf, int, (str, format, args));
   return result;
 }
-size_t STDIO::__fread_chk(void *ptr, size_t ptrlen, size_t size, size_t n, FILE *stream) {
+size_t STDIO::__fread_chk(void *ptr, size_t ptrlen, size_t size, size_t n,
+                          FILE *stream) {
   BRAHMA_UNWRAPPED_FUNC(__fread_chk, size_t, (ptr, ptrlen, size, n, stream));
   return result;
 }
-size_t STDIO::__fread_unlocked_chk(void *ptr, size_t ptrlen, size_t size, size_t n, FILE *stream) {
-  BRAHMA_UNWRAPPED_FUNC(__fread_unlocked_chk, size_t, (ptr, ptrlen, size, n, stream));
+size_t STDIO::__fread_unlocked_chk(void *ptr, size_t ptrlen, size_t size,
+                                   size_t n, FILE *stream) {
+  BRAHMA_UNWRAPPED_FUNC(__fread_unlocked_chk, size_t,
+                        (ptr, ptrlen, size, n, stream));
   return result;
 }
 char *STDIO::__fgets_chk(char *s, size_t size, int n, FILE *stream) {
@@ -290,10 +286,12 @@ char *STDIO::__fgets_unlocked_chk(char *s, size_t size, int n, FILE *stream) {
   BRAHMA_UNWRAPPED_FUNC(__fgets_unlocked_chk, char *, (s, size, n, stream));
   return result;
 }
-int STDIO::__fprintf_chk(FILE *stream, int flag, const char *format, va_list args) {
+int STDIO::__fprintf_chk(FILE *stream, int flag, const char *format,
+                         va_list args) {
   return __vfprintf_chk(stream, flag, format, args);
 }
-int STDIO::__vfprintf_chk(FILE *stream, int flag, const char *format, va_list args) {
+int STDIO::__vfprintf_chk(FILE *stream, int flag, const char *format,
+                          va_list args) {
   BRAHMA_UNWRAPPED_FUNC(__vfprintf_chk, int, (stream, flag, format, args));
   return result;
 }
@@ -311,7 +309,8 @@ int STDIO::__vdprintf_chk(int fd, int flag, const char *format, va_list args) {
   BRAHMA_UNWRAPPED_FUNC(__vdprintf_chk, int, (fd, flag, format, args));
   return result;
 }
-size_t STDIO::fwrite_unlocked(const void *ptr, size_t size, size_t n, FILE *stream) {
+size_t STDIO::fwrite_unlocked(const void *ptr, size_t size, size_t n,
+                              FILE *stream) {
   BRAHMA_UNWRAPPED_FUNC(fwrite_unlocked, size_t, (ptr, size, n, stream));
   return result;
 }
@@ -359,9 +358,7 @@ int STDIO::getchar_unlocked(void) {
   BRAHMA_UNWRAPPED_FUNC(getchar_unlocked, int, ());
   return result;
 }
-void STDIO::perror(const char *s) {
-  BRAHMA_UNWRAPPED_FUNC_VOID(perror, (s));
-}
+void STDIO::perror(const char *s) { BRAHMA_UNWRAPPED_FUNC_VOID(perror, (s)); }
 void STDIO::setbuf(FILE *stream, char *buf) {
   BRAHMA_UNWRAPPED_FUNC_VOID(setbuf, (stream, buf));
 }
@@ -399,7 +396,8 @@ int STDIO::fcloseall(void) {
   BRAHMA_UNWRAPPED_FUNC(fcloseall, int, ());
   return result;
 }
-FILE *STDIO::fopencookie(void *cookie, const char *mode, cookie_io_functions_t funcs) {
+FILE *STDIO::fopencookie(void *cookie, const char *mode,
+                         cookie_io_functions_t funcs) {
   BRAHMA_UNWRAPPED_FUNC(fopencookie, FILE *, (cookie, mode, funcs));
   return result;
 }
@@ -469,11 +467,13 @@ int STDIO::vfwprintf(FILE *stream, const wchar_t *format, va_list args) {
 int STDIO::fwprintf(FILE *stream, const wchar_t *format, va_list args) {
   return vfwprintf(stream, format, args);
 }
-int STDIO::__vfwprintf_chk(FILE *stream, int flag, const wchar_t *format, va_list args) {
+int STDIO::__vfwprintf_chk(FILE *stream, int flag, const wchar_t *format,
+                           va_list args) {
   BRAHMA_UNWRAPPED_FUNC(__vfwprintf_chk, int, (stream, flag, format, args));
   return result;
 }
-int STDIO::__fwprintf_chk(FILE *stream, int flag, const wchar_t *format, va_list args) {
+int STDIO::__fwprintf_chk(FILE *stream, int flag, const wchar_t *format,
+                          va_list args) {
   return __vfwprintf_chk(stream, flag, format, args);
 }
 int STDIO::vfwscanf(FILE *stream, const wchar_t *format, va_list args) {
@@ -483,21 +483,22 @@ int STDIO::vfwscanf(FILE *stream, const wchar_t *format, va_list args) {
 int STDIO::fwscanf(FILE *stream, const wchar_t *format, va_list args) {
   return vfwscanf(stream, format, args);
 }
-int STDIO::__isoc99_vfwscanf(FILE *stream, const wchar_t *format, va_list args) {
+int STDIO::__isoc99_vfwscanf(FILE *stream, const wchar_t *format,
+                             va_list args) {
   BRAHMA_UNWRAPPED_FUNC(__isoc99_vfwscanf, int, (stream, format, args));
   return result;
 }
 int STDIO::__isoc99_fwscanf(FILE *stream, const wchar_t *format, va_list args) {
   return __isoc99_vfwscanf(stream, format, args);
 }
-int STDIO::__isoc23_vfwscanf(FILE *stream, const wchar_t *format, va_list args) {
+int STDIO::__isoc23_vfwscanf(FILE *stream, const wchar_t *format,
+                             va_list args) {
   BRAHMA_UNWRAPPED_FUNC(__isoc23_vfwscanf, int, (stream, format, args));
   return result;
 }
 int STDIO::__isoc23_fwscanf(FILE *stream, const wchar_t *format, va_list args) {
   return __isoc23_vfwscanf(stream, format, args);
 }
-
 
 size_t brahma::STDIO::unbind() {
   num_bindings = unbindings.size();
@@ -509,7 +510,7 @@ size_t brahma::STDIO::unbind() {
     strcpy(unbind_name, tool_name);
     strcat(unbind_name, "_unbind");
     gotcha_wrap(raw_bindings, num_bindings, unbind_name);
-    gotcha_set_priority(unbind_name, bind_priority+1);
+    gotcha_set_priority(unbind_name, bind_priority + 1);
   }
   return num_bindings;
 }

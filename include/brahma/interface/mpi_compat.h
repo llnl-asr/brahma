@@ -17,20 +17,22 @@
 #ifndef BRAHMA_MPI_COMPAT_H
 #define BRAHMA_MPI_COMPAT_H
 #include <brahma/interface/mpi.h>
-#include <brahma/interface/mpi_openmpi_4_1_compat.h>
+#include <brahma/interface/mpi_craympich_8_1_compat.h>
 #include <brahma/interface/mpi_craympich_9_0_compat.h>
 #include <brahma/interface/mpi_craympich_9_1_compat.h>
-#include <brahma/interface/mpi_mpich_4_2_compat.h>
-#include <brahma/interface/mpi_openmpi_5_0_compat.h>
-#include <brahma/interface/mpi_craympich_8_1_compat.h>
 #include <brahma/interface/mpi_mpich_3_4_compat.h>
+#include <brahma/interface/mpi_mpich_4_2_compat.h>
 #include <brahma/interface/mpi_mvapich_2_3_compat.h>
+#include <brahma/interface/mpi_openmpi_4_1_compat.h>
+#include <brahma/interface/mpi_openmpi_5_0_compat.h>
+
 #include <vector>
 
 namespace brahma {
 /// Every compat interface that was generated for mpi.
 inline std::vector<const char*> mpi_compat_families() {
-  return {"openmpi_4_1", "craympich_9_0", "craympich_9_1", "mpich_4_2", "openmpi_5_0", "craympich_8_1", "mpich_3_4", "mvapich_2_3"};
+  return {"openmpi_4_1", "craympich_9_0", "craympich_9_1", "mpich_4_2",
+          "openmpi_5_0", "craympich_8_1", "mpich_3_4",     "mvapich_2_3"};
 }
 /// The ones compiled in for this build's MPI implementation, major and minor.
 inline std::vector<const char*> mpi_compat_enabled() {

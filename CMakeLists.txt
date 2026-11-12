@@ -336,7 +336,10 @@ if(BRAHMA_BUILD_WITH_MPI)
   set(BRAHMA_PUBLIC_HEADER ${BRAHMA_PUBLIC_HEADER} ${BRAHMA_MPI_INCLUDE})
 endif()
 
-add_library(${PROJECT_NAME} SHARED ${BRAHMA_SRC} ${BRAHMA_PUBLIC_HEADER} ${BRAHMA_PRIVATE_HEADER})
+# Shared unless BUILD_SHARED_LIBS is OFF (it defaults to ON above). A static
+# brahma is position independent (CMAKE_POSITION_INDEPENDENT_CODE), so it can
+# be linked into a shared library such as libdftracer_core.
+add_library(${PROJECT_NAME} ${BRAHMA_SRC} ${BRAHMA_PUBLIC_HEADER} ${BRAHMA_PRIVATE_HEADER})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     LINKER_LANGUAGE CXX

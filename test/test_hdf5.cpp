@@ -6389,6 +6389,7 @@ class HDF5Test : public HDF5 {
   }
 #endif
 
+#if defined(H5_HAVE_PARALLEL)
 #if ((BRAHMA_HDF5_VERSION >= 100823 && BRAHMA_HDF5_VERSION < 100900) || \
      (BRAHMA_HDF5_VERSION >= 101011 && BRAHMA_HDF5_VERSION < 101100) || \
      (BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
@@ -6401,7 +6402,9 @@ class HDF5Test : public HDF5 {
     return 0;
   }
 #endif
+#endif
 
+#if defined(H5_HAVE_PARALLEL)
 #if ((BRAHMA_HDF5_VERSION >= 100823 && BRAHMA_HDF5_VERSION < 100900) || \
      (BRAHMA_HDF5_VERSION >= 101011 && BRAHMA_HDF5_VERSION < 101100) || \
      (BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
@@ -6413,6 +6416,7 @@ class HDF5Test : public HDF5 {
     api_count++;
     return 0;
   }
+#endif
 #endif
 
 #if ((BRAHMA_HDF5_VERSION >= 100823 && BRAHMA_HDF5_VERSION < 100900) || \
@@ -8436,6 +8440,7 @@ class HDF5Test : public HDF5 {
   }
 #endif
 
+#if defined(H5_HAVE_PARALLEL)
 #if ((BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
      (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500))
   herr_t H5Pget_mpi_params(hid_t fapl_id, MPI_Comm *comm,
@@ -8446,7 +8451,9 @@ class HDF5Test : public HDF5 {
     return 0;
   }
 #endif
+#endif
 
+#if defined(H5_HAVE_PARALLEL)
 #if ((BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
      (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500))
   herr_t H5Pset_mpi_params(hid_t fapl_id, MPI_Comm comm,
@@ -8456,6 +8463,7 @@ class HDF5Test : public HDF5 {
     api_count++;
     return 0;
   }
+#endif
 #endif
 
 #if ((BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
@@ -8639,8 +8647,9 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  hid_t H5Oopen_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t lapl_id,
-                      hid_t es_id) override {
+  hid_t H5Oopen_async(const char *app_file, const char *app_func,
+                      unsigned app_line, hid_t loc_id, const char *name,
+                      hid_t lapl_id, hid_t es_id) override {
     printf("707 Captured H5Oopen_async call\n");
     fflush(stdout);
     api_count++;
@@ -8649,9 +8658,11 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  hid_t H5Oopen_by_idx_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *group_name,
-                             H5_index_t idx_type, H5_iter_order_t order,
-                             hsize_t n, hid_t lapl_id, hid_t es_id) override {
+  hid_t H5Oopen_by_idx_async(const char *app_file, const char *app_func,
+                             unsigned app_line, hid_t loc_id,
+                             const char *group_name, H5_index_t idx_type,
+                             H5_iter_order_t order, hsize_t n, hid_t lapl_id,
+                             hid_t es_id) override {
     printf("708 Captured H5Oopen_by_idx_async call\n");
     fflush(stdout);
     api_count++;
@@ -8660,9 +8671,11 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Oget_info_by_name_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name,
-                                   H5O_info2_t *oinfo, unsigned int fields,
-                                   hid_t lapl_id, hid_t es_id) override {
+  herr_t H5Oget_info_by_name_async(const char *app_file, const char *app_func,
+                                   unsigned app_line, hid_t loc_id,
+                                   const char *name, H5O_info2_t *oinfo,
+                                   unsigned int fields, hid_t lapl_id,
+                                   hid_t es_id) override {
     printf("709 Captured H5Oget_info_by_name_async call\n");
     fflush(stdout);
     api_count++;
@@ -8671,7 +8684,9 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Ocopy_async(const char *app_file, const char *app_func, unsigned app_line, hid_t src_loc_id, const char *src_name, hid_t dst_loc_id,
+  herr_t H5Ocopy_async(const char *app_file, const char *app_func,
+                       unsigned app_line, hid_t src_loc_id,
+                       const char *src_name, hid_t dst_loc_id,
                        const char *dst_name, hid_t ocpypl_id, hid_t lcpl_id,
                        hid_t es_id) override {
     printf("710 Captured H5Ocopy_async call\n");
@@ -8682,7 +8697,9 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Oclose_async(const char *app_file, const char *app_func, unsigned app_line, hid_t object_id, hid_t es_id) override {
+  herr_t H5Oclose_async(const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t object_id,
+                        hid_t es_id) override {
     printf("711 Captured H5Oclose_async call\n");
     fflush(stdout);
     api_count++;
@@ -8691,7 +8708,8 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Oflush_async(const char *app_file, const char *app_func, unsigned app_line, hid_t obj_id, hid_t es_id) override {
+  herr_t H5Oflush_async(const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t obj_id, hid_t es_id) override {
     printf("712 Captured H5Oflush_async call\n");
     fflush(stdout);
     api_count++;
@@ -8700,7 +8718,8 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Orefresh_async(const char *app_file, const char *app_func, unsigned app_line, hid_t oid, hid_t es_id) override {
+  herr_t H5Orefresh_async(const char *app_file, const char *app_func,
+                          unsigned app_line, hid_t oid, hid_t es_id) override {
     printf("713 Captured H5Orefresh_async call\n");
     fflush(stdout);
     api_count++;
@@ -8709,7 +8728,9 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Tclose_async(const char *app_file, const char *app_func, unsigned app_line, hid_t type_id, hid_t es_id) override {
+  herr_t H5Tclose_async(const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t type_id,
+                        hid_t es_id) override {
     printf("714 Captured H5Tclose_async call\n");
     fflush(stdout);
     api_count++;
@@ -8718,9 +8739,10 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Tcommit_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t type_id,
-                         hid_t lcpl_id, hid_t tcpl_id, hid_t tapl_id,
-                         hid_t es_id) override {
+  herr_t H5Tcommit_async(const char *app_file, const char *app_func,
+                         unsigned app_line, hid_t loc_id, const char *name,
+                         hid_t type_id, hid_t lcpl_id, hid_t tcpl_id,
+                         hid_t tapl_id, hid_t es_id) override {
     printf("715 Captured H5Tcommit_async call\n");
     fflush(stdout);
     api_count++;
@@ -8729,8 +8751,9 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  hid_t H5Topen_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t tapl_id,
-                      hid_t es_id) override {
+  hid_t H5Topen_async(const char *app_file, const char *app_func,
+                      unsigned app_line, hid_t loc_id, const char *name,
+                      hid_t tapl_id, hid_t es_id) override {
     printf("716 Captured H5Topen_async call\n");
     fflush(stdout);
     api_count++;
@@ -8739,7 +8762,9 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Aclose_async(const char *app_file, const char *app_func, unsigned app_line, hid_t attr_id, hid_t es_id) override {
+  herr_t H5Aclose_async(const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t attr_id,
+                        hid_t es_id) override {
     printf("717 Captured H5Aclose_async call\n");
     fflush(stdout);
     api_count++;
@@ -8748,9 +8773,10 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  hid_t H5Acreate_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *attr_name, hid_t type_id,
-                        hid_t space_id, hid_t acpl_id, hid_t aapl_id,
-                        hid_t es_id) override {
+  hid_t H5Acreate_async(const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t loc_id, const char *attr_name,
+                        hid_t type_id, hid_t space_id, hid_t acpl_id,
+                        hid_t aapl_id, hid_t es_id) override {
     printf("718 Captured H5Acreate_async call\n");
     fflush(stdout);
     api_count++;
@@ -8759,10 +8785,12 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  hid_t H5Acreate_by_name_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *obj_name,
-                                const char *attr_name, hid_t type_id,
-                                hid_t space_id, hid_t acpl_id, hid_t aapl_id,
-                                hid_t lapl_id, hid_t es_id) override {
+  hid_t H5Acreate_by_name_async(const char *app_file, const char *app_func,
+                                unsigned app_line, hid_t loc_id,
+                                const char *obj_name, const char *attr_name,
+                                hid_t type_id, hid_t space_id, hid_t acpl_id,
+                                hid_t aapl_id, hid_t lapl_id,
+                                hid_t es_id) override {
     printf("719 Captured H5Acreate_by_name_async call\n");
     fflush(stdout);
     api_count++;
@@ -8771,8 +8799,9 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Aexists_async(const char *app_file, const char *app_func, unsigned app_line, hid_t obj_id, const char *attr_name, hbool_t *exists,
-                         hid_t es_id) override {
+  herr_t H5Aexists_async(const char *app_file, const char *app_func,
+                         unsigned app_line, hid_t obj_id, const char *attr_name,
+                         hbool_t *exists, hid_t es_id) override {
     printf("720 Captured H5Aexists_async call\n");
     fflush(stdout);
     api_count++;
@@ -8781,9 +8810,11 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Aexists_by_name_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *obj_name,
-                                 const char *attr_name, hbool_t *exists,
-                                 hid_t lapl_id, hid_t es_id) override {
+  herr_t H5Aexists_by_name_async(const char *app_file, const char *app_func,
+                                 unsigned app_line, hid_t loc_id,
+                                 const char *obj_name, const char *attr_name,
+                                 hbool_t *exists, hid_t lapl_id,
+                                 hid_t es_id) override {
     printf("721 Captured H5Aexists_by_name_async call\n");
     fflush(stdout);
     api_count++;
@@ -8792,8 +8823,9 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  hid_t H5Aopen_async(const char *app_file, const char *app_func, unsigned app_line, hid_t obj_id, const char *attr_name, hid_t aapl_id,
-                      hid_t es_id) override {
+  hid_t H5Aopen_async(const char *app_file, const char *app_func,
+                      unsigned app_line, hid_t obj_id, const char *attr_name,
+                      hid_t aapl_id, hid_t es_id) override {
     printf("722 Captured H5Aopen_async call\n");
     fflush(stdout);
     api_count++;
@@ -8802,10 +8834,11 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  hid_t H5Aopen_by_idx_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *obj_name,
-                             H5_index_t idx_type, H5_iter_order_t order,
-                             hsize_t n, hid_t aapl_id, hid_t lapl_id,
-                             hid_t es_id) override {
+  hid_t H5Aopen_by_idx_async(const char *app_file, const char *app_func,
+                             unsigned app_line, hid_t loc_id,
+                             const char *obj_name, H5_index_t idx_type,
+                             H5_iter_order_t order, hsize_t n, hid_t aapl_id,
+                             hid_t lapl_id, hid_t es_id) override {
     printf("723 Captured H5Aopen_by_idx_async call\n");
     fflush(stdout);
     api_count++;
@@ -8814,9 +8847,11 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  hid_t H5Aopen_by_name_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *obj_name,
-                              const char *attr_name, hid_t aapl_id,
-                              hid_t lapl_id, hid_t es_id) override {
+  hid_t H5Aopen_by_name_async(const char *app_file, const char *app_func,
+                              unsigned app_line, hid_t loc_id,
+                              const char *obj_name, const char *attr_name,
+                              hid_t aapl_id, hid_t lapl_id,
+                              hid_t es_id) override {
     printf("724 Captured H5Aopen_by_name_async call\n");
     fflush(stdout);
     api_count++;
@@ -8825,8 +8860,9 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Aread_async(const char *app_file, const char *app_func, unsigned app_line, hid_t attr_id, hid_t dtype_id, void *buf,
-                       hid_t es_id) override {
+  herr_t H5Aread_async(const char *app_file, const char *app_func,
+                       unsigned app_line, hid_t attr_id, hid_t dtype_id,
+                       void *buf, hid_t es_id) override {
     printf("725 Captured H5Aread_async call\n");
     fflush(stdout);
     api_count++;
@@ -8835,7 +8871,8 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Arename_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *old_name,
+  herr_t H5Arename_async(const char *app_file, const char *app_func,
+                         unsigned app_line, hid_t loc_id, const char *old_name,
                          const char *new_name, hid_t es_id) override {
     printf("726 Captured H5Arename_async call\n");
     fflush(stdout);
@@ -8845,7 +8882,9 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Arename_by_name_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *obj_name,
+  herr_t H5Arename_by_name_async(const char *app_file, const char *app_func,
+                                 unsigned app_line, hid_t loc_id,
+                                 const char *obj_name,
                                  const char *old_attr_name,
                                  const char *new_attr_name, hid_t lapl_id,
                                  hid_t es_id) override {
@@ -8857,8 +8896,9 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Awrite_async(const char *app_file, const char *app_func, unsigned app_line, hid_t attr_id, hid_t type_id, const void *buf,
-                        hid_t es_id) override {
+  herr_t H5Awrite_async(const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t attr_id, hid_t type_id,
+                        const void *buf, hid_t es_id) override {
     printf("728 Captured H5Awrite_async call\n");
     fflush(stdout);
     api_count++;
@@ -8867,9 +8907,10 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  hid_t H5Dcreate_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t type_id,
-                        hid_t space_id, hid_t lcpl_id, hid_t dcpl_id,
-                        hid_t dapl_id, hid_t es_id) override {
+  hid_t H5Dcreate_async(const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t loc_id, const char *name,
+                        hid_t type_id, hid_t space_id, hid_t lcpl_id,
+                        hid_t dcpl_id, hid_t dapl_id, hid_t es_id) override {
     printf("729 Captured H5Dcreate_async call\n");
     fflush(stdout);
     api_count++;
@@ -8878,8 +8919,9 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  hid_t H5Dopen_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t dapl_id,
-                      hid_t es_id) override {
+  hid_t H5Dopen_async(const char *app_file, const char *app_func,
+                      unsigned app_line, hid_t loc_id, const char *name,
+                      hid_t dapl_id, hid_t es_id) override {
     printf("730 Captured H5Dopen_async call\n");
     fflush(stdout);
     api_count++;
@@ -8888,7 +8930,9 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  hid_t H5Dget_space_async(const char *app_file, const char *app_func, unsigned app_line, hid_t dset_id, hid_t es_id) override {
+  hid_t H5Dget_space_async(const char *app_file, const char *app_func,
+                           unsigned app_line, hid_t dset_id,
+                           hid_t es_id) override {
     printf("731 Captured H5Dget_space_async call\n");
     fflush(stdout);
     api_count++;
@@ -8908,9 +8952,10 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Dread_async(const char *app_file, const char *app_func, unsigned app_line, hid_t dset_id, hid_t mem_type_id, hid_t mem_space_id,
-                       hid_t file_space_id, hid_t dxpl_id, void *buf,
-                       hid_t es_id) override {
+  herr_t H5Dread_async(const char *app_file, const char *app_func,
+                       unsigned app_line, hid_t dset_id, hid_t mem_type_id,
+                       hid_t mem_space_id, hid_t file_space_id, hid_t dxpl_id,
+                       void *buf, hid_t es_id) override {
     printf("733 Captured H5Dread_async call\n");
     fflush(stdout);
     api_count++;
@@ -8919,9 +8964,11 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Dread_multi_async(const char *app_file, const char *app_func, unsigned app_line, size_t count, hid_t dset_id[], hid_t mem_type_id[],
-                             hid_t mem_space_id[], hid_t file_space_id[],
-                             hid_t dxpl_id, void *buf[], hid_t es_id) override {
+  herr_t H5Dread_multi_async(const char *app_file, const char *app_func,
+                             unsigned app_line, size_t count, hid_t dset_id[],
+                             hid_t mem_type_id[], hid_t mem_space_id[],
+                             hid_t file_space_id[], hid_t dxpl_id, void *buf[],
+                             hid_t es_id) override {
     printf("734 Captured H5Dread_multi_async call\n");
     fflush(stdout);
     api_count++;
@@ -8941,9 +8988,10 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Dwrite_async(const char *app_file, const char *app_func, unsigned app_line, hid_t dset_id, hid_t mem_type_id, hid_t mem_space_id,
-                        hid_t file_space_id, hid_t dxpl_id, const void *buf,
-                        hid_t es_id) override {
+  herr_t H5Dwrite_async(const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t dset_id, hid_t mem_type_id,
+                        hid_t mem_space_id, hid_t file_space_id, hid_t dxpl_id,
+                        const void *buf, hid_t es_id) override {
     printf("736 Captured H5Dwrite_async call\n");
     fflush(stdout);
     api_count++;
@@ -8952,7 +9000,8 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Dwrite_multi_async(const char *app_file, const char *app_func, unsigned app_line, size_t count, hid_t dset_id[],
+  herr_t H5Dwrite_multi_async(const char *app_file, const char *app_func,
+                              unsigned app_line, size_t count, hid_t dset_id[],
                               hid_t mem_type_id[], hid_t mem_space_id[],
                               hid_t file_space_id[], hid_t dxpl_id,
                               const void *buf[], hid_t es_id) override {
@@ -8964,8 +9013,9 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Dset_extent_async(const char *app_file, const char *app_func, unsigned app_line, hid_t dset_id, const hsize_t size[],
-                             hid_t es_id) override {
+  herr_t H5Dset_extent_async(const char *app_file, const char *app_func,
+                             unsigned app_line, hid_t dset_id,
+                             const hsize_t size[], hid_t es_id) override {
     printf("738 Captured H5Dset_extent_async call\n");
     fflush(stdout);
     api_count++;
@@ -8974,7 +9024,9 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Dclose_async(const char *app_file, const char *app_func, unsigned app_line, hid_t dset_id, hid_t es_id) override {
+  herr_t H5Dclose_async(const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t dset_id,
+                        hid_t es_id) override {
     printf("739 Captured H5Dclose_async call\n");
     fflush(stdout);
     api_count++;
@@ -9126,8 +9178,10 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  hid_t H5Fcreate_async(const char *app_file, const char *app_func, unsigned app_line, const char *filename, unsigned int flags, hid_t fcpl_id,
-                        hid_t fapl_id, hid_t es_id) override {
+  hid_t H5Fcreate_async(const char *app_file, const char *app_func,
+                        unsigned app_line, const char *filename,
+                        unsigned int flags, hid_t fcpl_id, hid_t fapl_id,
+                        hid_t es_id) override {
     printf("755 Captured H5Fcreate_async call\n");
     fflush(stdout);
     api_count++;
@@ -9136,8 +9190,10 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  hid_t H5Fopen_async(const char *app_file, const char *app_func, unsigned app_line, const char *filename, unsigned int flags,
-                      hid_t access_plist, hid_t es_id) override {
+  hid_t H5Fopen_async(const char *app_file, const char *app_func,
+                      unsigned app_line, const char *filename,
+                      unsigned int flags, hid_t access_plist,
+                      hid_t es_id) override {
     printf("756 Captured H5Fopen_async call\n");
     fflush(stdout);
     api_count++;
@@ -9146,7 +9202,9 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  hid_t H5Freopen_async(const char *app_file, const char *app_func, unsigned app_line, hid_t file_id, hid_t es_id) override {
+  hid_t H5Freopen_async(const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t file_id,
+                        hid_t es_id) override {
     printf("757 Captured H5Freopen_async call\n");
     fflush(stdout);
     api_count++;
@@ -9155,7 +9213,8 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Fflush_async(const char *app_file, const char *app_func, unsigned app_line, hid_t object_id, H5F_scope_t scope,
+  herr_t H5Fflush_async(const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t object_id, H5F_scope_t scope,
                         hid_t es_id) override {
     printf("758 Captured H5Fflush_async call\n");
     fflush(stdout);
@@ -9165,7 +9224,9 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Fclose_async(const char *app_file, const char *app_func, unsigned app_line, hid_t file_id, hid_t es_id) override {
+  herr_t H5Fclose_async(const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t file_id,
+                        hid_t es_id) override {
     printf("759 Captured H5Fclose_async call\n");
     fflush(stdout);
     api_count++;
@@ -9174,10 +9235,11 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Lcreate_hard_async(const char *app_file, const char *app_func, unsigned app_line, hid_t cur_loc_id, const char *cur_name,
-                              hid_t new_loc_id, const char *new_name,
-                              hid_t lcpl_id, hid_t lapl_id,
-                              hid_t es_id) override {
+  herr_t H5Lcreate_hard_async(const char *app_file, const char *app_func,
+                              unsigned app_line, hid_t cur_loc_id,
+                              const char *cur_name, hid_t new_loc_id,
+                              const char *new_name, hid_t lcpl_id,
+                              hid_t lapl_id, hid_t es_id) override {
     printf("760 Captured H5Lcreate_hard_async call\n");
     fflush(stdout);
     api_count++;
@@ -9186,9 +9248,11 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Lcreate_soft_async(const char *app_file, const char *app_func, unsigned app_line, const char *link_target, hid_t link_loc_id,
-                              const char *link_name, hid_t lcpl_id,
-                              hid_t lapl_id, hid_t es_id) override {
+  herr_t H5Lcreate_soft_async(const char *app_file, const char *app_func,
+                              unsigned app_line, const char *link_target,
+                              hid_t link_loc_id, const char *link_name,
+                              hid_t lcpl_id, hid_t lapl_id,
+                              hid_t es_id) override {
     printf("761 Captured H5Lcreate_soft_async call\n");
     fflush(stdout);
     api_count++;
@@ -9197,8 +9261,9 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Ldelete_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t lapl_id,
-                         hid_t es_id) override {
+  herr_t H5Ldelete_async(const char *app_file, const char *app_func,
+                         unsigned app_line, hid_t loc_id, const char *name,
+                         hid_t lapl_id, hid_t es_id) override {
     printf("762 Captured H5Ldelete_async call\n");
     fflush(stdout);
     api_count++;
@@ -9207,9 +9272,10 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Ldelete_by_idx_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *group_name,
-                                H5_index_t idx_type, H5_iter_order_t order,
-                                hsize_t n, hid_t lapl_id,
+  herr_t H5Ldelete_by_idx_async(const char *app_file, const char *app_func,
+                                unsigned app_line, hid_t loc_id,
+                                const char *group_name, H5_index_t idx_type,
+                                H5_iter_order_t order, hsize_t n, hid_t lapl_id,
                                 hid_t es_id) override {
     printf("763 Captured H5Ldelete_by_idx_async call\n");
     fflush(stdout);
@@ -9219,8 +9285,9 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Lexists_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hbool_t *exists,
-                         hid_t lapl_id, hid_t es_id) override {
+  herr_t H5Lexists_async(const char *app_file, const char *app_func,
+                         unsigned app_line, hid_t loc_id, const char *name,
+                         hbool_t *exists, hid_t lapl_id, hid_t es_id) override {
     printf("764 Captured H5Lexists_async call\n");
     fflush(stdout);
     api_count++;
@@ -9229,9 +9296,10 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Literate_async(const char *app_file, const char *app_func, unsigned app_line, hid_t group_id, H5_index_t idx_type,
-                          H5_iter_order_t order, hsize_t *idx_p,
-                          H5L_iterate2_t op, void *op_data,
+  herr_t H5Literate_async(const char *app_file, const char *app_func,
+                          unsigned app_line, hid_t group_id,
+                          H5_index_t idx_type, H5_iter_order_t order,
+                          hsize_t *idx_p, H5L_iterate2_t op, void *op_data,
                           hid_t es_id) override {
     printf("765 Captured H5Literate_async call\n");
     fflush(stdout);
@@ -9241,8 +9309,10 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  hid_t H5Gcreate_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t lcpl_id,
-                        hid_t gcpl_id, hid_t gapl_id, hid_t es_id) override {
+  hid_t H5Gcreate_async(const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t loc_id, const char *name,
+                        hid_t lcpl_id, hid_t gcpl_id, hid_t gapl_id,
+                        hid_t es_id) override {
     printf("766 Captured H5Gcreate_async call\n");
     fflush(stdout);
     api_count++;
@@ -9251,8 +9321,9 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  hid_t H5Gopen_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t gapl_id,
-                      hid_t es_id) override {
+  hid_t H5Gopen_async(const char *app_file, const char *app_func,
+                      unsigned app_line, hid_t loc_id, const char *name,
+                      hid_t gapl_id, hid_t es_id) override {
     printf("767 Captured H5Gopen_async call\n");
     fflush(stdout);
     api_count++;
@@ -9261,7 +9332,8 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Gget_info_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, H5G_info_t *ginfo,
+  herr_t H5Gget_info_async(const char *app_file, const char *app_func,
+                           unsigned app_line, hid_t loc_id, H5G_info_t *ginfo,
                            hid_t es_id) override {
     printf("768 Captured H5Gget_info_async call\n");
     fflush(stdout);
@@ -9271,9 +9343,10 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Gget_info_by_name_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name,
-                                   H5G_info_t *ginfo, hid_t lapl_id,
-                                   hid_t es_id) override {
+  herr_t H5Gget_info_by_name_async(const char *app_file, const char *app_func,
+                                   unsigned app_line, hid_t loc_id,
+                                   const char *name, H5G_info_t *ginfo,
+                                   hid_t lapl_id, hid_t es_id) override {
     printf("769 Captured H5Gget_info_by_name_async call\n");
     fflush(stdout);
     api_count++;
@@ -9282,9 +9355,11 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Gget_info_by_idx_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *group_name,
-                                  H5_index_t idx_type, H5_iter_order_t order,
-                                  hsize_t n, H5G_info_t *ginfo, hid_t lapl_id,
+  herr_t H5Gget_info_by_idx_async(const char *app_file, const char *app_func,
+                                  unsigned app_line, hid_t loc_id,
+                                  const char *group_name, H5_index_t idx_type,
+                                  H5_iter_order_t order, hsize_t n,
+                                  H5G_info_t *ginfo, hid_t lapl_id,
                                   hid_t es_id) override {
     printf("770 Captured H5Gget_info_by_idx_async call\n");
     fflush(stdout);
@@ -9294,7 +9369,9 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  herr_t H5Gclose_async(const char *app_file, const char *app_func, unsigned app_line, hid_t group_id, hid_t es_id) override {
+  herr_t H5Gclose_async(const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t group_id,
+                        hid_t es_id) override {
     printf("771 Captured H5Gclose_async call\n");
     fflush(stdout);
     api_count++;
@@ -9303,7 +9380,8 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  hid_t H5Ropen_object_async(const char *app_file, const char *app_func, unsigned app_line, H5R_ref_t *ref_ptr,
+  hid_t H5Ropen_object_async(const char *app_file, const char *app_func,
+                             unsigned app_line, H5R_ref_t *ref_ptr,
                              hid_t rapl_id, hid_t oapl_id,
                              hid_t es_id) override {
     printf("772 Captured H5Ropen_object_async call\n");
@@ -9314,7 +9392,9 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  hid_t H5Ropen_region_async(const char *app_file, const char *app_func, unsigned app_line, H5R_ref_t *ref_ptr, hid_t rapl_id, hid_t oapl_id,
+  hid_t H5Ropen_region_async(const char *app_file, const char *app_func,
+                             unsigned app_line, H5R_ref_t *ref_ptr,
+                             hid_t rapl_id, hid_t oapl_id,
                              hid_t es_id) override {
     printf("773 Captured H5Ropen_region_async call\n");
     fflush(stdout);
@@ -9324,8 +9404,9 @@ class HDF5Test : public HDF5 {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  hid_t H5Ropen_attr_async(const char *app_file, const char *app_func, unsigned app_line, H5R_ref_t *ref_ptr, hid_t rapl_id, hid_t aapl_id,
-                           hid_t es_id) override {
+  hid_t H5Ropen_attr_async(const char *app_file, const char *app_func,
+                           unsigned app_line, H5R_ref_t *ref_ptr, hid_t rapl_id,
+                           hid_t aapl_id, hid_t es_id) override {
     printf("774 Captured H5Ropen_attr_async call\n");
     fflush(stdout);
     api_count++;
@@ -13368,18 +13449,22 @@ int main(int argc, char *argv[]) {
   H5FD_mpio_term();
 #endif
 
+#if defined(H5_HAVE_PARALLEL)
 #if ((BRAHMA_HDF5_VERSION >= 100823 && BRAHMA_HDF5_VERSION < 100900) || \
      (BRAHMA_HDF5_VERSION >= 101011 && BRAHMA_HDF5_VERSION < 101100) || \
      (BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
      (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500))
   H5Pset_fapl_mpio((long)0, (MPI_Comm)0, (MPI_Info)0);
 #endif
+#endif
 
+#if defined(H5_HAVE_PARALLEL)
 #if ((BRAHMA_HDF5_VERSION >= 100823 && BRAHMA_HDF5_VERSION < 100900) || \
      (BRAHMA_HDF5_VERSION >= 101011 && BRAHMA_HDF5_VERSION < 101100) || \
      (BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
      (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500))
   H5Pget_fapl_mpio((long)0, (MPI_Comm *)NULL, (MPI_Info *)NULL);
+#endif
 #endif
 
 #if ((BRAHMA_HDF5_VERSION >= 100823 && BRAHMA_HDF5_VERSION < 100900) || \
@@ -14447,14 +14532,18 @@ int main(int argc, char *argv[]) {
   H5Pset_vol((long)0, (long)0, (const void *)NULL);
 #endif
 
+#if defined(H5_HAVE_PARALLEL)
 #if ((BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
      (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500))
   H5Pget_mpi_params((long)0, (MPI_Comm *)NULL, (MPI_Info *)NULL);
 #endif
+#endif
 
+#if defined(H5_HAVE_PARALLEL)
 #if ((BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
      (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500))
   H5Pset_mpi_params((long)0, (MPI_Comm)0, (MPI_Info)0);
+#endif
 #endif
 
 #if ((BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
@@ -14543,116 +14632,141 @@ int main(int argc, char *argv[]) {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Oopen_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (const char *)NULL, (long)0, (long)0);
+  H5Oopen_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+                (const char *)NULL, (long)0, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Oopen_by_idx_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (const char *)NULL, static_cast<H5_index_t>(0),
+  H5Oopen_by_idx_async((const char *)NULL, (const char *)NULL, (unsigned)0,
+                       (long)0, (const char *)NULL, static_cast<H5_index_t>(0),
                        static_cast<H5_iter_order_t>(0), (unsigned long long)0,
                        (long)0, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Oget_info_by_name_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (const char *)NULL, (H5O_info2_t *)NULL,
+  H5Oget_info_by_name_async((const char *)NULL, (const char *)NULL, (unsigned)0,
+                            (long)0, (const char *)NULL, (H5O_info2_t *)NULL,
                             (unsigned int)0, (long)0, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Ocopy_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (const char *)NULL, (long)0, (const char *)NULL,
-                (long)0, (long)0, (long)0);
+  H5Ocopy_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+                (const char *)NULL, (long)0, (const char *)NULL, (long)0,
+                (long)0, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Oclose_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (long)0);
+  H5Oclose_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+                 (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Oflush_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (long)0);
+  H5Oflush_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+                 (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Orefresh_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (long)0);
+  H5Orefresh_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+                   (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Tclose_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (long)0);
+  H5Tclose_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+                 (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Tcommit_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (const char *)NULL, (long)0, (long)0, (long)0,
-                  (long)0, (long)0);
+  H5Tcommit_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+                  (const char *)NULL, (long)0, (long)0, (long)0, (long)0,
+                  (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Topen_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (const char *)NULL, (long)0, (long)0);
+  H5Topen_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+                (const char *)NULL, (long)0, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Aclose_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (long)0);
+  H5Aclose_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+                 (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Acreate_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (const char *)NULL, (long)0, (long)0, (long)0,
-                  (long)0, (long)0);
+  H5Acreate_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+                  (const char *)NULL, (long)0, (long)0, (long)0, (long)0,
+                  (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Acreate_by_name_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (const char *)NULL, (const char *)NULL,
+  H5Acreate_by_name_async((const char *)NULL, (const char *)NULL, (unsigned)0,
+                          (long)0, (const char *)NULL, (const char *)NULL,
                           (long)0, (long)0, (long)0, (long)0, (long)0, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Aexists_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (const char *)NULL, (hbool_t *)NULL, (long)0);
+  H5Aexists_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+                  (const char *)NULL, (hbool_t *)NULL, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Aexists_by_name_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (const char *)NULL, (const char *)NULL,
+  H5Aexists_by_name_async((const char *)NULL, (const char *)NULL, (unsigned)0,
+                          (long)0, (const char *)NULL, (const char *)NULL,
                           (hbool_t *)NULL, (long)0, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Aopen_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (const char *)NULL, (long)0, (long)0);
+  H5Aopen_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+                (const char *)NULL, (long)0, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Aopen_by_idx_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (const char *)NULL, static_cast<H5_index_t>(0),
+  H5Aopen_by_idx_async((const char *)NULL, (const char *)NULL, (unsigned)0,
+                       (long)0, (const char *)NULL, static_cast<H5_index_t>(0),
                        static_cast<H5_iter_order_t>(0), (unsigned long long)0,
                        (long)0, (long)0, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Aopen_by_name_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (const char *)NULL, (const char *)NULL,
+  H5Aopen_by_name_async((const char *)NULL, (const char *)NULL, (unsigned)0,
+                        (long)0, (const char *)NULL, (const char *)NULL,
                         (long)0, (long)0, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Aread_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (long)0, (void *)NULL, (long)0);
+  H5Aread_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+                (long)0, (void *)NULL, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Arename_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (const char *)NULL, (const char *)NULL, (long)0);
+  H5Arename_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+                  (const char *)NULL, (const char *)NULL, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Arename_by_name_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (const char *)NULL, (const char *)NULL,
+  H5Arename_by_name_async((const char *)NULL, (const char *)NULL, (unsigned)0,
+                          (long)0, (const char *)NULL, (const char *)NULL,
                           (const char *)NULL, (long)0, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Awrite_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (long)0, (const void *)NULL, (long)0);
+  H5Awrite_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+                 (long)0, (const void *)NULL, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Dcreate_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (const char *)NULL, (long)0, (long)0, (long)0,
-                  (long)0, (long)0, (long)0);
+  H5Dcreate_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+                  (const char *)NULL, (long)0, (long)0, (long)0, (long)0,
+                  (long)0, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Dopen_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (const char *)NULL, (long)0, (long)0);
+  H5Dopen_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+                (const char *)NULL, (long)0, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Dget_space_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (long)0);
+  H5Dget_space_async((const char *)NULL, (const char *)NULL, (unsigned)0,
+                     (long)0, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
@@ -14661,12 +14775,13 @@ int main(int argc, char *argv[]) {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Dread_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (long)0, (long)0, (long)0, (long)0, (void *)NULL,
-                (long)0);
+  H5Dread_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+                (long)0, (long)0, (long)0, (long)0, (void *)NULL, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Dread_multi_async((const char *)NULL, (const char *)NULL, (unsigned)0, (size_t)0, (hid_t *)NULL, (hid_t *)NULL, (hid_t *)NULL,
+  H5Dread_multi_async((const char *)NULL, (const char *)NULL, (unsigned)0,
+                      (size_t)0, (hid_t *)NULL, (hid_t *)NULL, (hid_t *)NULL,
                       (hid_t *)NULL, (long)0, (void **)NULL, (long)0);
 #endif
 
@@ -14676,21 +14791,25 @@ int main(int argc, char *argv[]) {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Dwrite_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (long)0, (long)0, (long)0, (long)0,
-                 (const void *)NULL, (long)0);
+  H5Dwrite_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+                 (long)0, (long)0, (long)0, (long)0, (const void *)NULL,
+                 (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Dwrite_multi_async((const char *)NULL, (const char *)NULL, (unsigned)0, (size_t)0, (hid_t *)NULL, (hid_t *)NULL, (hid_t *)NULL,
+  H5Dwrite_multi_async((const char *)NULL, (const char *)NULL, (unsigned)0,
+                       (size_t)0, (hid_t *)NULL, (hid_t *)NULL, (hid_t *)NULL,
                        (hid_t *)NULL, (long)0, (const void **)NULL, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Dset_extent_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (const hsize_t *)NULL, (long)0);
+  H5Dset_extent_async((const char *)NULL, (const char *)NULL, (unsigned)0,
+                      (long)0, (const hsize_t *)NULL, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Dclose_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (long)0);
+  H5Dclose_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+                 (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
@@ -14755,95 +14874,113 @@ int main(int argc, char *argv[]) {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Fcreate_async((const char *)NULL, (const char *)NULL, (unsigned)0, (const char *)NULL, (unsigned int)0, (long)0, (long)0,
+  H5Fcreate_async((const char *)NULL, (const char *)NULL, (unsigned)0,
+                  (const char *)NULL, (unsigned int)0, (long)0, (long)0,
                   (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Fopen_async((const char *)NULL, (const char *)NULL, (unsigned)0, (const char *)NULL, (unsigned int)0, (long)0, (long)0);
+  H5Fopen_async((const char *)NULL, (const char *)NULL, (unsigned)0,
+                (const char *)NULL, (unsigned int)0, (long)0, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Freopen_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (long)0);
+  H5Freopen_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+                  (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Fflush_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, static_cast<H5F_scope_t>(0), (long)0);
+  H5Fflush_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+                 static_cast<H5F_scope_t>(0), (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Fclose_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (long)0);
+  H5Fclose_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+                 (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Lcreate_hard_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (const char *)NULL, (long)0, (const char *)NULL,
+  H5Lcreate_hard_async((const char *)NULL, (const char *)NULL, (unsigned)0,
+                       (long)0, (const char *)NULL, (long)0, (const char *)NULL,
                        (long)0, (long)0, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Lcreate_soft_async((const char *)NULL, (const char *)NULL, (unsigned)0, (const char *)NULL, (long)0, (const char *)NULL, (long)0,
+  H5Lcreate_soft_async((const char *)NULL, (const char *)NULL, (unsigned)0,
+                       (const char *)NULL, (long)0, (const char *)NULL, (long)0,
                        (long)0, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Ldelete_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (const char *)NULL, (long)0, (long)0);
+  H5Ldelete_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+                  (const char *)NULL, (long)0, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Ldelete_by_idx_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (const char *)NULL, static_cast<H5_index_t>(0),
+  H5Ldelete_by_idx_async(
+      (const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+      (const char *)NULL, static_cast<H5_index_t>(0),
       static_cast<H5_iter_order_t>(0), (unsigned long long)0, (long)0, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Lexists_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (const char *)NULL, (hbool_t *)NULL, (long)0,
-                  (long)0);
+  H5Lexists_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+                  (const char *)NULL, (hbool_t *)NULL, (long)0, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Literate_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, static_cast<H5_index_t>(0),
-                   static_cast<H5_iter_order_t>(0), (hsize_t *)NULL,
-                   (H5L_iterate2_t)0, (void *)NULL, (long)0);
+  H5Literate_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+                   static_cast<H5_index_t>(0), static_cast<H5_iter_order_t>(0),
+                   (hsize_t *)NULL, (H5L_iterate2_t)0, (void *)NULL, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Gcreate_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (const char *)NULL, (long)0, (long)0, (long)0,
-                  (long)0);
+  H5Gcreate_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+                  (const char *)NULL, (long)0, (long)0, (long)0, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Gopen_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (const char *)NULL, (long)0, (long)0);
+  H5Gopen_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+                (const char *)NULL, (long)0, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Gget_info_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (H5G_info_t *)NULL, (long)0);
+  H5Gget_info_async((const char *)NULL, (const char *)NULL, (unsigned)0,
+                    (long)0, (H5G_info_t *)NULL, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Gget_info_by_name_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (const char *)NULL, (H5G_info_t *)NULL,
+  H5Gget_info_by_name_async((const char *)NULL, (const char *)NULL, (unsigned)0,
+                            (long)0, (const char *)NULL, (H5G_info_t *)NULL,
                             (long)0, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Gget_info_by_idx_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (const char *)NULL, static_cast<H5_index_t>(0),
+  H5Gget_info_by_idx_async(
+      (const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+      (const char *)NULL, static_cast<H5_index_t>(0),
       static_cast<H5_iter_order_t>(0), (unsigned long long)0,
       (H5G_info_t *)NULL, (long)0, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Gclose_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0, (long)0);
+  H5Gclose_async((const char *)NULL, (const char *)NULL, (unsigned)0, (long)0,
+                 (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Ropen_object_async((const char *)NULL, (const char *)NULL, (unsigned)0, (H5R_ref_t *)NULL, (long)0, (long)0,
-                       (long)0);
+  H5Ropen_object_async((const char *)NULL, (const char *)NULL, (unsigned)0,
+                       (H5R_ref_t *)NULL, (long)0, (long)0, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Ropen_region_async((const char *)NULL, (const char *)NULL, (unsigned)0, (H5R_ref_t *)NULL, (long)0, (long)0, (long)0);
+  H5Ropen_region_async((const char *)NULL, (const char *)NULL, (unsigned)0,
+                       (H5R_ref_t *)NULL, (long)0, (long)0, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  H5Ropen_attr_async((const char *)NULL, (const char *)NULL, (unsigned)0, (H5R_ref_t *)NULL, (long)0, (long)0, (long)0);
+  H5Ropen_attr_async((const char *)NULL, (const char *)NULL, (unsigned)0,
+                     (H5R_ref_t *)NULL, (long)0, (long)0, (long)0);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
