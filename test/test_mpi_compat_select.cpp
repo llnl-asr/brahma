@@ -20,10 +20,9 @@ static std::string join(const std::vector<const char*>& v) {
 static int check(const char* name, const std::vector<const char*>& all,
                  const std::vector<const char*>& enabled,
                  const std::string& slug) {
-  bool exists =
-      std::find_if(all.begin(), all.end(), [&](const char* f) {
-        return slug == f;
-      }) != all.end();
+  bool exists = std::find_if(all.begin(), all.end(), [&](const char* f) {
+                  return slug == f;
+                }) != all.end();
   std::printf("%s: build is %s; compat interfaces: %s\n", name, slug.c_str(),
               join(all).c_str());
   std::printf("%s: enabled: %s\n", name, join(enabled).c_str());

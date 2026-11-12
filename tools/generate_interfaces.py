@@ -630,6 +630,21 @@ MPI1_REMOVED_PREAMBLE = f"""
 """
 
 
+# Libraries whose MPI layer exists only in a parallel build: a function that
+# takes or returns an MPI type is declared by them only when the build's
+# config header defines this macro, so the interface wraps it in
+# #if defined(<macro>) too. Without it a serial HDF5 fails to compile the interface (MPI_Comm is
+# undeclared in H5Pset_fapl_mpio and the like).
+PARALLEL_ONLY_MACROS = {"HDF5": "H5_HAVE_PARALLEL"}
+MPI_TYPE_RE = re.compile(r"\bMPI_[A-Z][A-Za-z_]*\b")
+
+
+def uses_mpi_types(variant):
+    """True if the function's signature mentions an MPI type."""
+    text = " ".join(list(variant.get("args", [])) + [variant.get("return_type") or ""])
+    return bool(MPI_TYPE_RE.search(text))
+
+
 def and_conditions(a, b):
     """Combine two impl_condition values for wrap_with_version_condition."""
     if not a:
@@ -1647,6 +1662,14 @@ for (
         if is_mpi_interface and canonical_variant['function_name'] in MPI1_REMOVED_FUNCTIONS:
             final_impl_condition = and_conditions(final_impl_condition, MPI1_REMOVED_MACRO)
 
+        # Its own #if around the version one, not ANDed into it: tools that
+        # read these headers (dftracer's generate_interfaces_from_brahma.py)
+        # recompute version guards and repeat only the others.
+        parallel_guard = None
+        if (not is_mpi_interface and namespace in PARALLEL_ONLY_MACROS
+                and uses_mpi_types(canonical_variant)):
+            parallel_guard = PARALLEL_ONLY_MACROS[namespace]
+
         macro_bindings[function_hash] = wrap_with_version_condition(
             final_version_condition,
             TEMPLATE_MACRO_BINDING.substitute(
@@ -1763,6 +1786,14 @@ for (
                 ),
                 final_impl_condition,
             )
+
+        if parallel_guard:
+            for generated in (macro_bindings, macro_typedefs, macro_vars,
+                              test_functions, test_function_overrides,
+                              virtual_functions, wrapper_functions):
+                if function_hash in generated:
+                    generated[function_hash] = wrap_with_version_condition(
+                        None, generated[function_hash], parallel_guard)
 
         api_counter += 1
 

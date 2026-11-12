@@ -1,31 +1,31 @@
 //
 // Created by hariharan on 8/8/22.
 //
+#include <aio.h>
 #include <assert.h>
 #include <brahma/brahma.h>
+#include <execinfo.h>
 #include <fcntl.h>
+#include <ftw.h>
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
+#include <sys/statvfs.h>
+#include <sys/time.h>
 #include <sys/types.h>
+#include <sys/uio.h>
+#include <sys/vfs.h>
+#include <sys/wait.h>
+#include <sys/xattr.h>
 #include <unistd.h>
 #include <utime.h>
-#include <signal.h>
-#include <execinfo.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <sys/uio.h>
-#include <sys/statvfs.h>
-#include <sys/wait.h>
-#include <cstdarg>
-#include <aio.h>
-#include <ftw.h>
-#include <sys/ioctl.h>
-#include <sys/time.h>
-#include <sys/vfs.h>
-#include <sys/xattr.h>
 #include <wchar.h>
 
+#include <cstdarg>
 #include <iostream>
 
 namespace brahma {
@@ -80,7 +80,7 @@ class POSIXTest : public POSIX {
     return instance;
   }
   size_t api_count;
-  
+
   int open(const char *pathname, int flags, ...) override {
     test_log("1 Captured open call\n");
     api_count++;
@@ -179,13 +179,12 @@ class POSIXTest : public POSIX {
     return 0;
   }
 
-
   int openat64(int dirfd, const char *pathname, int flags, ...) override {
     test_log("15 Captured openat64 call\n");
     api_count++;
     return 0;
   }
-  
+
   char *getcwd(char *buf, size_t size) override {
     test_log("16 Captured getcwd call\n");
     api_count++;
@@ -475,14 +474,14 @@ class POSIXTest : public POSIX {
   }
 
   void *mmap(void *addr, size_t length, int prot, int flags, int fd,
-                     off_t offset) override {
+             off_t offset) override {
     test_log("55 Captured mmap call\n");
     api_count++;
     return 0;
   }
-  
+
   void *mmap64(void *addr, size_t length, int prot, int flags, int fd,
-                       off64_t offset) override {
+               off64_t offset) override {
     test_log("56 Captured mmap64 call\n");
     api_count++;
     return 0;
@@ -523,7 +522,7 @@ class POSIXTest : public POSIX {
     api_count++;
     return 0;
   }
-  
+
   int munlock(const void *addr, size_t len) override {
     test_log("63 Captured munlock call\n");
     api_count++;
@@ -803,27 +802,32 @@ class POSIXTest : public POSIX {
     api_count++;
     return 0;
   }
-  ssize_t preadv2(int fd, const struct iovec *iov, int iovcnt, off_t offset, int flags) override {
+  ssize_t preadv2(int fd, const struct iovec *iov, int iovcnt, off_t offset,
+                  int flags) override {
     test_log("127 Captured preadv2 call\n");
     api_count++;
     return 0;
   }
-  ssize_t pwritev2(int fd, const struct iovec *iov, int iovcnt, off_t offset, int flags) override {
+  ssize_t pwritev2(int fd, const struct iovec *iov, int iovcnt, off_t offset,
+                   int flags) override {
     test_log("128 Captured pwritev2 call\n");
     api_count++;
     return 0;
   }
-  ssize_t preadv64v2(int fd, const struct iovec *iov, int iovcnt, off64_t offset, int flags) override {
+  ssize_t preadv64v2(int fd, const struct iovec *iov, int iovcnt,
+                     off64_t offset, int flags) override {
     test_log("129 Captured preadv64v2 call\n");
     api_count++;
     return 0;
   }
-  ssize_t pwritev64v2(int fd, const struct iovec *iov, int iovcnt, off64_t offset, int flags) override {
+  ssize_t pwritev64v2(int fd, const struct iovec *iov, int iovcnt,
+                      off64_t offset, int flags) override {
     test_log("130 Captured pwritev64v2 call\n");
     api_count++;
     return 0;
   }
-  ssize_t splice(int fd_in, off64_t *off_in, int fd_out, off64_t *off_out, size_t len, unsigned int flags) override {
+  ssize_t splice(int fd_in, off64_t *off_in, int fd_out, off64_t *off_out,
+                 size_t len, unsigned int flags) override {
     test_log("131 Captured splice call\n");
     api_count++;
     return 0;
@@ -833,7 +837,8 @@ class POSIXTest : public POSIX {
     api_count++;
     return 0;
   }
-  ssize_t vmsplice(int fd, const struct iovec *iov, size_t nr_segs, unsigned int flags) override {
+  ssize_t vmsplice(int fd, const struct iovec *iov, size_t nr_segs,
+                   unsigned int flags) override {
     test_log("133 Captured vmsplice call\n");
     api_count++;
     return 0;
@@ -862,12 +867,14 @@ class POSIXTest : public POSIX {
     api_count++;
     return 0;
   }
-  int sync_file_range(int fd, off64_t offset, off64_t nbytes, unsigned int flags) override {
+  int sync_file_range(int fd, off64_t offset, off64_t nbytes,
+                      unsigned int flags) override {
     test_log("139 Captured sync_file_range call\n");
     api_count++;
     return 0;
   }
-  int statx(int dirfd, const char *path, int flags, unsigned int mask, struct statx *buf) override {
+  int statx(int dirfd, const char *path, int flags, unsigned int mask,
+            struct statx *buf) override {
     test_log("140 Captured statx call\n");
     api_count++;
     return 0;
@@ -900,7 +907,8 @@ class POSIXTest : public POSIX {
   }
 #endif
 #if defined(__GLIBC__) && !__GLIBC_PREREQ(2, 33)
-  int __xmknodat(int ver, int dirfd, const char *path, mode_t mode, dev_t *dev) override {
+  int __xmknodat(int ver, int dirfd, const char *path, mode_t mode,
+                 dev_t *dev) override {
     test_log("146 Captured __xmknodat call\n");
     api_count++;
     return 0;
@@ -916,7 +924,8 @@ class POSIXTest : public POSIX {
     api_count++;
     return 0;
   }
-  int renameat2(int olddirfd, const char *oldpath, int newdirfd, const char *newpath, unsigned int flags) override {
+  int renameat2(int olddirfd, const char *oldpath, int newdirfd,
+                const char *newpath, unsigned int flags) override {
     test_log("149 Captured renameat2 call\n");
     api_count++;
     return 0;
@@ -946,12 +955,14 @@ class POSIXTest : public POSIX {
     api_count++;
     return 0;
   }
-  int futimesat(int dirfd, const char *path, const struct timeval times[2]) override {
+  int futimesat(int dirfd, const char *path,
+                const struct timeval times[2]) override {
     test_log("155 Captured futimesat call\n");
     api_count++;
     return 0;
   }
-  int utimensat(int dirfd, const char *path, const struct timespec times[2], int flags) override {
+  int utimensat(int dirfd, const char *path, const struct timespec times[2],
+                int flags) override {
     test_log("156 Captured utimensat call\n");
     api_count++;
     return 0;
@@ -976,7 +987,8 @@ class POSIXTest : public POSIX {
     api_count++;
     return 0;
   }
-  int readdir64_r(DIR *dir, struct dirent64 *entry, struct dirent64 **res) override {
+  int readdir64_r(DIR *dir, struct dirent64 *entry,
+                  struct dirent64 **res) override {
     test_log("161 Captured readdir64_r call\n");
     api_count++;
     return 0;
@@ -990,32 +1002,49 @@ class POSIXTest : public POSIX {
     api_count++;
     return 0;
   }
-  int scandir(const char *dir, struct dirent ***namelist, int (*filter)(const struct dirent *), int (*compar)(const struct dirent **, const struct dirent **)) override {
+  int scandir(const char *dir, struct dirent ***namelist,
+              int (*filter)(const struct dirent *),
+              int (*compar)(const struct dirent **,
+                            const struct dirent **)) override {
     test_log("164 Captured scandir call\n");
     api_count++;
     return 0;
   }
-  int scandir64(const char *dir, struct dirent64 ***namelist, int (*filter)(const struct dirent64 *), int (*compar)(const struct dirent64 **, const struct dirent64 **)) override {
+  int scandir64(const char *dir, struct dirent64 ***namelist,
+                int (*filter)(const struct dirent64 *),
+                int (*compar)(const struct dirent64 **,
+                              const struct dirent64 **)) override {
     test_log("165 Captured scandir64 call\n");
     api_count++;
     return 0;
   }
-  int scandirat(int dirfd, const char *dir, struct dirent ***namelist, int (*filter)(const struct dirent *), int (*compar)(const struct dirent **, const struct dirent **)) override {
+  int scandirat(int dirfd, const char *dir, struct dirent ***namelist,
+                int (*filter)(const struct dirent *),
+                int (*compar)(const struct dirent **,
+                              const struct dirent **)) override {
     test_log("166 Captured scandirat call\n");
     api_count++;
     return 0;
   }
-  int scandirat64(int dirfd, const char *dir, struct dirent64 ***namelist, int (*filter)(const struct dirent64 *), int (*compar)(const struct dirent64 **, const struct dirent64 **)) override {
+  int scandirat64(int dirfd, const char *dir, struct dirent64 ***namelist,
+                  int (*filter)(const struct dirent64 *),
+                  int (*compar)(const struct dirent64 **,
+                                const struct dirent64 **)) override {
     test_log("240 Captured scandirat64 call\n");
     api_count++;
     return 0;
   }
-  int nftw(const char *path, int (*func)(const char *, const struct stat *, int, struct FTW *), int nopenfd, int flags) override {
+  int nftw(const char *path,
+           int (*func)(const char *, const struct stat *, int, struct FTW *),
+           int nopenfd, int flags) override {
     test_log("167 Captured nftw call\n");
     api_count++;
     return 0;
   }
-  int nftw64(const char *path, int (*func)(const char *, const struct stat64 *, int, struct FTW *), int nopenfd, int flags) override {
+  int nftw64(const char *path,
+             int (*func)(const char *, const struct stat64 *, int,
+                         struct FTW *),
+             int nopenfd, int flags) override {
     test_log("168 Captured nftw64 call\n");
     api_count++;
     return 0;
@@ -1027,7 +1056,8 @@ class POSIXTest : public POSIX {
     return 0;
   }
 #endif
-  void *mremap(void *old_addr, size_t old_size, size_t new_size, int flags, void *new_addr) override {
+  void *mremap(void *old_addr, size_t old_size, size_t new_size, int flags,
+               void *new_addr) override {
     test_log("170 Captured mremap call\n");
     api_count++;
     return nullptr;
@@ -1102,32 +1132,38 @@ class POSIXTest : public POSIX {
     api_count++;
     return nullptr;
   }
-  ssize_t getxattr(const char *path, const char *name, void *value, size_t size) override {
+  ssize_t getxattr(const char *path, const char *name, void *value,
+                   size_t size) override {
     test_log("185 Captured getxattr call\n");
     api_count++;
     return 0;
   }
-  ssize_t lgetxattr(const char *path, const char *name, void *value, size_t size) override {
+  ssize_t lgetxattr(const char *path, const char *name, void *value,
+                    size_t size) override {
     test_log("186 Captured lgetxattr call\n");
     api_count++;
     return 0;
   }
-  ssize_t fgetxattr(int fd, const char *name, void *value, size_t size) override {
+  ssize_t fgetxattr(int fd, const char *name, void *value,
+                    size_t size) override {
     test_log("187 Captured fgetxattr call\n");
     api_count++;
     return 0;
   }
-  int setxattr(const char *path, const char *name, const void *value, size_t size, int flags) override {
+  int setxattr(const char *path, const char *name, const void *value,
+               size_t size, int flags) override {
     test_log("188 Captured setxattr call\n");
     api_count++;
     return 0;
   }
-  int lsetxattr(const char *path, const char *name, const void *value, size_t size, int flags) override {
+  int lsetxattr(const char *path, const char *name, const void *value,
+                size_t size, int flags) override {
     test_log("189 Captured lsetxattr call\n");
     api_count++;
     return 0;
   }
-  int fsetxattr(int fd, const char *name, const void *value, size_t size, int flags) override {
+  int fsetxattr(int fd, const char *name, const void *value, size_t size,
+                int flags) override {
     test_log("190 Captured fsetxattr call\n");
     api_count++;
     return 0;
@@ -1192,12 +1228,14 @@ class POSIXTest : public POSIX {
     api_count++;
     return 0;
   }
-  int aio_suspend(const struct aiocb *const list[], int nent, const struct timespec *timeout) override {
+  int aio_suspend(const struct aiocb *const list[], int nent,
+                  const struct timespec *timeout) override {
     test_log("203 Captured aio_suspend call\n");
     api_count++;
     return 0;
   }
-  int lio_listio(int mode, struct aiocb *const list[], int nent, struct sigevent *sig) override {
+  int lio_listio(int mode, struct aiocb *const list[], int nent,
+                 struct sigevent *sig) override {
     test_log("204 Captured lio_listio call\n");
     api_count++;
     return 0;
@@ -1232,12 +1270,14 @@ class POSIXTest : public POSIX {
     api_count++;
     return 0;
   }
-  int aio_suspend64(const struct aiocb64 *const list[], int nent, const struct timespec *timeout) override {
+  int aio_suspend64(const struct aiocb64 *const list[], int nent,
+                    const struct timespec *timeout) override {
     test_log("211 Captured aio_suspend64 call\n");
     api_count++;
     return 0;
   }
-  int lio_listio64(int mode, struct aiocb64 *const list[], int nent, struct sigevent *sig) override {
+  int lio_listio64(int mode, struct aiocb64 *const list[], int nent,
+                   struct sigevent *sig) override {
     test_log("212 Captured lio_listio64 call\n");
     api_count++;
     return 0;
@@ -1342,31 +1382,31 @@ class STDIOTest : public STDIO {
     test_log("13 Captured clearerr call\n");
     api_count++;
   }
-  
+
   int feof(FILE *) override {
     test_log("14 Captured feof call\n");
     api_count++;
     return 0;
   }
-  
+
   int ferror(FILE *) override {
     test_log("15 Captured ferror call\n");
     api_count++;
     return 0;
   }
-  
+
   int fflush(FILE *) override {
     test_log("16 Captured fflush call\n");
     api_count++;
     return 0;
   }
-  
+
   int fgetc(FILE *) override {
     test_log("17 Captured fgetc call\n");
     api_count++;
     return 0;
   }
-  
+
   int fgetpos(FILE *, fpos_t *) override {
     test_log("18 Captured fgetpos call\n");
     api_count++;
@@ -1377,14 +1417,14 @@ class STDIOTest : public STDIO {
     api_count++;
     return 0;
   }
-  
+
   size_t __fread_chk(void *ptr, size_t ptrlen, size_t size, size_t n,
                      FILE *stream) override {
     test_log("103 Captured __fread_chk call\n");
     api_count++;
     return 0;
   }
-  char* __fgets_chk(char *s, size_t size, int n, FILE *stream) override {
+  char *__fgets_chk(char *s, size_t size, int n, FILE *stream) override {
     test_log("104 Captured __fgets_chk call\n");
     api_count++;
     return 0;
@@ -1411,22 +1451,26 @@ class STDIOTest : public STDIO {
     api_count++;
     return 0;
   }
-  int __dprintf_chk(int fd, int flag, const char *format, va_list args) override {
+  int __dprintf_chk(int fd, int flag, const char *format,
+                    va_list args) override {
     test_log("119 Captured __dprintf_chk call\n");
     api_count++;
     return 0;
   }
-  int __vdprintf_chk(int fd, int flag, const char *format, va_list args) override {
+  int __vdprintf_chk(int fd, int flag, const char *format,
+                     va_list args) override {
     test_log("120 Captured __vdprintf_chk call\n");
     api_count++;
     return 0;
   }
-  size_t fwrite_unlocked(const void *ptr, size_t size, size_t n, FILE *stream) override {
+  size_t fwrite_unlocked(const void *ptr, size_t size, size_t n,
+                         FILE *stream) override {
     test_log("121 Captured fwrite_unlocked call\n");
     api_count++;
     return 0;
   }
-  size_t fread_unlocked(void *ptr, size_t size, size_t n, FILE *stream) override {
+  size_t fread_unlocked(void *ptr, size_t size, size_t n,
+                        FILE *stream) override {
     test_log("122 Captured fread_unlocked call\n");
     api_count++;
     return 0;
@@ -1451,23 +1495,23 @@ class STDIOTest : public STDIO {
     api_count++;
     return 0;
   }
-  char* fgets(char *, int, FILE *) override {
+  char *fgets(char *, int, FILE *) override {
     test_log("19 Captured fgets call\n");
     api_count++;
     return nullptr;
   }
-  
+
   void flockfile(FILE *) override {
     test_log("20 Captured flockfile call\n");
     api_count++;
   }
-  
+
   int fputc(int, FILE *) override {
     test_log("21 Captured fputc call\n");
     api_count++;
     return 0;
   }
-  
+
   int fputs(const char *, FILE *) override {
     test_log("22 Captured fputs call\n");
     api_count++;
@@ -1493,59 +1537,59 @@ class STDIOTest : public STDIO {
     api_count++;
     return 0;
   }
-  
+
   int ftrylockfile(FILE *) override {
     test_log("25 Captured ftrylockfile call\n");
     api_count++;
     return 0;
   }
-  
+
   void funlockfile(FILE *) override {
     test_log("26 Captured funlockfile call\n");
     api_count++;
   }
-  
+
   int getc(FILE *) override {
     test_log("27 Captured getc call\n");
     api_count++;
     return 0;
   }
-  
+
   int getc_unlocked(FILE *) override {
     test_log("28 Captured getc_unlocked call\n");
     api_count++;
     return 0;
   }
-  
+
   int getw(FILE *) override {
     test_log("29 Captured getw call\n");
     api_count++;
     return 0;
   }
-  
+
   int pclose(FILE *) override {
     test_log("30 Captured pclose call\n");
     api_count++;
     return 0;
   }
-  
+
   int putw(int, FILE *) override {
     test_log("31 Captured putw call\n");
     api_count++;
     return 0;
   }
-  
+
   void rewind(FILE *) override {
     test_log("32 Captured rewind call\n");
     api_count++;
   }
-  
+
   int setvbuf(FILE *, char *, int, size_t) override {
     test_log("33 Captured setvbuf call\n");
     api_count++;
     return 0;
   }
-  
+
   int ungetc(int, FILE *) override {
     test_log("34 Captured ungetc call\n");
     api_count++;
@@ -1629,8 +1673,7 @@ class STDIOTest : public STDIO {
     return 0;
   }
   // Before glibc 2.38 the header sends fscanf and friends here in ISO C99 mode.
-  int __isoc99_fscanf(FILE *stream, const char *format,
-                      va_list args) override {
+  int __isoc99_fscanf(FILE *stream, const char *format, va_list args) override {
     test_log("105 Captured __isoc99_fscanf call\n");
     api_count++;
     return 0;
@@ -1664,8 +1707,7 @@ class STDIOTest : public STDIO {
     return 0;
   }
 #if defined(__GLIBC__) && __GLIBC_PREREQ(2, 38)
-  int __isoc23_fscanf(FILE *stream, const char *format,
-                      va_list args) override {
+  int __isoc23_fscanf(FILE *stream, const char *format, va_list args) override {
     test_log("43 Captured __isoc23_fscanf call\n");
     api_count++;
     return 0;
@@ -1784,7 +1826,8 @@ class STDIOTest : public STDIO {
     api_count++;
     return 0;
   }
-  FILE *fopencookie(void *cookie, const char *mode, cookie_io_functions_t funcs) override {
+  FILE *fopencookie(void *cookie, const char *mode,
+                    cookie_io_functions_t funcs) override {
     test_log("214 Captured fopencookie call\n");
     api_count++;
     return nullptr;
@@ -1873,12 +1916,14 @@ class STDIOTest : public STDIO {
     api_count++;
     return 0;
   }
-  int __vfwprintf_chk(FILE *stream, int flag, const wchar_t *format, va_list args) override {
+  int __vfwprintf_chk(FILE *stream, int flag, const wchar_t *format,
+                      va_list args) override {
     test_log("232 Captured __vfwprintf_chk call\n");
     api_count++;
     return 0;
   }
-  int __fwprintf_chk(FILE *stream, int flag, const wchar_t *format, va_list args) override {
+  int __fwprintf_chk(FILE *stream, int flag, const wchar_t *format,
+                     va_list args) override {
     test_log("233 Captured __fwprintf_chk call\n");
     api_count++;
     return 0;
@@ -1893,25 +1938,29 @@ class STDIOTest : public STDIO {
     api_count++;
     return 0;
   }
-  int __isoc99_vfwscanf(FILE *stream, const wchar_t *format, va_list args) override {
+  int __isoc99_vfwscanf(FILE *stream, const wchar_t *format,
+                        va_list args) override {
     test_log("236 Captured __isoc99_vfwscanf call\n");
     api_count++;
     return 0;
   }
-  int __isoc99_fwscanf(FILE *stream, const wchar_t *format, va_list args) override {
+  int __isoc99_fwscanf(FILE *stream, const wchar_t *format,
+                       va_list args) override {
     test_log("237 Captured __isoc99_fwscanf call\n");
     api_count++;
     return 0;
   }
 #if defined(__GLIBC__) && __GLIBC_PREREQ(2, 38)
-  int __isoc23_vfwscanf(FILE *stream, const wchar_t *format, va_list args) override {
+  int __isoc23_vfwscanf(FILE *stream, const wchar_t *format,
+                        va_list args) override {
     test_log("238 Captured __isoc23_vfwscanf call\n");
     api_count++;
     return 0;
   }
 #endif
 #if defined(__GLIBC__) && __GLIBC_PREREQ(2, 38)
-  int __isoc23_fwscanf(FILE *stream, const wchar_t *format, va_list args) override {
+  int __isoc23_fwscanf(FILE *stream, const wchar_t *format,
+                       va_list args) override {
     test_log("239 Captured __isoc23_fwscanf call\n");
     api_count++;
     return 0;
@@ -1943,7 +1992,8 @@ void __attribute__((destructor)) test_finalize() {
   brahma::test_logf("STDIO num_bindings: %zu, api_count: %zu\n",
                     stdio->num_bindings, stdio->api_count);
   size_t stdio_unbindings = stdio->unbind();
-  printf("POSIX num_bindings: %zu, api_count: %zu\n", posix->num_bindings, posix->api_count);
+  printf("POSIX num_bindings: %zu, api_count: %zu\n", posix->num_bindings,
+         posix->api_count);
   printf("POSIX unbindings: %zu\n", unbindings);
   fflush(stdout);
   assert(posix->num_bindings == posix->api_count);
@@ -2046,7 +2096,7 @@ void print_stacktrace(int sig) {
 int main(int argc, char *argv[]) {
   signal(SIGSEGV, print_stacktrace);
   signal(SIGABRT, print_stacktrace);
-  
+
   open("", 0);
 
   creat("", 0);
@@ -2184,9 +2234,9 @@ int main(int argc, char *argv[]) {
   fork();
 
   mmap(NULL, 0, 0, 0, 0, 0);
-  
+
   mmap64(NULL, 0, 0, 0, 0, 0);
-  
+
   munmap(NULL, 0);
 
   msync(NULL, 0, 0);
@@ -2379,9 +2429,9 @@ int main(int argc, char *argv[]) {
   ftello(NULL);
   ftello64(NULL);
 
-  clearerr(NULL);  
-  feof(NULL);  
-  ferror(NULL);  
+  clearerr(NULL);
+  feof(NULL);
+  ferror(NULL);
   fflush(NULL);
   fgetc(NULL);
   fgetpos(NULL, 0);
@@ -2425,7 +2475,8 @@ int main(int argc, char *argv[]) {
   // match), so a second, separate call here would double-count it. Only
   // make this second call when the two are genuinely distinct symbols.
   using freopen_sig = FILE *(*)(const char *, const char *, FILE *);
-  if ((void *)(freopen_sig)&::freopen != (void *)(freopen_sig)&::freopen64) {
+  if ((void *)(freopen_sig) & ::freopen != (void *)(freopen_sig) &
+      ::freopen64) {
     freopen64("", "", stdin);
   }
   fprintf(stdout, "");

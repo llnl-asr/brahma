@@ -15,7 +15,7 @@
 #include <utime.h>
 
 #ifdef NDEBUG
-    #error "Assertions are disabled! Remove NDEBUG to enable them."
+#error "Assertions are disabled! Remove NDEBUG to enable them."
 #endif
 
 #ifdef BRAHMA_ENABLE_MPI
@@ -142,7 +142,7 @@ class POSIXTest : public POSIX {
     api_count++;
     return 0;
   }
-  
+
   char *getcwd(char *buf, size_t size) override {
     printf("16 Captured getcwd call\n");
     api_count++;
@@ -377,14 +377,14 @@ class POSIXTest : public POSIX {
   }
 
   void *mmap(void *addr, size_t length, int prot, int flags, int fd,
-                     off_t offset) override {
+             off_t offset) override {
     printf("55 Captured mmap call\n");
     api_count++;
     return 0;
   }
-  
+
   void *mmap64(void *addr, size_t length, int prot, int flags, int fd,
-                       off64_t offset) override {
+               off64_t offset) override {
     printf("56 Captured mmap64 call\n");
     api_count++;
     return 0;
@@ -425,7 +425,7 @@ class POSIXTest : public POSIX {
     api_count++;
     return 0;
   }
-  
+
   int munlock(const void *addr, size_t len) override {
     printf("63 Captured munlock call\n");
     api_count++;
@@ -527,124 +527,124 @@ class STDIOTest : public STDIO {
     printf("13 Captured clearerr call\n");
     api_count++;
   }
-  
+
   int feof(FILE *) override {
     printf("14 Captured feof call\n");
     api_count++;
     return 0;
   }
-  
+
   int ferror(FILE *) override {
     printf("15 Captured ferror call\n");
     api_count++;
     return 0;
   }
-  
+
   int fflush(FILE *) override {
     printf("16 Captured fflush call\n");
     api_count++;
     return 0;
   }
-  
+
   int fgetc(FILE *) override {
     printf("17 Captured fgetc call\n");
     api_count++;
     return 0;
   }
-  
+
   int fgetpos(FILE *, fpos_t *) override {
     printf("18 Captured fgetpos call\n");
     api_count++;
     return 0;
   }
-  
-  char* fgets(char *, int, FILE *) override {
+
+  char *fgets(char *, int, FILE *) override {
     printf("19 Captured fgets call\n");
     api_count++;
     return nullptr;
   }
-  
+
   void flockfile(FILE *) override {
     printf("20 Captured flockfile call\n");
     api_count++;
   }
-  
+
   int fputc(int, FILE *) override {
     printf("21 Captured fputc call\n");
     api_count++;
     return 0;
   }
-  
+
   int fputs(const char *, FILE *) override {
     printf("22 Captured fputs call\n");
     api_count++;
     return 0;
   }
-  
-  FILE* freopen(const char *, const char *, FILE *) override {
+
+  FILE *freopen(const char *, const char *, FILE *) override {
     printf("23 Captured freopen call\n");
     api_count++;
     return nullptr;
   }
-    
+
   int fsetpos(FILE *, const fpos_t *) override {
     printf("24 Captured fsetpos call\n");
     api_count++;
     return 0;
   }
-  
+
   int ftrylockfile(FILE *) override {
     printf("25 Captured ftrylockfile call\n");
     api_count++;
     return 0;
   }
-  
+
   void funlockfile(FILE *) override {
     printf("26 Captured funlockfile call\n");
     api_count++;
   }
-  
+
   int getc(FILE *) override {
     printf("27 Captured getc call\n");
     api_count++;
     return 0;
   }
-  
+
   int getc_unlocked(FILE *) override {
     printf("28 Captured getc_unlocked call\n");
     api_count++;
     return 0;
   }
-  
+
   int getw(FILE *) override {
     printf("29 Captured getw call\n");
     api_count++;
     return 0;
   }
-  
+
   int pclose(FILE *) override {
     printf("30 Captured pclose call\n");
     api_count++;
     return 0;
   }
-  
+
   int putw(int, FILE *) override {
     printf("31 Captured putw call\n");
     api_count++;
     return 0;
   }
-  
+
   void rewind(FILE *) override {
     printf("32 Captured rewind call\n");
     api_count++;
   }
-  
+
   int setvbuf(FILE *, char *, int, size_t) override {
     printf("33 Captured setvbuf call\n");
     api_count++;
     return 0;
   }
-  
+
   int ungetc(int, FILE *) override {
     printf("34 Captured ungetc call\n");
     api_count++;
@@ -870,11 +870,13 @@ void __attribute__((destructor)) test_finalize() {
   printf("finalizing test\n");
   auto posix = brahma::POSIXTest::get_instance();
   size_t unbindings = posix->unbind();
-  printf("POSIX num_bindings: %zu, api_count: %zu\n", posix->num_bindings, posix->api_count);
+  printf("POSIX num_bindings: %zu, api_count: %zu\n", posix->num_bindings,
+         posix->api_count);
   printf("POSIX unbindings: %zu\n", unbindings);
   assert(posix->num_bindings == posix->api_count);
   auto stdio = brahma::STDIOTest::get_instance();
-  printf("STDIO num_bindings: %zu, api_count: %zu\n", stdio->num_bindings, stdio->api_count);
+  printf("STDIO num_bindings: %zu, api_count: %zu\n", stdio->num_bindings,
+         stdio->api_count);
   size_t stdio_unbindings = stdio->unbind();
   printf("STDIO unbindings: %zu\n", stdio_unbindings);
   assert(stdio->num_bindings == stdio->api_count);
@@ -896,10 +898,10 @@ void __attribute__((destructor)) test_finalize() {
   assert(mpiio->num_bindings == mpiio->api_count);
 #endif
 }
-#include <signal.h>
 #include <execinfo.h>
-#include <stdlib.h>
+#include <signal.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 void print_stacktrace(int sig) {
   void *array[32];
@@ -908,7 +910,6 @@ void print_stacktrace(int sig) {
   backtrace_symbols_fd(array, size, STDERR_FILENO);
   exit(sig);
 }
-
 
 int main(int argc, char *argv[]) {
   signal(SIGSEGV, print_stacktrace);
@@ -1032,9 +1033,9 @@ int main(int argc, char *argv[]) {
   fseeko(NULL, 0, 0);
   ftello(NULL);
 
-  clearerr(NULL);  
-  feof(NULL);  
-  ferror(NULL);  
+  clearerr(NULL);
+  feof(NULL);
+  ferror(NULL);
   fflush(NULL);
   fgetc(NULL);
   fgetpos(NULL, 0);

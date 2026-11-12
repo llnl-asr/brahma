@@ -90,7 +90,13 @@
 #define H5Tclose_async H5Tclose_async__brahma_hidden_stub
 #define H5Tcommit_async H5Tcommit_async__brahma_hidden_stub
 #define H5Topen_async H5Topen_async__brahma_hidden_stub
+// Some HDF5 1.14 releases (1.14.3; fixed by 1.14.6) misspell hid_t as
+// "chid_t" in the H5_DOXYGEN declaration of H5Aread_async (H5Apublic.h),
+// which then does not compile. That stub is renamed away above; it only
+// has to parse.
+#define chid_t hid_t
 #include <hdf5.h>
+#undef chid_t
 #undef H5Aclose_async
 #undef H5Acreate_async
 #undef H5Acreate_by_name_async
@@ -3990,19 +3996,23 @@ class HDF5 : public Interface {
   virtual void H5FD_mpio_term(void);
 #endif
 
+#if defined(H5_HAVE_PARALLEL)
 #if ((BRAHMA_HDF5_VERSION >= 100823 && BRAHMA_HDF5_VERSION < 100900) || \
      (BRAHMA_HDF5_VERSION >= 101011 && BRAHMA_HDF5_VERSION < 101100) || \
      (BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
      (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500))
   virtual herr_t H5Pset_fapl_mpio(hid_t fapl_id, MPI_Comm comm, MPI_Info info);
 #endif
+#endif
 
+#if defined(H5_HAVE_PARALLEL)
 #if ((BRAHMA_HDF5_VERSION >= 100823 && BRAHMA_HDF5_VERSION < 100900) || \
      (BRAHMA_HDF5_VERSION >= 101011 && BRAHMA_HDF5_VERSION < 101100) || \
      (BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
      (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500))
   virtual herr_t H5Pget_fapl_mpio(hid_t fapl_id, MPI_Comm *comm,
                                   MPI_Info *info);
+#endif
 #endif
 
 #if ((BRAHMA_HDF5_VERSION >= 100823 && BRAHMA_HDF5_VERSION < 100900) || \
@@ -5172,15 +5182,19 @@ class HDF5 : public Interface {
                             const void *new_vol_info);
 #endif
 
+#if defined(H5_HAVE_PARALLEL)
 #if ((BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
      (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500))
   virtual herr_t H5Pget_mpi_params(hid_t fapl_id, MPI_Comm *comm,
                                    MPI_Info *info);
 #endif
+#endif
 
+#if defined(H5_HAVE_PARALLEL)
 #if ((BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
      (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500))
   virtual herr_t H5Pset_mpi_params(hid_t fapl_id, MPI_Comm comm, MPI_Info info);
+#endif
 #endif
 
 #if ((BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
@@ -5278,138 +5292,173 @@ class HDF5 : public Interface {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual hid_t H5Oopen_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t lapl_id,
-                              hid_t es_id);
+  virtual hid_t H5Oopen_async(const char *app_file, const char *app_func,
+                              unsigned app_line, hid_t loc_id, const char *name,
+                              hid_t lapl_id, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual hid_t H5Oopen_by_idx_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *group_name,
+  virtual hid_t H5Oopen_by_idx_async(const char *app_file, const char *app_func,
+                                     unsigned app_line, hid_t loc_id,
+                                     const char *group_name,
                                      H5_index_t idx_type, H5_iter_order_t order,
                                      hsize_t n, hid_t lapl_id, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Oget_info_by_name_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name,
-                                           H5O_info2_t *oinfo,
+  virtual herr_t H5Oget_info_by_name_async(const char *app_file,
+                                           const char *app_func,
+                                           unsigned app_line, hid_t loc_id,
+                                           const char *name, H5O_info2_t *oinfo,
                                            unsigned int fields, hid_t lapl_id,
                                            hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Ocopy_async(const char *app_file, const char *app_func, unsigned app_line, hid_t src_loc_id, const char *src_name,
-                               hid_t dst_loc_id, const char *dst_name,
-                               hid_t ocpypl_id, hid_t lcpl_id, hid_t es_id);
+  virtual herr_t H5Ocopy_async(const char *app_file, const char *app_func,
+                               unsigned app_line, hid_t src_loc_id,
+                               const char *src_name, hid_t dst_loc_id,
+                               const char *dst_name, hid_t ocpypl_id,
+                               hid_t lcpl_id, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Oclose_async(const char *app_file, const char *app_func, unsigned app_line, hid_t object_id, hid_t es_id);
+  virtual herr_t H5Oclose_async(const char *app_file, const char *app_func,
+                                unsigned app_line, hid_t object_id,
+                                hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Oflush_async(const char *app_file, const char *app_func, unsigned app_line, hid_t obj_id, hid_t es_id);
+  virtual herr_t H5Oflush_async(const char *app_file, const char *app_func,
+                                unsigned app_line, hid_t obj_id, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Orefresh_async(const char *app_file, const char *app_func, unsigned app_line, hid_t oid, hid_t es_id);
+  virtual herr_t H5Orefresh_async(const char *app_file, const char *app_func,
+                                  unsigned app_line, hid_t oid, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Tclose_async(const char *app_file, const char *app_func, unsigned app_line, hid_t type_id, hid_t es_id);
+  virtual herr_t H5Tclose_async(const char *app_file, const char *app_func,
+                                unsigned app_line, hid_t type_id, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Tcommit_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t type_id,
-                                 hid_t lcpl_id, hid_t tcpl_id, hid_t tapl_id,
+  virtual herr_t H5Tcommit_async(const char *app_file, const char *app_func,
+                                 unsigned app_line, hid_t loc_id,
+                                 const char *name, hid_t type_id, hid_t lcpl_id,
+                                 hid_t tcpl_id, hid_t tapl_id, hid_t es_id);
+#endif
+
+#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
+  virtual hid_t H5Topen_async(const char *app_file, const char *app_func,
+                              unsigned app_line, hid_t loc_id, const char *name,
+                              hid_t tapl_id, hid_t es_id);
+#endif
+
+#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
+  virtual herr_t H5Aclose_async(const char *app_file, const char *app_func,
+                                unsigned app_line, hid_t attr_id, hid_t es_id);
+#endif
+
+#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
+  virtual hid_t H5Acreate_async(const char *app_file, const char *app_func,
+                                unsigned app_line, hid_t loc_id,
+                                const char *attr_name, hid_t type_id,
+                                hid_t space_id, hid_t acpl_id, hid_t aapl_id,
+                                hid_t es_id);
+#endif
+
+#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
+  virtual hid_t H5Acreate_by_name_async(
+      const char *app_file, const char *app_func, unsigned app_line,
+      hid_t loc_id, const char *obj_name, const char *attr_name, hid_t type_id,
+      hid_t space_id, hid_t acpl_id, hid_t aapl_id, hid_t lapl_id, hid_t es_id);
+#endif
+
+#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
+  virtual herr_t H5Aexists_async(const char *app_file, const char *app_func,
+                                 unsigned app_line, hid_t obj_id,
+                                 const char *attr_name, hbool_t *exists,
                                  hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual hid_t H5Topen_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t tapl_id,
-                              hid_t es_id);
-#endif
-
-#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Aclose_async(const char *app_file, const char *app_func, unsigned app_line, hid_t attr_id, hid_t es_id);
-#endif
-
-#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual hid_t H5Acreate_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *attr_name,
-                                hid_t type_id, hid_t space_id, hid_t acpl_id,
-                                hid_t aapl_id, hid_t es_id);
-#endif
-
-#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual hid_t H5Acreate_by_name_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *obj_name,
-                                        const char *attr_name, hid_t type_id,
-                                        hid_t space_id, hid_t acpl_id,
-                                        hid_t aapl_id, hid_t lapl_id,
-                                        hid_t es_id);
-#endif
-
-#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Aexists_async(const char *app_file, const char *app_func, unsigned app_line, hid_t obj_id, const char *attr_name,
-                                 hbool_t *exists, hid_t es_id);
-#endif
-
-#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Aexists_by_name_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *obj_name,
+  virtual herr_t H5Aexists_by_name_async(const char *app_file,
+                                         const char *app_func,
+                                         unsigned app_line, hid_t loc_id,
+                                         const char *obj_name,
                                          const char *attr_name, hbool_t *exists,
                                          hid_t lapl_id, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual hid_t H5Aopen_async(const char *app_file, const char *app_func, unsigned app_line, hid_t obj_id, const char *attr_name,
-                              hid_t aapl_id, hid_t es_id);
+  virtual hid_t H5Aopen_async(const char *app_file, const char *app_func,
+                              unsigned app_line, hid_t obj_id,
+                              const char *attr_name, hid_t aapl_id,
+                              hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual hid_t H5Aopen_by_idx_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *obj_name,
-                                     H5_index_t idx_type, H5_iter_order_t order,
-                                     hsize_t n, hid_t aapl_id, hid_t lapl_id,
-                                     hid_t es_id);
+  virtual hid_t H5Aopen_by_idx_async(const char *app_file, const char *app_func,
+                                     unsigned app_line, hid_t loc_id,
+                                     const char *obj_name, H5_index_t idx_type,
+                                     H5_iter_order_t order, hsize_t n,
+                                     hid_t aapl_id, hid_t lapl_id, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual hid_t H5Aopen_by_name_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *obj_name,
+  virtual hid_t H5Aopen_by_name_async(const char *app_file,
+                                      const char *app_func, unsigned app_line,
+                                      hid_t loc_id, const char *obj_name,
                                       const char *attr_name, hid_t aapl_id,
                                       hid_t lapl_id, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Aread_async(const char *app_file, const char *app_func, unsigned app_line, hid_t attr_id, hid_t dtype_id, void *buf,
-                               hid_t es_id);
+  virtual herr_t H5Aread_async(const char *app_file, const char *app_func,
+                               unsigned app_line, hid_t attr_id, hid_t dtype_id,
+                               void *buf, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Arename_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *old_name,
-                                 const char *new_name, hid_t es_id);
+  virtual herr_t H5Arename_async(const char *app_file, const char *app_func,
+                                 unsigned app_line, hid_t loc_id,
+                                 const char *old_name, const char *new_name,
+                                 hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Arename_by_name_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *obj_name,
-                                         const char *old_attr_name,
-                                         const char *new_attr_name,
-                                         hid_t lapl_id, hid_t es_id);
+  virtual herr_t H5Arename_by_name_async(
+      const char *app_file, const char *app_func, unsigned app_line,
+      hid_t loc_id, const char *obj_name, const char *old_attr_name,
+      const char *new_attr_name, hid_t lapl_id, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Awrite_async(const char *app_file, const char *app_func, unsigned app_line, hid_t attr_id, hid_t type_id, const void *buf,
+  virtual herr_t H5Awrite_async(const char *app_file, const char *app_func,
+                                unsigned app_line, hid_t attr_id, hid_t type_id,
+                                const void *buf, hid_t es_id);
+#endif
+
+#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
+  virtual hid_t H5Dcreate_async(const char *app_file, const char *app_func,
+                                unsigned app_line, hid_t loc_id,
+                                const char *name, hid_t type_id, hid_t space_id,
+                                hid_t lcpl_id, hid_t dcpl_id, hid_t dapl_id,
                                 hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual hid_t H5Dcreate_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t type_id,
-                                hid_t space_id, hid_t lcpl_id, hid_t dcpl_id,
-                                hid_t dapl_id, hid_t es_id);
+  virtual hid_t H5Dopen_async(const char *app_file, const char *app_func,
+                              unsigned app_line, hid_t loc_id, const char *name,
+                              hid_t dapl_id, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual hid_t H5Dopen_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t dapl_id,
-                              hid_t es_id);
-#endif
-
-#if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual hid_t H5Dget_space_async(const char *app_file, const char *app_func, unsigned app_line, hid_t dset_id, hid_t es_id);
+  virtual hid_t H5Dget_space_async(const char *app_file, const char *app_func,
+                                   unsigned app_line, hid_t dset_id,
+                                   hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
@@ -5420,14 +5469,18 @@ class HDF5 : public Interface {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Dread_async(const char *app_file, const char *app_func, unsigned app_line, hid_t dset_id, hid_t mem_type_id,
-                               hid_t mem_space_id, hid_t file_space_id,
-                               hid_t dxpl_id, void *buf, hid_t es_id);
+  virtual herr_t H5Dread_async(const char *app_file, const char *app_func,
+                               unsigned app_line, hid_t dset_id,
+                               hid_t mem_type_id, hid_t mem_space_id,
+                               hid_t file_space_id, hid_t dxpl_id, void *buf,
+                               hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Dread_multi_async(const char *app_file, const char *app_func, unsigned app_line, size_t count, hid_t dset_id[],
-                                     hid_t mem_type_id[], hid_t mem_space_id[],
+  virtual herr_t H5Dread_multi_async(const char *app_file, const char *app_func,
+                                     unsigned app_line, size_t count,
+                                     hid_t dset_id[], hid_t mem_type_id[],
+                                     hid_t mem_space_id[],
                                      hid_t file_space_id[], hid_t dxpl_id,
                                      void *buf[], hid_t es_id);
 #endif
@@ -5440,25 +5493,31 @@ class HDF5 : public Interface {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Dwrite_async(const char *app_file, const char *app_func, unsigned app_line, hid_t dset_id, hid_t mem_type_id,
-                                hid_t mem_space_id, hid_t file_space_id,
-                                hid_t dxpl_id, const void *buf, hid_t es_id);
+  virtual herr_t H5Dwrite_async(const char *app_file, const char *app_func,
+                                unsigned app_line, hid_t dset_id,
+                                hid_t mem_type_id, hid_t mem_space_id,
+                                hid_t file_space_id, hid_t dxpl_id,
+                                const void *buf, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Dwrite_multi_async(const char *app_file, const char *app_func, unsigned app_line, size_t count, hid_t dset_id[],
+  virtual herr_t H5Dwrite_multi_async(const char *app_file,
+                                      const char *app_func, unsigned app_line,
+                                      size_t count, hid_t dset_id[],
                                       hid_t mem_type_id[], hid_t mem_space_id[],
                                       hid_t file_space_id[], hid_t dxpl_id,
                                       const void *buf[], hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Dset_extent_async(const char *app_file, const char *app_func, unsigned app_line, hid_t dset_id, const hsize_t size[],
-                                     hid_t es_id);
+  virtual herr_t H5Dset_extent_async(const char *app_file, const char *app_func,
+                                     unsigned app_line, hid_t dset_id,
+                                     const hsize_t size[], hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Dclose_async(const char *app_file, const char *app_func, unsigned app_line, hid_t dset_id, hid_t es_id);
+  virtual herr_t H5Dclose_async(const char *app_file, const char *app_func,
+                                unsigned app_line, hid_t dset_id, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
@@ -5531,112 +5590,139 @@ class HDF5 : public Interface {
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual hid_t H5Fcreate_async(const char *app_file, const char *app_func, unsigned app_line, const char *filename, unsigned int flags,
-                                hid_t fcpl_id, hid_t fapl_id, hid_t es_id);
+  virtual hid_t H5Fcreate_async(const char *app_file, const char *app_func,
+                                unsigned app_line, const char *filename,
+                                unsigned int flags, hid_t fcpl_id,
+                                hid_t fapl_id, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual hid_t H5Fopen_async(const char *app_file, const char *app_func, unsigned app_line, const char *filename, unsigned int flags,
-                              hid_t access_plist, hid_t es_id);
+  virtual hid_t H5Fopen_async(const char *app_file, const char *app_func,
+                              unsigned app_line, const char *filename,
+                              unsigned int flags, hid_t access_plist,
+                              hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual hid_t H5Freopen_async(const char *app_file, const char *app_func, unsigned app_line, hid_t file_id, hid_t es_id);
+  virtual hid_t H5Freopen_async(const char *app_file, const char *app_func,
+                                unsigned app_line, hid_t file_id, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Fflush_async(const char *app_file, const char *app_func, unsigned app_line, hid_t object_id, H5F_scope_t scope,
-                                hid_t es_id);
+  virtual herr_t H5Fflush_async(const char *app_file, const char *app_func,
+                                unsigned app_line, hid_t object_id,
+                                H5F_scope_t scope, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Fclose_async(const char *app_file, const char *app_func, unsigned app_line, hid_t file_id, hid_t es_id);
+  virtual herr_t H5Fclose_async(const char *app_file, const char *app_func,
+                                unsigned app_line, hid_t file_id, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Lcreate_hard_async(const char *app_file, const char *app_func, unsigned app_line, hid_t cur_loc_id, const char *cur_name,
+  virtual herr_t H5Lcreate_hard_async(const char *app_file,
+                                      const char *app_func, unsigned app_line,
+                                      hid_t cur_loc_id, const char *cur_name,
                                       hid_t new_loc_id, const char *new_name,
                                       hid_t lcpl_id, hid_t lapl_id,
                                       hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Lcreate_soft_async(const char *app_file, const char *app_func, unsigned app_line, const char *link_target,
+  virtual herr_t H5Lcreate_soft_async(const char *app_file,
+                                      const char *app_func, unsigned app_line,
+                                      const char *link_target,
                                       hid_t link_loc_id, const char *link_name,
                                       hid_t lcpl_id, hid_t lapl_id,
                                       hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Ldelete_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t lapl_id,
-                                 hid_t es_id);
+  virtual herr_t H5Ldelete_async(const char *app_file, const char *app_func,
+                                 unsigned app_line, hid_t loc_id,
+                                 const char *name, hid_t lapl_id, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Ldelete_by_idx_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *group_name,
+  virtual herr_t H5Ldelete_by_idx_async(const char *app_file,
+                                        const char *app_func, unsigned app_line,
+                                        hid_t loc_id, const char *group_name,
                                         H5_index_t idx_type,
                                         H5_iter_order_t order, hsize_t n,
                                         hid_t lapl_id, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Lexists_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name,
-                                 hbool_t *exists, hid_t lapl_id, hid_t es_id);
+  virtual herr_t H5Lexists_async(const char *app_file, const char *app_func,
+                                 unsigned app_line, hid_t loc_id,
+                                 const char *name, hbool_t *exists,
+                                 hid_t lapl_id, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Literate_async(const char *app_file, const char *app_func, unsigned app_line, hid_t group_id, H5_index_t idx_type,
-                                  H5_iter_order_t order, hsize_t *idx_p,
-                                  H5L_iterate2_t op, void *op_data,
-                                  hid_t es_id);
+  virtual herr_t H5Literate_async(const char *app_file, const char *app_func,
+                                  unsigned app_line, hid_t group_id,
+                                  H5_index_t idx_type, H5_iter_order_t order,
+                                  hsize_t *idx_p, H5L_iterate2_t op,
+                                  void *op_data, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual hid_t H5Gcreate_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t lcpl_id,
-                                hid_t gcpl_id, hid_t gapl_id, hid_t es_id);
+  virtual hid_t H5Gcreate_async(const char *app_file, const char *app_func,
+                                unsigned app_line, hid_t loc_id,
+                                const char *name, hid_t lcpl_id, hid_t gcpl_id,
+                                hid_t gapl_id, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual hid_t H5Gopen_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t gapl_id,
-                              hid_t es_id);
+  virtual hid_t H5Gopen_async(const char *app_file, const char *app_func,
+                              unsigned app_line, hid_t loc_id, const char *name,
+                              hid_t gapl_id, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Gget_info_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, H5G_info_t *ginfo,
-                                   hid_t es_id);
+  virtual herr_t H5Gget_info_async(const char *app_file, const char *app_func,
+                                   unsigned app_line, hid_t loc_id,
+                                   H5G_info_t *ginfo, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Gget_info_by_name_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name,
-                                           H5G_info_t *ginfo, hid_t lapl_id,
-                                           hid_t es_id);
+  virtual herr_t H5Gget_info_by_name_async(const char *app_file,
+                                           const char *app_func,
+                                           unsigned app_line, hid_t loc_id,
+                                           const char *name, H5G_info_t *ginfo,
+                                           hid_t lapl_id, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Gget_info_by_idx_async(const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *group_name,
-                                          H5_index_t idx_type,
-                                          H5_iter_order_t order, hsize_t n,
-                                          H5G_info_t *ginfo, hid_t lapl_id,
-                                          hid_t es_id);
+  virtual herr_t H5Gget_info_by_idx_async(
+      const char *app_file, const char *app_func, unsigned app_line,
+      hid_t loc_id, const char *group_name, H5_index_t idx_type,
+      H5_iter_order_t order, hsize_t n, H5G_info_t *ginfo, hid_t lapl_id,
+      hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual herr_t H5Gclose_async(const char *app_file, const char *app_func, unsigned app_line, hid_t group_id, hid_t es_id);
+  virtual herr_t H5Gclose_async(const char *app_file, const char *app_func,
+                                unsigned app_line, hid_t group_id, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual hid_t H5Ropen_object_async(const char *app_file, const char *app_func, unsigned app_line, H5R_ref_t *ref_ptr,
+  virtual hid_t H5Ropen_object_async(const char *app_file, const char *app_func,
+                                     unsigned app_line, H5R_ref_t *ref_ptr,
                                      hid_t rapl_id, hid_t oapl_id, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual hid_t H5Ropen_region_async(const char *app_file, const char *app_func, unsigned app_line, H5R_ref_t *ref_ptr, hid_t rapl_id,
-                                     hid_t oapl_id, hid_t es_id);
+  virtual hid_t H5Ropen_region_async(const char *app_file, const char *app_func,
+                                     unsigned app_line, H5R_ref_t *ref_ptr,
+                                     hid_t rapl_id, hid_t oapl_id, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-  virtual hid_t H5Ropen_attr_async(const char *app_file, const char *app_func, unsigned app_line, H5R_ref_t *ref_ptr, hid_t rapl_id,
-                                   hid_t aapl_id, hid_t es_id);
+  virtual hid_t H5Ropen_attr_async(const char *app_file, const char *app_func,
+                                   unsigned app_line, H5R_ref_t *ref_ptr,
+                                   hid_t rapl_id, hid_t aapl_id, hid_t es_id);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
@@ -9340,18 +9426,22 @@ class HDF5 : public Interface {
   GOTCHA_MACRO_VAR(H5FD_mpio_term)
 #endif
 
+#if defined(H5_HAVE_PARALLEL)
 #if ((BRAHMA_HDF5_VERSION >= 100823 && BRAHMA_HDF5_VERSION < 100900) || \
      (BRAHMA_HDF5_VERSION >= 101011 && BRAHMA_HDF5_VERSION < 101100) || \
      (BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
      (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500))
   GOTCHA_MACRO_VAR(H5Pset_fapl_mpio)
 #endif
+#endif
 
+#if defined(H5_HAVE_PARALLEL)
 #if ((BRAHMA_HDF5_VERSION >= 100823 && BRAHMA_HDF5_VERSION < 100900) || \
      (BRAHMA_HDF5_VERSION >= 101011 && BRAHMA_HDF5_VERSION < 101100) || \
      (BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
      (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500))
   GOTCHA_MACRO_VAR(H5Pget_fapl_mpio)
+#endif
 #endif
 
 #if ((BRAHMA_HDF5_VERSION >= 100823 && BRAHMA_HDF5_VERSION < 100900) || \
@@ -10333,14 +10423,18 @@ class HDF5 : public Interface {
   GOTCHA_MACRO_VAR(H5Pset_vol)
 #endif
 
+#if defined(H5_HAVE_PARALLEL)
 #if ((BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
      (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500))
   GOTCHA_MACRO_VAR(H5Pget_mpi_params)
 #endif
+#endif
 
+#if defined(H5_HAVE_PARALLEL)
 #if ((BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
      (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500))
   GOTCHA_MACRO_VAR(H5Pset_mpi_params)
+#endif
 #endif
 
 #if ((BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
@@ -15400,6 +15494,7 @@ GOTCHA_MACRO_TYPEDEF(H5FD_mpio_init, hid_t, (void), (), brahma::HDF5);
 GOTCHA_MACRO_TYPEDEF(H5FD_mpio_term, void, (void), (), brahma::HDF5);
 #endif
 
+#if defined(H5_HAVE_PARALLEL)
 #if ((BRAHMA_HDF5_VERSION >= 100823 && BRAHMA_HDF5_VERSION < 100900) || \
      (BRAHMA_HDF5_VERSION >= 101011 && BRAHMA_HDF5_VERSION < 101100) || \
      (BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
@@ -15408,7 +15503,9 @@ GOTCHA_MACRO_TYPEDEF(H5Pset_fapl_mpio, herr_t,
                      (hid_t fapl_id, MPI_Comm comm, MPI_Info info),
                      (fapl_id, comm, info), brahma::HDF5);
 #endif
+#endif
 
+#if defined(H5_HAVE_PARALLEL)
 #if ((BRAHMA_HDF5_VERSION >= 100823 && BRAHMA_HDF5_VERSION < 100900) || \
      (BRAHMA_HDF5_VERSION >= 101011 && BRAHMA_HDF5_VERSION < 101100) || \
      (BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
@@ -15416,6 +15513,7 @@ GOTCHA_MACRO_TYPEDEF(H5Pset_fapl_mpio, herr_t,
 GOTCHA_MACRO_TYPEDEF(H5Pget_fapl_mpio, herr_t,
                      (hid_t fapl_id, MPI_Comm *comm, MPI_Info *info),
                      (fapl_id, comm, info), brahma::HDF5);
+#endif
 #endif
 
 #if ((BRAHMA_HDF5_VERSION >= 100823 && BRAHMA_HDF5_VERSION < 100900) || \
@@ -16833,18 +16931,22 @@ GOTCHA_MACRO_TYPEDEF(H5Pset_vol, herr_t,
                      (plist_id, new_vol_id, new_vol_info), brahma::HDF5);
 #endif
 
+#if defined(H5_HAVE_PARALLEL)
 #if ((BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
      (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500))
 GOTCHA_MACRO_TYPEDEF(H5Pget_mpi_params, herr_t,
                      (hid_t fapl_id, MPI_Comm *comm, MPI_Info *info),
                      (fapl_id, comm, info), brahma::HDF5);
 #endif
+#endif
 
+#if defined(H5_HAVE_PARALLEL)
 #if ((BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
      (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500))
 GOTCHA_MACRO_TYPEDEF(H5Pset_mpi_params, herr_t,
                      (hid_t fapl_id, MPI_Comm comm, MPI_Info info),
                      (fapl_id, comm, info), brahma::HDF5);
+#endif
 #endif
 
 #if ((BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
@@ -16966,184 +17068,245 @@ GOTCHA_MACRO_TYPEDEF(H5is_library_terminating, herr_t,
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-GOTCHA_MACRO_TYPEDEF_C(H5Oopen_async, hid_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t lapl_id,
-                      hid_t es_id),
-                     (app_file, app_func, app_line, loc_id, name, lapl_id, es_id), brahma::HDF5);
+GOTCHA_MACRO_TYPEDEF_C(
+    H5Oopen_async, hid_t,
+    (const char *app_file, const char *app_func, unsigned app_line,
+     hid_t loc_id, const char *name, hid_t lapl_id, hid_t es_id),
+    (app_file, app_func, app_line, loc_id, name, lapl_id, es_id), brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Oopen_by_idx_async, hid_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *group_name, H5_index_t idx_type,
-                      H5_iter_order_t order, hsize_t n, hid_t lapl_id,
-                      hid_t es_id),
-                     (app_file, app_func, app_line, loc_id, group_name, idx_type, order, n, lapl_id, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t loc_id, const char *group_name,
+                        H5_index_t idx_type, H5_iter_order_t order, hsize_t n,
+                        hid_t lapl_id, hid_t es_id),
+                       (app_file, app_func, app_line, loc_id, group_name,
+                        idx_type, order, n, lapl_id, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Oget_info_by_name_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, H5O_info2_t *oinfo,
-                      unsigned int fields, hid_t lapl_id, hid_t es_id),
-                     (app_file, app_func, app_line, loc_id, name, oinfo, fields, lapl_id, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t loc_id, const char *name,
+                        H5O_info2_t *oinfo, unsigned int fields, hid_t lapl_id,
+                        hid_t es_id),
+                       (app_file, app_func, app_line, loc_id, name, oinfo,
+                        fields, lapl_id, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Ocopy_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t src_loc_id, const char *src_name, hid_t dst_loc_id,
-                      const char *dst_name, hid_t ocpypl_id, hid_t lcpl_id,
-                      hid_t es_id),
-                     (app_file, app_func, app_line, src_loc_id, src_name, dst_loc_id, dst_name, ocpypl_id,
-                      lcpl_id, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t src_loc_id,
+                        const char *src_name, hid_t dst_loc_id,
+                        const char *dst_name, hid_t ocpypl_id, hid_t lcpl_id,
+                        hid_t es_id),
+                       (app_file, app_func, app_line, src_loc_id, src_name,
+                        dst_loc_id, dst_name, ocpypl_id, lcpl_id, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Oclose_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t object_id, hid_t es_id),
-                     (app_file, app_func, app_line, object_id, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t object_id, hid_t es_id),
+                       (app_file, app_func, app_line, object_id, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Oflush_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t obj_id, hid_t es_id),
-                     (app_file, app_func, app_line, obj_id, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t obj_id, hid_t es_id),
+                       (app_file, app_func, app_line, obj_id, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Orefresh_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t oid, hid_t es_id),
-                     (app_file, app_func, app_line, oid, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t oid, hid_t es_id),
+                       (app_file, app_func, app_line, oid, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Tclose_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t type_id, hid_t es_id),
-                     (app_file, app_func, app_line, type_id, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t type_id, hid_t es_id),
+                       (app_file, app_func, app_line, type_id, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Tcommit_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t type_id,
-                      hid_t lcpl_id, hid_t tcpl_id, hid_t tapl_id, hid_t es_id),
-                     (app_file, app_func, app_line, loc_id, name, type_id, lcpl_id, tcpl_id, tapl_id, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t loc_id, const char *name,
+                        hid_t type_id, hid_t lcpl_id, hid_t tcpl_id,
+                        hid_t tapl_id, hid_t es_id),
+                       (app_file, app_func, app_line, loc_id, name, type_id,
+                        lcpl_id, tcpl_id, tapl_id, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-GOTCHA_MACRO_TYPEDEF_C(H5Topen_async, hid_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t tapl_id,
-                      hid_t es_id),
-                     (app_file, app_func, app_line, loc_id, name, tapl_id, es_id), brahma::HDF5);
+GOTCHA_MACRO_TYPEDEF_C(
+    H5Topen_async, hid_t,
+    (const char *app_file, const char *app_func, unsigned app_line,
+     hid_t loc_id, const char *name, hid_t tapl_id, hid_t es_id),
+    (app_file, app_func, app_line, loc_id, name, tapl_id, es_id), brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Aclose_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t attr_id, hid_t es_id),
-                     (app_file, app_func, app_line, attr_id, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t attr_id, hid_t es_id),
+                       (app_file, app_func, app_line, attr_id, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Acreate_async, hid_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *attr_name, hid_t type_id,
-                      hid_t space_id, hid_t acpl_id, hid_t aapl_id,
-                      hid_t es_id),
-                     (app_file, app_func, app_line, loc_id, attr_name, type_id, space_id, acpl_id, aapl_id,
-                      es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t loc_id, const char *attr_name,
+                        hid_t type_id, hid_t space_id, hid_t acpl_id,
+                        hid_t aapl_id, hid_t es_id),
+                       (app_file, app_func, app_line, loc_id, attr_name,
+                        type_id, space_id, acpl_id, aapl_id, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-GOTCHA_MACRO_TYPEDEF_C(H5Acreate_by_name_async, hid_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *obj_name, const char *attr_name,
-                      hid_t type_id, hid_t space_id, hid_t acpl_id,
-                      hid_t aapl_id, hid_t lapl_id, hid_t es_id),
-                     (app_file, app_func, app_line, loc_id, obj_name, attr_name, type_id, space_id, acpl_id,
-                      aapl_id, lapl_id, es_id), brahma::HDF5);
+GOTCHA_MACRO_TYPEDEF_C(
+    H5Acreate_by_name_async, hid_t,
+    (const char *app_file, const char *app_func, unsigned app_line,
+     hid_t loc_id, const char *obj_name, const char *attr_name, hid_t type_id,
+     hid_t space_id, hid_t acpl_id, hid_t aapl_id, hid_t lapl_id, hid_t es_id),
+    (app_file, app_func, app_line, loc_id, obj_name, attr_name, type_id,
+     space_id, acpl_id, aapl_id, lapl_id, es_id),
+    brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Aexists_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t obj_id, const char *attr_name, hbool_t *exists,
-                      hid_t es_id),
-                     (app_file, app_func, app_line, obj_id, attr_name, exists, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t obj_id, const char *attr_name,
+                        hbool_t *exists, hid_t es_id),
+                       (app_file, app_func, app_line, obj_id, attr_name, exists,
+                        es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Aexists_by_name_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *obj_name, const char *attr_name,
-                      hbool_t *exists, hid_t lapl_id, hid_t es_id),
-                     (app_file, app_func, app_line, loc_id, obj_name, attr_name, exists, lapl_id, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t loc_id, const char *obj_name,
+                        const char *attr_name, hbool_t *exists, hid_t lapl_id,
+                        hid_t es_id),
+                       (app_file, app_func, app_line, loc_id, obj_name,
+                        attr_name, exists, lapl_id, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Aopen_async, hid_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t obj_id, const char *attr_name, hid_t aapl_id,
-                      hid_t es_id),
-                     (app_file, app_func, app_line, obj_id, attr_name, aapl_id, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t obj_id, const char *attr_name,
+                        hid_t aapl_id, hid_t es_id),
+                       (app_file, app_func, app_line, obj_id, attr_name,
+                        aapl_id, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Aopen_by_idx_async, hid_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *obj_name, H5_index_t idx_type,
-                      H5_iter_order_t order, hsize_t n, hid_t aapl_id,
-                      hid_t lapl_id, hid_t es_id),
-                     (app_file, app_func, app_line, loc_id, obj_name, idx_type, order, n, aapl_id, lapl_id,
-                      es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t loc_id, const char *obj_name,
+                        H5_index_t idx_type, H5_iter_order_t order, hsize_t n,
+                        hid_t aapl_id, hid_t lapl_id, hid_t es_id),
+                       (app_file, app_func, app_line, loc_id, obj_name,
+                        idx_type, order, n, aapl_id, lapl_id, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Aopen_by_name_async, hid_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *obj_name, const char *attr_name,
-                      hid_t aapl_id, hid_t lapl_id, hid_t es_id),
-                     (app_file, app_func, app_line, loc_id, obj_name, attr_name, aapl_id, lapl_id, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t loc_id, const char *obj_name,
+                        const char *attr_name, hid_t aapl_id, hid_t lapl_id,
+                        hid_t es_id),
+                       (app_file, app_func, app_line, loc_id, obj_name,
+                        attr_name, aapl_id, lapl_id, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Aread_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t attr_id, hid_t dtype_id, void *buf, hid_t es_id),
-                     (app_file, app_func, app_line, attr_id, dtype_id, buf, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t attr_id, hid_t dtype_id,
+                        void *buf, hid_t es_id),
+                       (app_file, app_func, app_line, attr_id, dtype_id, buf,
+                        es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Arename_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *old_name, const char *new_name,
-                      hid_t es_id),
-                     (app_file, app_func, app_line, loc_id, old_name, new_name, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t loc_id, const char *old_name,
+                        const char *new_name, hid_t es_id),
+                       (app_file, app_func, app_line, loc_id, old_name,
+                        new_name, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Arename_by_name_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *obj_name,
-                      const char *old_attr_name, const char *new_attr_name,
-                      hid_t lapl_id, hid_t es_id),
-                     (app_file, app_func, app_line, loc_id, obj_name, old_attr_name, new_attr_name, lapl_id,
-                      es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t loc_id, const char *obj_name,
+                        const char *old_attr_name, const char *new_attr_name,
+                        hid_t lapl_id, hid_t es_id),
+                       (app_file, app_func, app_line, loc_id, obj_name,
+                        old_attr_name, new_attr_name, lapl_id, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-GOTCHA_MACRO_TYPEDEF_C(H5Awrite_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t attr_id, hid_t type_id, const void *buf,
-                      hid_t es_id),
-                     (app_file, app_func, app_line, attr_id, type_id, buf, es_id), brahma::HDF5);
+GOTCHA_MACRO_TYPEDEF_C(
+    H5Awrite_async, herr_t,
+    (const char *app_file, const char *app_func, unsigned app_line,
+     hid_t attr_id, hid_t type_id, const void *buf, hid_t es_id),
+    (app_file, app_func, app_line, attr_id, type_id, buf, es_id), brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Dcreate_async, hid_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t type_id,
-                      hid_t space_id, hid_t lcpl_id, hid_t dcpl_id,
-                      hid_t dapl_id, hid_t es_id),
-                     (app_file, app_func, app_line, loc_id, name, type_id, space_id, lcpl_id, dcpl_id,
-                      dapl_id, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t loc_id, const char *name,
+                        hid_t type_id, hid_t space_id, hid_t lcpl_id,
+                        hid_t dcpl_id, hid_t dapl_id, hid_t es_id),
+                       (app_file, app_func, app_line, loc_id, name, type_id,
+                        space_id, lcpl_id, dcpl_id, dapl_id, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-GOTCHA_MACRO_TYPEDEF_C(H5Dopen_async, hid_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t dapl_id,
-                      hid_t es_id),
-                     (app_file, app_func, app_line, loc_id, name, dapl_id, es_id), brahma::HDF5);
+GOTCHA_MACRO_TYPEDEF_C(
+    H5Dopen_async, hid_t,
+    (const char *app_file, const char *app_func, unsigned app_line,
+     hid_t loc_id, const char *name, hid_t dapl_id, hid_t es_id),
+    (app_file, app_func, app_line, loc_id, name, dapl_id, es_id), brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Dget_space_async, hid_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t dset_id, hid_t es_id),
-                     (app_file, app_func, app_line, dset_id, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t dset_id, hid_t es_id),
+                       (app_file, app_func, app_line, dset_id, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
@@ -17158,20 +17321,24 @@ GOTCHA_MACRO_TYPEDEF(H5Dread_multi, herr_t,
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Dread_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t dset_id, hid_t mem_type_id, hid_t mem_space_id,
-                      hid_t file_space_id, hid_t dxpl_id, void *buf,
-                      hid_t es_id),
-                     (app_file, app_func, app_line, dset_id, mem_type_id, mem_space_id, file_space_id,
-                      dxpl_id, buf, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t dset_id, hid_t mem_type_id,
+                        hid_t mem_space_id, hid_t file_space_id, hid_t dxpl_id,
+                        void *buf, hid_t es_id),
+                       (app_file, app_func, app_line, dset_id, mem_type_id,
+                        mem_space_id, file_space_id, dxpl_id, buf, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-GOTCHA_MACRO_TYPEDEF_C(H5Dread_multi_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, size_t count, hid_t dset_id[], hid_t mem_type_id[],
-                      hid_t mem_space_id[], hid_t file_space_id[],
-                      hid_t dxpl_id, void *buf[], hid_t es_id),
-                     (app_file, app_func, app_line, count, dset_id, mem_type_id, mem_space_id, file_space_id,
-                      dxpl_id, buf, es_id), brahma::HDF5);
+GOTCHA_MACRO_TYPEDEF_C(
+    H5Dread_multi_async, herr_t,
+    (const char *app_file, const char *app_func, unsigned app_line,
+     size_t count, hid_t dset_id[], hid_t mem_type_id[], hid_t mem_space_id[],
+     hid_t file_space_id[], hid_t dxpl_id, void *buf[], hid_t es_id),
+    (app_file, app_func, app_line, count, dset_id, mem_type_id, mem_space_id,
+     file_space_id, dxpl_id, buf, es_id),
+    brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
@@ -17186,32 +17353,41 @@ GOTCHA_MACRO_TYPEDEF(H5Dwrite_multi, herr_t,
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Dwrite_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t dset_id, hid_t mem_type_id, hid_t mem_space_id,
-                      hid_t file_space_id, hid_t dxpl_id, const void *buf,
-                      hid_t es_id),
-                     (app_file, app_func, app_line, dset_id, mem_type_id, mem_space_id, file_space_id,
-                      dxpl_id, buf, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t dset_id, hid_t mem_type_id,
+                        hid_t mem_space_id, hid_t file_space_id, hid_t dxpl_id,
+                        const void *buf, hid_t es_id),
+                       (app_file, app_func, app_line, dset_id, mem_type_id,
+                        mem_space_id, file_space_id, dxpl_id, buf, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-GOTCHA_MACRO_TYPEDEF_C(H5Dwrite_multi_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, size_t count, hid_t dset_id[], hid_t mem_type_id[],
-                      hid_t mem_space_id[], hid_t file_space_id[],
-                      hid_t dxpl_id, const void *buf[], hid_t es_id),
-                     (app_file, app_func, app_line, count, dset_id, mem_type_id, mem_space_id, file_space_id,
-                      dxpl_id, buf, es_id), brahma::HDF5);
+GOTCHA_MACRO_TYPEDEF_C(
+    H5Dwrite_multi_async, herr_t,
+    (const char *app_file, const char *app_func, unsigned app_line,
+     size_t count, hid_t dset_id[], hid_t mem_type_id[], hid_t mem_space_id[],
+     hid_t file_space_id[], hid_t dxpl_id, const void *buf[], hid_t es_id),
+    (app_file, app_func, app_line, count, dset_id, mem_type_id, mem_space_id,
+     file_space_id, dxpl_id, buf, es_id),
+    brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Dset_extent_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t dset_id, const hsize_t size[], hid_t es_id),
-                     (app_file, app_func, app_line, dset_id, size, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t dset_id, const hsize_t size[],
+                        hid_t es_id),
+                       (app_file, app_func, app_line, dset_id, size, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Dclose_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t dset_id, hid_t es_id),
-                     (app_file, app_func, app_line, dset_id, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t dset_id, hid_t es_id),
+                       (app_file, app_func, app_line, dset_id, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
@@ -17302,145 +17478,198 @@ GOTCHA_MACRO_TYPEDEF(H5ESclose, herr_t, (hid_t es_id), (es_id), brahma::HDF5);
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Fcreate_async, hid_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, const char *filename, unsigned int flags, hid_t fcpl_id,
-                      hid_t fapl_id, hid_t es_id),
-                     (app_file, app_func, app_line, filename, flags, fcpl_id, fapl_id, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, const char *filename,
+                        unsigned int flags, hid_t fcpl_id, hid_t fapl_id,
+                        hid_t es_id),
+                       (app_file, app_func, app_line, filename, flags, fcpl_id,
+                        fapl_id, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Fopen_async, hid_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, const char *filename, unsigned int flags,
-                      hid_t access_plist, hid_t es_id),
-                     (app_file, app_func, app_line, filename, flags, access_plist, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, const char *filename,
+                        unsigned int flags, hid_t access_plist, hid_t es_id),
+                       (app_file, app_func, app_line, filename, flags,
+                        access_plist, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Freopen_async, hid_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t file_id, hid_t es_id),
-                     (app_file, app_func, app_line, file_id, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t file_id, hid_t es_id),
+                       (app_file, app_func, app_line, file_id, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Fflush_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t object_id, H5F_scope_t scope, hid_t es_id),
-                     (app_file, app_func, app_line, object_id, scope, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t object_id, H5F_scope_t scope,
+                        hid_t es_id),
+                       (app_file, app_func, app_line, object_id, scope, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Fclose_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t file_id, hid_t es_id),
-                     (app_file, app_func, app_line, file_id, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t file_id, hid_t es_id),
+                       (app_file, app_func, app_line, file_id, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Lcreate_hard_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t cur_loc_id, const char *cur_name, hid_t new_loc_id,
-                      const char *new_name, hid_t lcpl_id, hid_t lapl_id,
-                      hid_t es_id),
-                     (app_file, app_func, app_line, cur_loc_id, cur_name, new_loc_id, new_name, lcpl_id,
-                      lapl_id, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t cur_loc_id,
+                        const char *cur_name, hid_t new_loc_id,
+                        const char *new_name, hid_t lcpl_id, hid_t lapl_id,
+                        hid_t es_id),
+                       (app_file, app_func, app_line, cur_loc_id, cur_name,
+                        new_loc_id, new_name, lcpl_id, lapl_id, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Lcreate_soft_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, const char *link_target, hid_t link_loc_id,
-                      const char *link_name, hid_t lcpl_id, hid_t lapl_id,
-                      hid_t es_id),
-                     (app_file, app_func, app_line, link_target, link_loc_id, link_name, lcpl_id, lapl_id,
-                      es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, const char *link_target,
+                        hid_t link_loc_id, const char *link_name, hid_t lcpl_id,
+                        hid_t lapl_id, hid_t es_id),
+                       (app_file, app_func, app_line, link_target, link_loc_id,
+                        link_name, lcpl_id, lapl_id, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-GOTCHA_MACRO_TYPEDEF_C(H5Ldelete_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t lapl_id,
-                      hid_t es_id),
-                     (app_file, app_func, app_line, loc_id, name, lapl_id, es_id), brahma::HDF5);
+GOTCHA_MACRO_TYPEDEF_C(
+    H5Ldelete_async, herr_t,
+    (const char *app_file, const char *app_func, unsigned app_line,
+     hid_t loc_id, const char *name, hid_t lapl_id, hid_t es_id),
+    (app_file, app_func, app_line, loc_id, name, lapl_id, es_id), brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Ldelete_by_idx_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *group_name, H5_index_t idx_type,
-                      H5_iter_order_t order, hsize_t n, hid_t lapl_id,
-                      hid_t es_id),
-                     (app_file, app_func, app_line, loc_id, group_name, idx_type, order, n, lapl_id, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t loc_id, const char *group_name,
+                        H5_index_t idx_type, H5_iter_order_t order, hsize_t n,
+                        hid_t lapl_id, hid_t es_id),
+                       (app_file, app_func, app_line, loc_id, group_name,
+                        idx_type, order, n, lapl_id, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Lexists_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hbool_t *exists,
-                      hid_t lapl_id, hid_t es_id),
-                     (app_file, app_func, app_line, loc_id, name, exists, lapl_id, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t loc_id, const char *name,
+                        hbool_t *exists, hid_t lapl_id, hid_t es_id),
+                       (app_file, app_func, app_line, loc_id, name, exists,
+                        lapl_id, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Literate_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t group_id, H5_index_t idx_type,
-                      H5_iter_order_t order, hsize_t *idx_p, H5L_iterate2_t op,
-                      void *op_data, hid_t es_id),
-                     (app_file, app_func, app_line, group_id, idx_type, order, idx_p, op, op_data, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t group_id, H5_index_t idx_type,
+                        H5_iter_order_t order, hsize_t *idx_p,
+                        H5L_iterate2_t op, void *op_data, hid_t es_id),
+                       (app_file, app_func, app_line, group_id, idx_type, order,
+                        idx_p, op, op_data, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Gcreate_async, hid_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t lcpl_id,
-                      hid_t gcpl_id, hid_t gapl_id, hid_t es_id),
-                     (app_file, app_func, app_line, loc_id, name, lcpl_id, gcpl_id, gapl_id, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t loc_id, const char *name,
+                        hid_t lcpl_id, hid_t gcpl_id, hid_t gapl_id,
+                        hid_t es_id),
+                       (app_file, app_func, app_line, loc_id, name, lcpl_id,
+                        gcpl_id, gapl_id, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
-GOTCHA_MACRO_TYPEDEF_C(H5Gopen_async, hid_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, hid_t gapl_id,
-                      hid_t es_id),
-                     (app_file, app_func, app_line, loc_id, name, gapl_id, es_id), brahma::HDF5);
+GOTCHA_MACRO_TYPEDEF_C(
+    H5Gopen_async, hid_t,
+    (const char *app_file, const char *app_func, unsigned app_line,
+     hid_t loc_id, const char *name, hid_t gapl_id, hid_t es_id),
+    (app_file, app_func, app_line, loc_id, name, gapl_id, es_id), brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Gget_info_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, H5G_info_t *ginfo, hid_t es_id),
-                     (app_file, app_func, app_line, loc_id, ginfo, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t loc_id, H5G_info_t *ginfo,
+                        hid_t es_id),
+                       (app_file, app_func, app_line, loc_id, ginfo, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Gget_info_by_name_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *name, H5G_info_t *ginfo,
-                      hid_t lapl_id, hid_t es_id),
-                     (app_file, app_func, app_line, loc_id, name, ginfo, lapl_id, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t loc_id, const char *name,
+                        H5G_info_t *ginfo, hid_t lapl_id, hid_t es_id),
+                       (app_file, app_func, app_line, loc_id, name, ginfo,
+                        lapl_id, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Gget_info_by_idx_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t loc_id, const char *group_name, H5_index_t idx_type,
-                      H5_iter_order_t order, hsize_t n, H5G_info_t *ginfo,
-                      hid_t lapl_id, hid_t es_id),
-                     (app_file, app_func, app_line, loc_id, group_name, idx_type, order, n, ginfo, lapl_id,
-                      es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t loc_id, const char *group_name,
+                        H5_index_t idx_type, H5_iter_order_t order, hsize_t n,
+                        H5G_info_t *ginfo, hid_t lapl_id, hid_t es_id),
+                       (app_file, app_func, app_line, loc_id, group_name,
+                        idx_type, order, n, ginfo, lapl_id, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Gclose_async, herr_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, hid_t group_id, hid_t es_id),
-                     (app_file, app_func, app_line, group_id, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, hid_t group_id, hid_t es_id),
+                       (app_file, app_func, app_line, group_id, es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Ropen_object_async, hid_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, H5R_ref_t *ref_ptr, hid_t rapl_id,
-                      hid_t oapl_id, hid_t es_id),
-                     (app_file, app_func, app_line, ref_ptr, rapl_id, oapl_id, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, H5R_ref_t *ref_ptr, hid_t rapl_id,
+                        hid_t oapl_id, hid_t es_id),
+                       (app_file, app_func, app_line, ref_ptr, rapl_id, oapl_id,
+                        es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Ropen_region_async, hid_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, H5R_ref_t * ref_ptr, hid_t rapl_id, hid_t oapl_id,
-                      hid_t es_id),
-                     (app_file, app_func, app_line, ref_ptr, rapl_id, oapl_id, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, H5R_ref_t *ref_ptr, hid_t rapl_id,
+                        hid_t oapl_id, hid_t es_id),
+                       (app_file, app_func, app_line, ref_ptr, rapl_id, oapl_id,
+                        es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
 GOTCHA_MACRO_TYPEDEF_C(H5Ropen_attr_async, hid_t,
-                     (const char *app_file, const char *app_func, unsigned app_line, H5R_ref_t * ref_ptr, hid_t rapl_id, hid_t aapl_id,
-                      hid_t es_id),
-                     (app_file, app_func, app_line, ref_ptr, rapl_id, aapl_id, es_id), brahma::HDF5);
+                       (const char *app_file, const char *app_func,
+                        unsigned app_line, H5R_ref_t *ref_ptr, hid_t rapl_id,
+                        hid_t aapl_id, hid_t es_id),
+                       (app_file, app_func, app_line, ref_ptr, rapl_id, aapl_id,
+                        es_id),
+                       brahma::HDF5);
 #endif
 
 #if (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500)
@@ -21206,18 +21435,22 @@ size_t brahma::HDF5::bind(const char *name, uint16_t priority) {
   GOTCHA_BINDING_MACRO(H5FD_mpio_term, brahma::HDF5);
 #endif
 
+#if defined(H5_HAVE_PARALLEL)
 #if ((BRAHMA_HDF5_VERSION >= 100823 && BRAHMA_HDF5_VERSION < 100900) || \
      (BRAHMA_HDF5_VERSION >= 101011 && BRAHMA_HDF5_VERSION < 101100) || \
      (BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
      (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500))
   GOTCHA_BINDING_MACRO(H5Pset_fapl_mpio, brahma::HDF5);
 #endif
+#endif
 
+#if defined(H5_HAVE_PARALLEL)
 #if ((BRAHMA_HDF5_VERSION >= 100823 && BRAHMA_HDF5_VERSION < 100900) || \
      (BRAHMA_HDF5_VERSION >= 101011 && BRAHMA_HDF5_VERSION < 101100) || \
      (BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
      (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500))
   GOTCHA_BINDING_MACRO(H5Pget_fapl_mpio, brahma::HDF5);
+#endif
 #endif
 
 #if ((BRAHMA_HDF5_VERSION >= 100823 && BRAHMA_HDF5_VERSION < 100900) || \
@@ -22199,14 +22432,18 @@ size_t brahma::HDF5::bind(const char *name, uint16_t priority) {
   GOTCHA_BINDING_MACRO(H5Pset_vol, brahma::HDF5);
 #endif
 
+#if defined(H5_HAVE_PARALLEL)
 #if ((BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
      (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500))
   GOTCHA_BINDING_MACRO(H5Pget_mpi_params, brahma::HDF5);
 #endif
+#endif
 
+#if defined(H5_HAVE_PARALLEL)
 #if ((BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \
      (BRAHMA_HDF5_VERSION >= 101405 && BRAHMA_HDF5_VERSION < 101500))
   GOTCHA_BINDING_MACRO(H5Pset_mpi_params, brahma::HDF5);
+#endif
 #endif
 
 #if ((BRAHMA_HDF5_VERSION >= 101203 && BRAHMA_HDF5_VERSION < 101300) || \

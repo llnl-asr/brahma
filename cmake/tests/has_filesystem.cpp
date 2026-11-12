@@ -1,8 +1,7 @@
 
 #include <filesystem>
 
-int main()
-{
+int main() {
   std::filesystem::path p{"."};
   return 0;
 }
