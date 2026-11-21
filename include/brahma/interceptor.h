@@ -14,19 +14,22 @@
 #include <cstdarg>
 #include <memory>
 
-// The unbinding points to the original function
-#define GOTCHA_BINDING_MACRO_IMPL(fname, CLASS, SYMBOL)          \
-  if constexpr (!std::is_same_v<decltype(&C::fname),             \
-                                decltype(&CLASS::fname)>) {      \
-    gotcha_binding_t binding = {#fname, (void *)fname##_wrapper, \
-                                &fname##_brahma_handle};         \
-    bindings.push_back(binding);                                 \
-    fname##_fptr fn = &SYMBOL;                                   \
-    if (fn) {                                                    \
-      gotcha_binding_t unbinding = {#fname, (void *)fn,          \
-                                    &fname##_brahma_handle};     \
-      unbindings.push_back(unbinding);                           \
-    }                                                            \
+// The unbinding points to the original function. It has its own handle,
+// because gotcha_wrap() resets each handle it is given and the wrapper reads
+// fname##_brahma_handle on every call, also in threads that run during
+// unbind().
+#define GOTCHA_BINDING_MACRO_IMPL(fname, CLASS, SYMBOL)             \
+  if constexpr (!std::is_same_v<decltype(&C::fname),                \
+                                decltype(&CLASS::fname)>) {         \
+    gotcha_binding_t binding = {#fname, (void *)fname##_wrapper,    \
+                                &fname##_brahma_handle};            \
+    bindings.push_back(binding);                                    \
+    fname##_fptr fn = &SYMBOL;                                      \
+    if (fn) {                                                       \
+      gotcha_binding_t unbinding = {#fname, (void *)fn,             \
+                                    &fname##_brahma_unbind_handle}; \
+      unbindings.push_back(unbinding);                              \
+    }                                                               \
   }
 
 #define GOTCHA_BINDING_MACRO(fname, CLASS) \
@@ -213,7 +216,9 @@
     return _r;                                                               \
   }
 
-#define GOTCHA_MACRO_VAR(name) gotcha_wrappee_handle_t name##_brahma_handle;
+#define GOTCHA_MACRO_VAR(name)                  \
+  gotcha_wrappee_handle_t name##_brahma_handle; \
+  gotcha_wrappee_handle_t name##_brahma_unbind_handle;
 
 #define BRAHMA_WRAPPER(name) name##_wrapper;
 

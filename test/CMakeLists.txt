@@ -19,6 +19,11 @@ target_compile_options(test_posix PRIVATE -fno-builtin)
 target_compile_options(test_posix PRIVATE -O0 -UNDEBUG)
 add_test(NAME test_posix COMMAND $<TARGET_FILE:test_posix>)
 
+add_executable(test_unbind_race test_unbind_race.cpp)
+add_dependencies(test_unbind_race ${PROJECT_NAME})
+target_link_libraries(test_unbind_race ${PROJECT_NAME} pthread)
+add_test(NAME test_unbind_race COMMAND $<TARGET_FILE:test_unbind_race>)
+
 if(BRAHMA_BUILD_WITH_MPI)
     add_executable(test_mpiio test_mpiio.cpp)
     add_dependencies(test_mpiio ${PROJECT_NAME})
